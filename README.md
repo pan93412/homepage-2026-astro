@@ -1,43 +1,53 @@
-# Astro Starter Kit: Minimal
+# pan93.com
+
+Personal website built with Astro. English at `/`, Traditional Chinese at `/zh/`. The legacy `/index.zh-TW.html` URL redirects to `/zh/`.
+
+## Development
 
 ```sh
-bun create astro@latest -- --template minimal
+nix develop
+bun install --frozen-lockfile
+bun run astro dev --background
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Open http://localhost:4321. Manage the server with `bun run astro dev status`, `logs`, or `stop`.
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```sh
+bun run check         # Lint, formatting and type checks
+bun run fmt           # Format files
+bun run test          # Test friend-link synchronization
+bun run build         # Build to dist/
+bun run preview       # Preview the production build
+bun run sync:friends  # Refresh approved friend links
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Content
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+- Text: `src/i18n/en.ts` and `src/i18n/zh.ts`.
+- Project, experience and talk lists: `src/components/`. New experiences also need a table-of-contents entry in `Portfolio.astro`.
+- Friend links: edit the source Google Sheet, then run **Sync Friend Links** in GitHub Actions. Approved entries sync daily to `src/data/friends.yaml` and trigger deployment.
 
-Any static assets, like images, can be placed in the `public/` directory.
+## PostHog
 
-## 🧞 Commands
+Copy `.env.example` to `.env` and set:
 
-All commands are run from the root of the project, from a terminal:
+- `PUBLIC_POSTHOG_TOKEN`: public project token, not a personal API key.
+- `PUBLIC_POSTHOG_API_HOST`: your live reverse-proxy URL.
+- `PUBLIC_POSTHOG_UI_HOST`: `https://us.posthog.com` or `https://eu.posthog.com`.
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `bun install`             | Installs dependencies                            |
-| `bun dev`             | Starts local dev server at `localhost:4321`      |
-| `bun build`           | Build your production site to `./dist/`          |
-| `bun preview`         | Preview your build locally, before deploying     |
-| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help` | Get help using the Astro CLI                     |
+PostHog runs only in production when all three values are set. Session recording is disabled. Provision the proxy separately using the [PostHog guide](https://posthog.com/docs/advanced/proxy).
 
-## 👀 Want to learn more?
+## Deployment
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Hosted on [Bunny Static Hosting](https://bunny.net/docs/storage/static-site-hosting/astro). One-time setup after installing dependencies:
+
+```sh
+bunx bunny login
+bunx bunny sites create --region SG
+```
+
+1. Choose your own site name when prompted. Add it as repository **Actions variable** `BUNNY_SITE`, add `BUNNYNET_API_KEY` as an **Actions secret**, and add the PostHog values above as **Actions variables**.
+2. Push to `master`, or run **Bunny and Quality** manually. PRs only run checks and builds.
+3. Verify the Bunny preview URL, then run `bunx bunny sites domains add pan93.com`, apply the DNS record it prints, and run `bunx bunny sites domains ssl pan93.com`. Disable GitHub Pages after the cutover.
+
+Local deployment: `bun run build && bun run deploy`. Rollback: `bunx bunny sites deployments publish --previous`. Settings live in `bunny.jsonc`; SPA fallback is disabled. Environment changes require a new build.

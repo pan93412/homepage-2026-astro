@@ -1,0 +1,7 @@
+{
+  "sites": {
+    "build": "bun run build",
+    "dir": "dist",
+    "spa": false,
+  },
+}

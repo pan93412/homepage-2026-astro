@@ -1,0 +1,61 @@
+---
+import { Image } from "astro:assets"
+import { messages, type Locale } from "../i18n"
+import { parse } from "yaml"
+import source from "../data/friends.yaml?raw"
+import RichText from "./RichText.astro"
+
+interface Props {
+  locale: Locale
+}
+
+const { locale } = Astro.props
+const t = messages[locale]["friend-links"]
+const friends = parse(source) as {
+  name: string
+  description: string
+  url: string
+  avatar: string
+}[]
+---
+
+<section class="@container" aria-labelledby="friend-links">
+  <h2 id="friend-links">{t.title}</h2>
+  <p>
+    <RichText
+      text={t.description}
+      links={{
+        "form-link": { href: "https://link.pan93.com/friendship-links", label: t["form-link"] },
+      }}
+    />
+  </p>
+  <div class="mt-4 grid grid-cols-1 gap-3 @lg:grid-cols-2 @xl:grid-cols-3">
+    {friends.map((friend) => (
+      <a
+        data-friend
+        class="flex items-center gap-3 rounded-lg border border-neutral-200 p-3 no-underline transition-[border-color,background-color] duration-150 hover:border-neutral-400 hover:bg-neutral-50 motion-reduce:transition-none dark:border-neutral-700 dark:hover:border-neutral-500 dark:hover:bg-neutral-800"
+        href={friend.url}
+        target="_blank"
+        rel="noopener"
+      >
+        <Image
+          class="size-12 shrink-0 rounded-full object-cover"
+          src={friend.avatar}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          width="48"
+          height="48"
+          densities={[1, 2]}
+          format={new URL(friend.avatar).pathname.toLowerCase().endsWith(".svg") ? "svg" : "avif"}
+        />
+        <div class="min-w-0">
+          <p class="truncate font-bold text-neutral-900 dark:text-neutral-100">{friend.name}</p>
+          <p class="line-clamp-2 text-sm text-neutral-500 dark:text-neutral-400">
+            {friend.description}
+          </p>
+        </div>
+      </a>
+    ))}
+  </div>
+</section>

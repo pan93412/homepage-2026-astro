@@ -1,0 +1,13 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["github>zeabur-oss/.github"],
+  "enabledManagers": ["bun", "github-actions", "nix"],
+  "packageRules": [
+    {
+      "description": "One pull request for compatible package updates; majors stay separate.",
+      "matchManagers": ["bun"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "packages (non-major)"
+    }
+  ]
+}

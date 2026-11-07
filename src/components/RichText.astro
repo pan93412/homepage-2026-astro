@@ -1,0 +1,17 @@
+---
+interface Props {
+  text: string
+  links?: Record<string, { href: string; label: string }>
+  values?: Record<string, string>
+}
+const { text, links = {}, values = {} } = Astro.props
+const parts = text.split(/(\{[\w-]+\})/g).map((part) => {
+  const key = /^\{([\w-]+)\}$/.exec(part)?.[1]
+  if (!key) return { text: part }
+  if (links[key]) return { link: links[key] }
+  if (values[key] !== undefined) return { text: values[key] }
+  throw new Error(`Missing translation interpolation: ${key}`)
+})
+---
+
+{parts.map((part) => (part.link ? <a href={part.link.href}>{part.link.label}</a> : part.text))}

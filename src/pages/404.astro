@@ -1,0 +1,30 @@
+---
+import { getRelativeLocaleUrl } from "astro:i18n"
+import "../styles/global.css"
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <meta name="color-scheme" content="light dark" />
+    <title>404 — Page not found / 找不到頁面</title>
+  </head>
+  <body>
+    <main class="mx-auto max-w-3xl px-6 py-12">
+      <h1 class="mb-6 text-5xl">404</h1>
+      <section aria-labelledby="not-found-en" lang="en">
+        <h2 id="not-found-en">Page not found</h2>
+        <p>The page you requested could not be found.</p>
+        <a href={getRelativeLocaleUrl("en")}>Back to the English homepage</a>
+      </section>
+      <section aria-labelledby="not-found-zh" lang="zh-TW">
+        <h2 id="not-found-zh">找不到頁面</h2>
+        <p>您要找的頁面不存在。</p>
+        <a href={getRelativeLocaleUrl("zh")}>回到繁體中文首頁</a>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    color-scheme: light dark;
+  }
+  html {
+    @apply scroll-smooth motion-reduce:scroll-auto;
+  }
+  body {
+    @apply bg-neutral-50 font-serif leading-relaxed text-neutral-900 wrap-break-word dark:bg-neutral-900 dark:text-neutral-100;
+    text-autospace: normal;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-bold text-balance;
+  }
+  h1 {
+    @apply text-2xl;
+  }
+  h2 {
+    @apply mb-2 text-xl;
+  }
+  h3 {
+    @apply mb-1 text-lg;
+  }
+  h2[id],
+  h3[id] {
+    @apply scroll-mt-4;
+  }
+  a {
+    @apply text-blue-800 underline underline-offset-2 hover:decoration-2 dark:text-blue-400;
+    touch-action: manipulation;
+  }
+  :focus-visible {
+    @apply rounded-sm outline-2 outline-offset-4 outline-blue-800 dark:outline-blue-400;
+  }
+  section {
+    @apply mb-8;
+  }
+  section > p {
+    @apply mb-1.5;
+  }
+  section section {
+    @apply mb-4;
+  }
+}

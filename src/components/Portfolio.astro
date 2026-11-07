@@ -1,0 +1,229 @@
+---
+import { getRelativeLocaleUrl } from "astro:i18n"
+import { Image } from "astro:assets"
+import avatar from "../assets/avatar.avif"
+import { messages, locales, type Locale } from "../i18n"
+import About from "./About.astro"
+import Projects from "./Projects.astro"
+import Experiences from "./Experiences.astro"
+import Slides from "./Slides.astro"
+import FriendLinks from "./FriendLinks.astro"
+import SocialMedia from "./SocialMedia.astro"
+import RichText from "./RichText.astro"
+import "../styles/global.css"
+interface Props {
+  locale: Locale
+}
+const { locale } = Astro.props
+const t = messages[locale]
+const language = locale === "zh" ? "zh-TW" : "en"
+const description =
+  locale === "zh"
+    ? "Yi-Jyun Pan 的履歷：開發、設計、翻譯與開源貢獻。"
+    : "Yi-Jyun Pan’s CV: development, design, translation, and open-source contributions."
+const canonical = new URL(getRelativeLocaleUrl(locale), Astro.site)
+const sectionIds = [
+  "about",
+  "projects",
+  "experiences",
+  "slides",
+  "friend-links",
+  "social-media",
+] as const
+const experienceKeys = [
+  "zeabur-oss",
+  "zeabur-2023-04",
+  "sitcon-2026",
+  "coscup-2025-2026",
+  "mopcon-2022",
+  "nkust-gdsc-2022-10",
+  "wmjtyd-2022-07",
+  "unm-2021",
+  "cisc-2020",
+  "smhs-os-project-2019",
+  "l10n-tw-2018",
+] as const
+const tocEntries = sectionIds.flatMap((id) => [
+  { id, title: t[id].title, nested: false },
+  ...(id === "experiences"
+    ? experienceKeys.map((key) => ({
+        id: `experience-${key}`,
+        title: t.experiences[key].title,
+        nested: true,
+      }))
+    : []),
+])
+---
+
+<!doctype html>
+<html lang={language}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#171717" media="(prefers-color-scheme: dark)" />
+    <title>Yi-Jyun Pan</title>
+    <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.ico`} sizes="any" />
+    <link rel="canonical" href={canonical} />
+    {locales.map((entry) => (
+      <link
+        rel="alternate"
+        hreflang={entry.language}
+        href={new URL(getRelativeLocaleUrl(entry.code), Astro.site)}
+      />
+    ))}
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href={new URL(getRelativeLocaleUrl("en"), Astro.site)}
+    />
+    <link rel="sitemap" href={`${import.meta.env.BASE_URL}sitemap-index.xml`} />
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content="Yi-Jyun Pan" />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={locale === "zh" ? "zh_TW" : "en_US"} />
+    <meta property="og:locale:alternate" content={locale === "zh" ? "en_US" : "zh_TW"} />
+    <meta
+      property="og:image"
+      content={new URL(`${import.meta.env.BASE_URL}avatar.png`, Astro.site)}
+    />
+    <meta property="og:image:alt" content="Yi-Jyun Pan" />
+    <meta name="twitter:card" content="summary" />
+  </head>
+  <body>
+    <a
+      class="fixed top-2 left-4 z-50 -translate-y-[200%] bg-neutral-50 px-4 py-2 focus:translate-y-0 dark:bg-neutral-900"
+      href="#main-content"
+    >
+      {locale === "zh" ? "跳至主要內容" : "Skip to main content"}
+    </a>
+    <header class="relative mb-4 overflow-hidden bg-neutral-100 py-8 dark:bg-neutral-800">
+      <div class="container mx-auto px-4">
+        <div class="relative z-10 space-y-1">
+          <h1 translate="no">{t.header.title}</h1>
+          <p>
+            <RichText
+              text={t.header.description1}
+              links={{ company: { href: "https://zeabur.com", label: "Zeabur" } }}
+            />
+            <br />
+            {t.header.description2}
+          </p>
+          <nav
+            aria-label={locale === "zh" ? "語言" : "Language"}
+            class="languages flex items-center gap-1"
+          >
+            {locales.map((entry, index) => (
+              <>
+                {index > 0 && <span aria-hidden="true">・</span>}
+                <a
+                  data-locale
+                  href={getRelativeLocaleUrl(entry.code)}
+                  lang={entry.language}
+                  hreflang={entry.language}
+                  aria-current={entry.code === locale ? "page" : undefined}
+                >
+                  {entry.label}
+                </a>
+              </>
+            ))}
+          </nav>
+        </div>
+        <Image
+          class="pointer-events-none absolute top-1/2 right-4 size-80 -translate-y-1/2 rounded-full object-cover opacity-10 select-none"
+          src={avatar}
+          width="320"
+          height="320"
+          densities={[1, 2]}
+          format="avif"
+          loading="eager"
+          alt=""
+          aria-hidden="true"
+        />
+      </div>
+    </header>
+    <div class="container mx-auto grid grid-cols-1 gap-8 px-4 lg:grid-cols-[minmax(0,6fr)_minmax(0,2fr)]">
+      <main id="main-content" class="min-w-0" tabindex="-1">
+        <About locale={locale} />
+        <Projects locale={locale} />
+        <Experiences locale={locale} />
+        <Slides locale={locale} />
+        <FriendLinks locale={locale} />
+        <SocialMedia locale={locale} />
+      </main>
+      <aside class="hidden min-w-0 lg:block">
+        <nav
+          data-toc
+          class="sticky top-4 max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-lg border border-neutral-200 bg-neutral-100 p-4 dark:border-neutral-700 dark:bg-neutral-800"
+          aria-labelledby="toc-title"
+        >
+          <h2 id="toc-title" class="mb-3 text-sm">
+            {t["table-of-contents"]}
+          </h2>
+          <ul class="space-y-1">
+            {tocEntries.map((entry) => (
+              <li class:list={{ "ml-4": entry.nested }}>
+                <a
+                  class="block rounded-sm px-2 py-1 text-sm text-neutral-700 no-underline hover:bg-neutral-200 aria-[current=location]:bg-blue-100 aria-[current=location]:text-blue-900 dark:text-neutral-300 dark:hover:bg-neutral-700 dark:aria-[current=location]:bg-blue-900 dark:aria-[current=location]:text-blue-100"
+                  href={`#${entry.id}`}
+                >
+                  {entry.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </aside>
+    </div>
+    <script>
+      const token = import.meta.env.PUBLIC_POSTHOG_TOKEN
+      const apiHost = import.meta.env.PUBLIC_POSTHOG_API_HOST
+      const uiHost = import.meta.env.PUBLIC_POSTHOG_UI_HOST
+
+      if (import.meta.env.PROD && token && apiHost && uiHost) {
+        const { default: posthog } = await import("posthog-js")
+        posthog.init(token, {
+          api_host: apiHost,
+          ui_host: uiHost,
+          defaults: "2026-08-30",
+          capture_pageview: true,
+          capture_pageleave: true,
+          person_profiles: "identified_only",
+          disable_session_recording: true,
+        })
+      }
+    </script>
+    <script>
+      const toc = document.querySelector("[data-toc] ul")
+      const headings = [...document.querySelectorAll<HTMLElement>("main h2[id], main h3[id]")]
+      if (toc) {
+        const anchors = [...toc.querySelectorAll("a")]
+        const visible = new Set<Element>()
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) visible.add(entry.target)
+              else visible.delete(entry.target)
+            }
+            const active = headings.find((heading) => visible.has(heading))
+            if (!active) return
+            for (const anchor of anchors) {
+              if (anchor.hash === `#${active.id}`) anchor.setAttribute("aria-current", "location")
+              else anchor.removeAttribute("aria-current")
+            }
+          },
+          { rootMargin: "0px 0px -65% 0px" },
+        )
+        headings.forEach((heading) => observer.observe(heading))
+      }
+      for (const link of document.querySelectorAll<HTMLAnchorElement>("[data-locale]")) {
+        link.addEventListener("click", () => {
+          link.hash = location.hash
+        })
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,213 @@
+---
+import { messages, type Locale } from "../i18n"
+import RichText from "./RichText.astro"
+
+interface Props {
+  locale: Locale
+}
+
+interface Contribution {
+  title?: string
+  description: string
+  url?: string
+  links?: Record<string, { href: string; label: string }>
+}
+
+interface Experience {
+  key: string
+  title: string
+  description: string
+  url?: string
+  contributions: Contribution[]
+}
+
+const { locale } = Astro.props
+const t = messages[locale]
+const text = t.experiences
+const zeabur = text["zeabur-2023-04"]
+const zeaburOss = text["zeabur-oss"]
+const nkust = text["nkust-gdsc-2022-10"]
+const wmjtyd = text["wmjtyd-2022-07"]
+const unm = text["unm-2021"]
+const cisc = text["cisc-2020"]
+const smhs = text["smhs-os-project-2019"]
+const localization = text["l10n-tw-2018"]
+
+const experiences: Experience[] = [
+  {
+    key: "zeabur-oss",
+    title: zeaburOss.title,
+    description: zeaburOss["company-description"],
+    url: "https://oss.zeabur.com",
+    contributions: [
+      { ...zeaburOss.contributions.zeabur, url: "https://github.com/zeabur-oss/zeabur" },
+      { ...zeaburOss.contributions.identity, url: "https://github.com/zeabur-oss/identity" },
+      { ...zeaburOss.contributions.builder, url: "https://github.com/zeabur-oss/builder" },
+      { ...zeaburOss.contributions.catalog, url: "https://github.com/zeabur-oss/catalog" },
+    ],
+  },
+  {
+    key: "zeabur-2023-04",
+    title: zeabur.title,
+    description: zeabur["company-description"],
+    url: "https://zeabur.com",
+    contributions: [
+      { ...zeabur.contributions.zbpack, url: "https://github.com/zeabur/zbpack" },
+      { ...zeabur.contributions.zbplan, url: "https://github.com/zeabur/zbplan" },
+      zeabur.contributions.sspec,
+      zeabur.contributions["oci-registry"],
+      zeabur.contributions.mcp,
+      zeabur.contributions.networking,
+      zeabur.contributions["backup-migration"],
+      zeabur.contributions["file-management-v2"],
+      zeabur.contributions.observability,
+      zeabur.contributions.incident,
+      zeabur.contributions.gitops,
+      zeabur.contributions.regions,
+      zeabur.contributions.edge,
+      zeabur.contributions["dedicated-cluster"],
+      zeabur.contributions.cicd,
+      zeabur.contributions["ai-products"],
+      zeabur.contributions.security,
+      zeabur.contributions.compliance,
+      zeabur.contributions.billing,
+      zeabur.contributions.support,
+    ],
+  },
+  {
+    key: "sitcon-2026",
+    title: text["sitcon-2026"].title,
+    description: text["sitcon-2026"]["company-description"],
+    url: "https://github.com/sitcon-tw/tickets",
+    contributions: [{ description: text["sitcon-2026"].contributions.tickets }],
+  },
+  {
+    key: "coscup-2025-2026",
+    title: text["coscup-2025-2026"].title,
+    description: text["coscup-2025-2026"]["company-description"],
+    url: "https://coscup.org",
+    contributions: [{ description: text["coscup-2025-2026"].contributions.website }],
+  },
+  {
+    key: "mopcon-2022",
+    title: text["mopcon-2022"].title,
+    description: text["mopcon-2022"]["company-description"],
+    url: "https://mopcon.org",
+    contributions: [],
+  },
+  {
+    key: "nkust-gdsc-2022-10",
+    title: nkust.title,
+    description: nkust["company-description"],
+    contributions: [{ description: nkust.contributions["figma-course"] }],
+  },
+  {
+    key: "wmjtyd-2022-07",
+    title: wmjtyd.title,
+    description: wmjtyd["company-description"],
+    url: "https://github.com/wmjtyd",
+    contributions: [
+      { ...wmjtyd.contributions.libstock, url: "https://github.com/wmjtyd/libstock" },
+    ],
+  },
+  {
+    key: "unm-2021",
+    title: unm.title,
+    description: unm["company-description"],
+    url: "https://github.com/UnblockNeteaseMusic",
+    contributions: [
+      { ...unm.contributions["js-version"], url: "https://github.com/UnblockNeteaseMusic/server" },
+      {
+        ...unm.contributions["rust-version"],
+        url: "https://github.com/UnblockNeteaseMusic/server-rust",
+      },
+    ],
+  },
+  {
+    key: "cisc-2020",
+    title: cisc.title,
+    description: cisc["company-description"],
+    contributions: [cisc.contributions.ciscc],
+  },
+  {
+    key: "smhs-os-project-2019",
+    title: smhs.title,
+    description: smhs["company-description"],
+    url: "https://github.com/smhs-os-project",
+    contributions: [
+      { ...smhs.contributions.cscheckin, url: "https://github.com/smhs-os-project/cscheckin-fe" },
+      {
+        ...smhs.contributions["schweb-crawler"],
+        url: "https://github.com/smhs-os-project/schweb-crawler",
+      },
+      {
+        ...smhs.contributions["smhs-epf-faq"],
+        url: "https://github.com/smhs-os-project/smhs-epf-faq",
+      },
+    ],
+  },
+  {
+    key: "l10n-tw-2018",
+    title: localization.title,
+    description: localization["company-description"],
+    url: "https://github.com/l10n-tw",
+    contributions: [
+      { description: localization.contributions.translation },
+      {
+        description: localization.contributions.weblate,
+        links: { slat: { href: "https://slat.org.tw/", label: localization.slat } },
+      },
+      {
+        description: localization.contributions.telegram,
+        links: { telegram: { href: "https://t.me/l10n_tw", label: localization.telegram } },
+      },
+    ],
+  },
+]
+---
+
+<section aria-labelledby="experiences">
+  <h2 id="experiences">{text.title}</h2>
+  {experiences.map((experience) => (
+    <section aria-labelledby={`experience-${experience.key}`} class="[&_a]:text-blue-500">
+      <h3 class="scroll-mt-2" id={`experience-${experience.key}`}>
+        {experience.title}
+      </h3>
+      <p>
+        {experience.description}
+        {experience.url && (
+          <>
+            {" "}
+            <a href={experience.url}>{text["more-information"]}</a>
+          </>
+        )}
+      </p>
+      {experience.contributions.length > 0 && (
+        <>
+          <p>{text.contributions}</p>
+          <ul class="mb-1.5 list-inside list-disc [&>li]:mb-0.5">
+            {experience.contributions.map((contribution) => (
+              <li>
+                {contribution.title && (
+                  <>
+                    <strong>
+                      {contribution.url ? (
+                        <a href={contribution.url} rel="noopener noreferrer">
+                          {contribution.title}
+                        </a>
+                      ) : (
+                        contribution.title
+                      )}
+                    </strong>
+                    {t["description-list"].colon}
+                  </>
+                )}
+                <RichText text={contribution.description} links={contribution.links} />
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </section>
+  ))}
+</section>

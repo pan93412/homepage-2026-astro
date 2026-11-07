@@ -1,0 +1,5 @@
+# New hosted runner label not yet recognized by actionlint 1.7.12.
+# Same compatibility override used by zeabur-oss/.github.
+self-hosted-runner:
+  labels:
+    - ubuntu-26.04-arm

@@ -1,0 +1,42 @@
+---
+import { messages, type Locale } from "../i18n"
+import RichText from "./RichText.astro"
+interface Props {
+  locale: Locale
+}
+const { locale } = Astro.props
+const t = messages[locale]
+const skills = [
+  "frontend",
+  "backend",
+  "cloud",
+  "infra",
+  "llm",
+  "apple-ecosystem",
+  "engineering",
+  "designing",
+] as const
+---
+
+<section aria-labelledby="about">
+  <h2 id="about">{t.about.title}</h2>
+  <p>{t.about.description}</p>
+  <ul class="mb-1.5 list-inside list-disc [&>li]:mb-0.5">
+    {skills.map((key) => (
+      <li>
+        <strong>{t.about[key].title}</strong>
+        {t["description-list"].colon}
+        <RichText
+          text={t.about[key].description}
+          values={{
+            "string-catalog-merger": t.about["apple-ecosystem"]["string-catalog-merger"],
+            "conventional-commits": t.about.engineering["conventional-commits"],
+          }}
+        />
+      </li>
+    ))}
+  </ul>
+  <p>{t.about["cloud-portfolio"]}</p>
+  <p>{t.about["solutions-engineering-portfolio"]}</p>
+  <p>{t.about["oss-contributions"]}</p>
+</section>

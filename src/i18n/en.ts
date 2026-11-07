@@ -1,0 +1,398 @@
+export default {
+  "table-of-contents": "Table of Contents",
+  header: {
+    title: "Yi-Jyun Pan",
+    description1:
+      "I’m a platform engineer at {company}, working on build tooling and cloud infrastructure.",
+    description2:
+      "I’m also a master’s student, with work spanning software development, design, translation, and open-source contributions.",
+  },
+  about: {
+    title: "About me",
+    description: "I am a full-stack developer with expertise in a wide range of technologies.",
+    frontend: {
+      title: "Frontend",
+      description:
+        "Mainly using React.js, TypeScript, and Next.js. Use Vue.js, Nuxt.js, and Vite for small projects.",
+    },
+    backend: {
+      title: "Backend",
+      description: "Mainly using Go, Rust, PHP, and Node.js.",
+    },
+    cloud: {
+      title: "Cloud",
+      description:
+        "For PaaS solutions, I have extensive experience with Zeabur and Vercel, ensuring applications run seamlessly on such platforms. I am also familiar with object storages like S3, CDN configurations on Cloudflare and Bunny CDN.",
+    },
+    infra: {
+      title: "Infrastructure",
+      description:
+        "My works on Zeabur involve a lot of Kubernetes, Docker, and Git. For example, I can set up a simple Kubernetes cluster with K3s, manage it, and deploy applications to it with Helm or generic YAML manifests. I can also set up a CI/CD pipeline using GitHub Actions.",
+    },
+    llm: {
+      title: "Large Language Models",
+      description:
+        "I am proficient in various models, including GPT, Claude, Gemini, DeepSeek, Perplexity, and others. I understand their optimal use cases and API integrations. I can develop an LLM Agent using LangChain and the Vercel AI SDK. Additionally, I can build a RAG pipeline with LangChain utilizing Voyage AI's models, and create an MCP server for general tools for agents.",
+    },
+    "data-analysis": {
+      title: "Data Analysis",
+      description:
+        "I can do data analysis using Python, Pandas / Polars, and visualization with Matplotlib / Seaborn / Plotly. I also have a basic understanding of statistical analysis, such as t-tests, ANOVA, Chi-square test, and p-values, although I am not highly skilled in them.",
+    },
+    "machine-learning": {
+      title: "Machine Learning",
+      description:
+        "I can do some machine learning using Python, Scikit-learn, and TensorFlow Keras. I have experience with the development of machine learning models, such as classification, regression, clustering, and dimensionality reduction. Although I am not highly skilled in them.",
+    },
+    "apple-ecosystem": {
+      title: "Apple Ecosystem",
+      description:
+        "I design apps using Swift for the Apple ecosystem and React Native as an amateur. I have experience with the development of macOS and iOS apps, such as {string-catalog-merger} and helping improve concurrency in some Swift projects.",
+      "string-catalog-merger": "a helper for merging the string catalog",
+    },
+    engineering: {
+      title: "Engineering Practices",
+      description:
+        "I am familiar with established contribution flows and committing guidelines, such as {conventional-commits}. I respect the linters, formatters, and type checkers.",
+      "conventional-commits": "Conventional Commits",
+    },
+    designing: {
+      title: "Designing",
+      description:
+        "I can create UI mockup and wireframes with Figma, and have some experiences on using Adobe Suites like Photoshop, Illustrator, and Premiere Pro to present my works.",
+    },
+    "cloud-portfolio":
+      "I prefer cloud-native and scalable solutions. I have applied microservice architectures and techniques on several projects, which you can find on the Projects section.",
+    "solutions-engineering-portfolio":
+      "I consistently explore best practices and scalable solutions in software engineering, and share my finding on Threads, X and my blog. Feel free to share your opinions with me!",
+    "oss-contributions":
+      "I am an active contributor to open-source projects such as Symfony, Git, Keka, and various GNU software. Additionally, I actively participate in several developer communities on Telegram and Discord, where you can often find me.",
+  },
+  projects: {
+    title: "Projects",
+    description:
+      "Most of my exciting projects are open-sourced on {my-github} and the organization I created. I have pinned some projects that showcase my skills. I also maintain a {blog}, where I share my thoughts and technical insights.",
+    "my-github": "my GitHub (pan93412)",
+    blog: "blog (blog.pan93.com)",
+    stratus: {
+      title: "Stratus (Go)",
+      description:
+        "An S3-backed, read-only OCI image registry written in Go, serving Docker and containerd clients through blob redirects and manifest streaming. A separate Go library uploads BuildKit OCI images directly to S3, with parallel blob uploads and atomic image index merging; the registry HTTP API intentionally does not implement push, delete, or catalog endpoints.",
+    },
+    zbplan: {
+      title: "zbplan (Go)",
+      description:
+        "An AI agent-driven Dockerfile generator that inspects projects, searches built-in Dockerfile templates, and queries container registries for base images and tags. It runs actual builds with BuildKit and feeds failed build logs back to the agent for revision, within configured build attempt, agent step, and time limits.",
+    },
+    "nkust-iot-2024-06": {
+      title: "2024/06 - NKUST IC IoT Projects (Go)",
+      description:
+        "A final project for the IoT course that can quickly detect and alert for intruders, based on the Raspberry Pi 3 hardware. It is written in Go and uses a microservice architecture, incorporating RabbitMQ, GraphQL, gRPC, OpenTelemetry, mTLS, PostgreSQL, and more.",
+    },
+    "database-playground-2024-07": {
+      title: "2024/07 - Database Playground (PHP)",
+      description:
+        "A SQL practice platform for our course, also serving as an NSTC Undergraduate Research ('24) project (\"Use reminders and reference feedback mechanisms realized by GPT models in generating personalized content to enhance students' willingness to learn: A case study of a database learning gamification platform\"). It is built on Symfony, with Go used for performance-critical services such as the SQL runner.",
+    },
+    "nkust-iot-2024-12": {
+      title: "2024/12 - NKUST IC IoT Projects (Rust)",
+      description:
+        "An extended project for the IoT course that quickly detects and alerts for intruders, using software with GStreamer for the webcams. It is written in Rust and employs a microservice architecture, incorporating Cloudflare R2, GraphQL, NATS, PostgreSQL, GStreamer, YOLO, and more. It is designed for asynchronous operations and the worker pattern.",
+    },
+    "yolo-rs-2024-12": {
+      title: "2024/12 - YOLO-RS",
+      description:
+        "A Rust implementation of YOLO (You Only Look Once), a real-time object detection algorithm, achieves 17 FPS with the largest YOLO model (YOLO11x).",
+    },
+    "crawler-2025-04": {
+      title: "2025/04 - NKUST Crawler Projects",
+      description:
+        "A crawler project for the NKUST IC data analysis course, written in Go. The toolkits can crawl and scrape data from Yahoo News, Dcard, PTT, Mobile01, and more. They also perform data cleaning and visualization using Streamlit.",
+    },
+    "coscup-2025-07": {
+      title: "2025/07 - COSCUP 2025 - Sessions page",
+      description:
+        "A completely-rewritten sessions page for COSCUP 2025, built with VitePress, features a responsive design that works on both desktop and mobile devices. It addresses many limitations of the platform, such as pre-rendering all session pages, minimizing the bundle size, and working around the Pretalx API limitations.",
+    },
+    "database-playground-2025-08": {
+      title: "2025/08 - Database Playground (Go)",
+      description:
+        "This is a rewrite of the previous Symfony-based SQL practice platform, which also serves as an NSTC Undergraduate Research ('25) project. It focuses on AI agents and high extensibility. The platform is built on Go for the backend and SQL runner, without using any framework, and Next.js for the frontend and admin interface. It incorporates the Vercel AI SDK for LLM integrations and PostHog for product analytics, LLM observability, and behavior tracking. The project faces challenges in security, such as OAuth and permission management, as well as scalability, including database replication and microservices. All components and tech choices are open-sourced on GitHub as documentation.",
+    },
+    "virtual-doctor-2025-12": {
+      title: "2025/12 - Virtual Doctor (Python, not open-sourced yet)",
+      description:
+        "A virtual doctor project for the graduation project of NKUST IC, written in Python. This project serves as a virtual doctor for elderly individuals, retrieving medical knowledge from our internal database using RAG. It assesses the user's health condition with MCP and integrates this information with a large language model (LLM) to provide daily life recommendations. Additionally, it offers a digital doctor based on LiveTalking, which mimics the doctor's voice and lip movements, helping elderly patients feel more comfortable and engaged, as if they are conversing with a real doctor.",
+    },
+  },
+  experiences: {
+    title: "Experiences",
+    contributions: "Contributions:",
+    "more-information": "More information →",
+    "zeabur-oss": {
+      title: "Zeabur Open Source (Development Lead)",
+      "company-description":
+        "Development lead for zeabur-oss, an Apache-2.0-licensed suite for deploying and operating services on your own Kubernetes.",
+      contributions: {
+        zeabur: {
+          title: "Self-hosted PaaS",
+          description:
+            "A Rust-based platform that presents Kubernetes as projects and services, explains operational problems, and previews field-level changes before applying them. Requests use the user's own credentials and Kubernetes permissions; state stays in standard Kubernetes objects, with no separate database or custom resources.",
+        },
+        identity: {
+          title: "Zeabur Identity",
+          description:
+            "Passkey sign-in for kubectl and OIDC applications, replacing long-lived shared admin credentials with short-lived tokens. Kubernetes validates the tokens directly; the identity service runs inside the cluster without a database.",
+        },
+        builder: {
+          title: "Zeabur Builder",
+          description:
+            "A Kubernetes operator that builds container images from Git with BuildKit, using Dockerfiles or Railpack. Each namespace has its own builder and persistent cache; image tags and digests are exposed for rollout tools, and idle builders scale to zero.",
+        },
+        catalog: {
+          title: "Zeabur Catalog",
+          description:
+            "Cluster components and app templates with pinned chart versions, values, and documented choices. CI installs and tests every entry and records idle resource usage; signed release bundles can feed Helm, Flux, or Argo CD workflows.",
+        },
+      },
+    },
+    "zeabur-2023-04": {
+      title: "Zeabur: 2023-04 ~ (Intern → Platform Engineer)",
+      "company-description":
+        "Zeabur is a cloud platform company (PaaS) dedicated to simplifying application deployment processes for developers. Its goal is to let developers focus on writing code without being burdened by tedious server configuration, environment setup, and deployment workflows.",
+      contributions: {
+        zbpack: {
+          title: "Development of the packaging system (zbpack)",
+          description:
+            "Implemented and improved packaging for Rust, Node.js, Python, Go, and PHP; added support for cross-monorepo workflows, Corepack version pinning, and new tools like Rye and uv; redesigned the packaging system architecture and rebuilt Dockerfile assembly around AST parsing. The project is open source and continues to support new projects.",
+        },
+        sspec: {
+          title: "Design of the service specification",
+          description:
+            "Designed the service specification from scratch, implemented the underlying converter, gRPC, GraphQL, JSON schema definition, and its implementation. The specification became the standard for Zeabur templates and the core structure of Zeabur internal services.",
+        },
+        "oci-registry": {
+          title: "Designing and implementing the own OCI Registry",
+          description:
+            "Implemented the OCI v2 pull protocol and our S3-optimized push mechanism, optimized garbage collection to minimize the impact of stop-the-world, and established a multi-zone registry with caching and CDN support.",
+        },
+        "file-management-v2": {
+          title: "Optimize file management API",
+          description:
+            "Optimized the file management API to enhance performance and scalability by deploying a RESTful API to each shared cluster and designing a more straightforward content streaming process. Utilized TLS and Ed25519 for authentication and payload signing, inspired by AWS SigV4, to prevent unauthorized access to the container filesystem. Integrated the access flow into the platform gateway.",
+        },
+        observability: {
+          title: "Introducing OpenTelemetry end-to-end tracing",
+          description:
+            "Introduced OpenTelemetry end-to-end tracing and cross-service instrumentation, connected logs and traces, and improved service health checks. Also operated VictoriaMetrics, VictoriaLogs, and VictoriaTraces for metrics, logs, and traces, including Kubernetes events.",
+        },
+        zbplan: {
+          title: "Agent-driven builds (zbplan)",
+          description:
+            "Redesigned the build system around an agent that inspects a project, searches Dockerfile templates and registry images, and generates a Dockerfile. BuildKit runs the build and returns failure logs for revision. This replaces per-framework detection rules with actual build verification. The open-source tool also shipped as a platform build option.",
+        },
+        mcp: {
+          title: "MCP deployment tooling",
+          description:
+            "Implemented Zeabur's MCP integration so AI coding tools can upload projects and environment files, discover and deploy templates, track deployment status, and retrieve build and runtime logs.",
+        },
+        networking: {
+          title: "TCP networking and ingress",
+          description:
+            "Implemented and rolled out TCP Proxy v2 for Kubernetes-based services, including port forwarding and updates when forwarding rules change. Also developed HTTP/2 support, TLS certificate management with CertMagic, and PROXY protocol support in the ingress controller.",
+        },
+        "backup-migration": {
+          title: "Volume migration and backup",
+          description:
+            "Implemented cross-region volume copying for project cloning and integrated volume backup and restore into the platform backend. Also delivered online MariaDB backups, backup cancellation, and backup-event visibility in the dashboard.",
+        },
+        incident: {
+          title: "Alerting and production recovery",
+          description:
+            "Built tiered alerting and on-call workflows with Grafana Cloud, including rules for unavailable nodes and abnormal usage. Handled production recovery from backups and improved backup automation.",
+        },
+        gitops: {
+          title: "GitOps deployments",
+          description:
+            "Brought Kubernetes manifests under Argo CD, then migrated deployments to Flux CD with image automation and multi-environment sync. CI publishes versioned images; Flux updates their tags in Git, leaving a record for releases and rollbacks.",
+        },
+        regions: {
+          title: "Multi-cloud infrastructure",
+          description:
+            "Operated Kubernetes clusters across AWS, Linode, and Chinese cloud providers. Brought new regions online, including GPU workloads, upgraded control planes and node pools, and migrated platform infrastructure between providers.",
+        },
+        edge: {
+          title: "Edge traffic and application protection",
+          description:
+            "Migrated the website and API to Bunny CDN and improved regional connectivity. Delivered Zeabur Gateway, an application firewall with a configuration interface, custom error pages, and a one-click deployment template.",
+        },
+        "dedicated-cluster": {
+          title: "Dedicated servers and clusters",
+          description:
+            "Developed dedicated server operations for power management, reinstalling, and renewal. Extended this work to cluster lifecycle management: bring-your-own clusters, operator reconciliation, dynamic node pools, EKS recovery, EFS, and volume expansion.",
+        },
+        cicd: {
+          title: "Customer-facing CI/CD",
+          description:
+            "Turned the build pipeline into a CI/CD product with arbitrary Git sources, password and SSH-key authentication, private repositories, build history, provenance, and a public GraphQL API. Connected build usage reporting to Stripe meter events.",
+        },
+        "ai-products": {
+          title: "AI tooling and usage controls",
+          description:
+            "Reworked Zeabur Agent using the Vercel AI SDK and Langfuse tracing, and added input compression and output limits to control model usage. Also contributed to AI Hub infrastructure and regional connectivity improvements.",
+        },
+        security: {
+          title: "API authorization",
+          description:
+            "Reworked API authorization around scoped personal access tokens, added scope enforcement at the GraphQL layer, and migrated away from legacy API keys.",
+        },
+        compliance: {
+          title: "Audit readiness",
+          description:
+            "Prepared controls and evidence for SOC 2 auditing, including vulnerability scans, disaster recovery exercises, incident reporting and root cause analysis, and monitoring, logging, and firewall records.",
+        },
+        billing: {
+          title: "Subscriptions and billing",
+          description:
+            "Rebuilt subscription and plan changes around a shared upgrade, downgrade, trial, and Stripe webhook flow. Also handled dedicated server billing, refunds, and renewals.",
+        },
+        support: {
+          title: "Technical support",
+          description:
+            "Handled support alongside platform development, covering builds, runtime, domains, certificates, databases, private networking, and backups. Turned recurring issues into team runbooks and product improvements.",
+        },
+      },
+    },
+    "sitcon-2026": {
+      title: "SITCON: 2026 (Ticketing system contributor)",
+      "company-description": "A student-led computing conference.",
+      contributions: {
+        tickets: "Helped improve the ticketing system for SITCON 2026.",
+      },
+    },
+    "coscup-2025-2026": {
+      title: "COSCUP: 2025 and 2026 (IT team member)",
+      "company-description": "A conference for open-source coders, users, and promoters.",
+      contributions: {
+        website:
+          "Assisted with schedule and website development as an IT team member for COSCUP 2025 and 2026.",
+      },
+    },
+    "mopcon-2022": {
+      title: "MOPCON: 2022 (Agenda Group volunteer)",
+      "company-description":
+        "MOPCON conducts in-depth exploration of mobile communications by integrating industry practices, engineering research and development, project management, and entrepreneurial activities, aiming to cultivate more talent and practical applications in the mobile technology field. Held for eleven consecutive years, it is the largest IT community annual meeting in southern Taiwan.",
+    },
+    "nkust-gdsc-2022-10": {
+      title: "NKUST GDSC: 2022-10 ~ 2024/06 (Core Member)",
+      "company-description":
+        "GDSC stands for Google Developer Student Clubs, a student community program supported by Google Developers that encourages students to learn, share, and apply Google development technologies. The community is student-run and organizes activities such as technical courses, workshops, hackathons, and guest lectures by industry professionals, helping students master development skills in areas like Android, Cloud, and Web.",
+      contributions: {
+        "figma-course":
+          "Organized Figma usage courses and Flutter technology introduction events, receiving simultaneous responses from at least 20 members.",
+      },
+    },
+    "wmjtyd-2022-07": {
+      title: "WMJTYD: 2022 ~ 2023 (volunteer)",
+      "company-description":
+        "A team focuses on developing highly efficient and sustainable software. They share knowledge and collaborate on software development.",
+      contributions: {
+        libstock: {
+          title: "libstock",
+          description:
+            "Developed a high-performance serialization and deserialization library for stock data using Rust and C as the foreign function interface (FFI).",
+        },
+      },
+    },
+    "unm-2021": {
+      title: "UnblockNeteaseMusic: 2020 ~ (volunteer)",
+      "company-description":
+        "A proxy that automatically replaces unavailable songs on Netease Cloud Music with the available ones on other platforms.",
+      contributions: {
+        "js-version": {
+          title: "JavaScript Version",
+          description:
+            "Collaborate with the fork author (Tianling Shen) to improve the JavaScript version of UnblockNeteaseMusic, allowing users to replace unavailable songs with available ones on other platforms.",
+        },
+        "rust-version": {
+          title: "Rust Version",
+          description:
+            "Developed the Rust version of UnblockNeteaseMusic by re-implementing the song retrieval logic in Rust. This version serves as a library for projects depending on UnblockNeteaseMusic like YesPlayMusic.",
+        },
+      },
+    },
+    "cisc-2020": {
+      title: "CISC: 2020–2024 (volunteer)",
+      "company-description":
+        "A IT community for senior high school students. I participated in the community as an volunteer in information group.",
+      contributions: {
+        ciscc: {
+          title: "CISC Complain",
+          description:
+            "Share your opinions anonymously in CISC. It is developed with TypeScript for the Discord platform. Abandoned due to a lack of maintenance.",
+        },
+      },
+    },
+    "smhs-os-project-2019": {
+      title: "SMHS Open Source Organization: 2019 ~ 2022 (volunteer)",
+      "company-description":
+        "A student volunteer organization dedicated to developing open-source software for Kaohsiung Municipal Sanmin Senior High School (SMHS).",
+      contributions: {
+        cscheckin: {
+          title: "CSCheckin Frontend",
+          description:
+            "CSCheckin is a free web application designed for online course requirements during the COVID-19 pandemic. It integrates with Google Classroom, enabling teachers to initiate check-in sessions for students to join. I mainly developed the frontend with Next.js and Tailwind CSS.",
+        },
+        "schweb-crawler": {
+          title: "Schweb Crawler",
+          description:
+            "SchWeb Crawler is a web crawler for the SMHS announcements, useful for students to get the announcements even when the SMHS website is down. It is written in TypeScript with Cheerio to parse the HTML.",
+        },
+        "smhs-epf-faq": {
+          title: "SMHS EPF FAQ",
+          description:
+            '"SMHS e-Portfolio FAQ site" was created by us, the first cohort under the 2019 curriculum guidelines, as an FAQ website about how to create a learning portfolio, how to compress PDFs for upload, and how to use the system. It is a multi-page application (MPA) built with a custom Webpack configuration and Pug.',
+        },
+      },
+    },
+    "l10n-tw-2018": {
+      title: "Taiwan F.O.S.S. Localization Community: 2018 ~ (volunteer)",
+      "company-description":
+        "A volunteer community in Taiwan focuses on producing high-quality translations for open-source software.",
+      contributions: {
+        translation:
+          "Participated in the translation of various programs under the name l10n-tw, including Git, GNOME, KDE, etc.",
+        weblate: "Maintained the Weblate translation platform affiliated with the {slat}.",
+        telegram: "Participated in the {telegram} community as a moderator and translator.",
+      },
+      slat: "SLAT",
+      telegram: "Telegram",
+    },
+  },
+  slides: {
+    title: "Slides",
+    slide: "Slide",
+    article: "Article",
+  },
+  "friend-links": {
+    title: "Friend Links",
+    description:
+      "These are my friends' websites — feel free to check them out! Want to join? Submit via {form-link}.",
+    "form-link": "this Google Form",
+    error: "Failed to load friend links. Please try again later.",
+  },
+  "social-media": {
+    title: "Social Media",
+    description:
+      "You can reach me via Threads, X, or other social media platforms. I am mostly active on Telegram, X and Threads.",
+    email: "E-mail",
+  },
+  "description-list": {
+    colon: ": ",
+  },
+  "inline-links": {
+    parenthesis: " (",
+    "parenthesis-end": ")",
+    separator: ", ",
+  },
+}

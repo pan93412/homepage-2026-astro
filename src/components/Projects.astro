@@ -1,0 +1,55 @@
+---
+import { messages, type Locale } from "../i18n"
+import RichText from "./RichText.astro"
+interface Props {
+  locale: Locale
+}
+const { locale } = Astro.props
+const t = messages[locale]
+const projects = [
+  { key: "stratus", href: "https://github.com/zeabur/stratus" },
+  { key: "zbplan", href: "https://github.com/zeabur/zbplan" },
+  { key: "virtual-doctor-2025-12" },
+  { key: "database-playground-2025-08", href: "https://github.com/database-playground/backend-v2" },
+  { key: "coscup-2025-07", href: "https://github.com/coscup/2025" },
+  {
+    key: "crawler-2025-04",
+    href: "https://github.com/pan93412?tab=repositories&q=nkust-crawler&type=source&language=&sort=",
+  },
+  { key: "yolo-rs-2024-12", href: "https://github.com/pan93412/yolo-rs" },
+  {
+    key: "nkust-iot-2024-12",
+    href: "https://github.com/nkust-monitor-iot-project-2024/iot-system",
+  },
+  { key: "database-playground-2024-07", href: "https://github.com/database-playground/app-sf" },
+  { key: "nkust-iot-2024-06", href: "https://github.com/nkust-monitor-iot-project-2024/central" },
+] as const
+---
+
+<section aria-labelledby="projects">
+  <h2 id="projects">{t.projects.title}</h2>
+  <p>
+    <RichText
+      text={t.projects.description}
+      links={{
+        "my-github": { href: "https://github.com/pan93412", label: t.projects["my-github"] },
+        blog: { href: "https://blog.pan93.com", label: t.projects.blog },
+      }}
+    />
+  </p>
+  <ul class="mb-1.5 list-inside list-disc [&>li]:mb-0.5">
+    {projects.map((project) => (
+      <li>
+        <strong>
+          {"href" in project ? (
+            <a href={project.href}>{t.projects[project.key].title}</a>
+          ) : (
+            t.projects[project.key].title
+          )}
+        </strong>
+        {t["description-list"].colon}
+        {t.projects[project.key].description}
+      </li>
+    ))}
+  </ul>
+</section>

@@ -46,7 +46,7 @@ bunx bunny login
 bunx bunny sites create --region SG
 ```
 
-1. Choose your own site name when prompted. Add it as repository **Actions variable** `BUNNY_SITE`, add `BUNNYNET_API_KEY` as an **Actions secret**, and add the PostHog values above as **Actions variables**.
+1. Choose your own site name when prompted. In **Settings → Environments**, create `production`, add the chosen name as variable `BUNNY_SITE` and `BUNNYNET_API_KEY` as a secret, and restrict deployment branches to `master`. Configure required reviewers there if desired. Keep the PostHog values above as repository **Actions variables**, since they are used during the build.
 2. Push to `master`, or run **Bunny and Quality** manually. PRs only run checks and builds.
 3. Verify the Bunny preview URL, then run `bunx bunny sites domains add pan93.com`, apply the DNS record it prints, and run `bunx bunny sites domains ssl pan93.com`. Disable GitHub Pages after the cutover.
 

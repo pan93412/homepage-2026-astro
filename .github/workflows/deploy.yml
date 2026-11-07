@@ -37,8 +37,37 @@ jobs:
           PUBLIC_POSTHOG_TOKEN: ${{ vars.PUBLIC_POSTHOG_TOKEN }}
           PUBLIC_POSTHOG_API_HOST: ${{ vars.PUBLIC_POSTHOG_API_HOST }}
           PUBLIC_POSTHOG_UI_HOST: ${{ vars.PUBLIC_POSTHOG_UI_HOST }}
-      - name: Deploy to Bunny
+      - name: Upload static site
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: static-site
+          path: dist/
+          if-no-files-found: error
+          retention-days: 1
+
+  deploy:
+    needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-26.04-arm
+    environment:
+      name: production
+      url: https://pan93.com
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Set up Nix
+        uses: DeterminateSystems/determinate-nix-action@92957199488000b908fdad19f63711000965d8f3 # v3.24.1
+      - name: Install dependencies
+        run: nix develop --command bun install --frozen-lockfile
+      - name: Download static site
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: static-site
+          path: dist/
+      - name: Deploy to Bunny
         run: nix develop --command bun run deploy --site "$BUNNY_SITE"
         env:
           BUNNYNET_API_KEY: ${{ secrets.BUNNYNET_API_KEY }}

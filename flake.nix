@@ -17,7 +17,26 @@
       devShells = forEachSystem (
         system:
         let
-          pkgs = import nixpkgs { inherit system; };
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = [
+              # Newer than nixpkgs; its tests need the network and a .git directory. Drop this
+              # when nixpkgs has 2.6.0 or later.
+              (final: prev: {
+                jactionlint = prev.jactionlint.overrideAttrs (old: rec {
+                  version = "2.6.0";
+                  src = final.fetchFromGitHub {
+                    owner = "jdx";
+                    repo = "jactionlint";
+                    tag = "v${version}";
+                    hash = "sha256-ikUVmurWrKP18XMth0lhnsvF0JT4gVoiNGTN+5AAL3U=";
+                  };
+                  vendorHash = "sha256-jf7hKPnaSl4iTYT0mtRRAEmgLKAA/lj0vSVoO9+iOvw=";
+                  doCheck = false;
+                });
+              })
+            ];
+          };
         in
         {
           default = pkgs.mkShell {
@@ -25,9 +44,8 @@
               bun
               nodejs_24
               git
-              actionlint
+              jactionlint
               shellcheck
-              zizmor
               nixfmt
             ];
             # Native frontend dependencies need libstdc++ on non-NixOS Linux runners.

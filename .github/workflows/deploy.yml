@@ -11,7 +11,7 @@ permissions:
 
 defaults:
   run:
-    shell: nix develop --command bash -e {0}
+    shell: nix develop --command bash -eo pipefail {0}
 
 concurrency:
   group: bunny-${{ github.ref }}
@@ -20,27 +20,32 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-26.04-arm
+    timeout-minutes: 15
+    permissions:
+      actions: read
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
       - name: Set up Nix
-        uses: DeterminateSystems/determinate-nix-action@92957199488000b908fdad19f63711000965d8f3 # v3.24.1
+        uses: ./.github/actions/ci-setup
       - name: Install dependencies
         run: bun install --frozen-lockfile
-      - name: Check developer and workflow configuration
-        run: nixfmt --check flake.nix && actionlint && zizmor --offline --no-progress --min-severity medium .github
-      - name: Lint, format and typecheck
-        run: bun run check
-      - name: Test data synchronization
-        run: bun run test
-      - name: Build static site
-        run: bun run build
-        env:
-          PUBLIC_POSTHOG_TOKEN: ${{ vars.PUBLIC_POSTHOG_TOKEN }}
-          PUBLIC_POSTHOG_API_HOST: ${{ vars.PUBLIC_POSTHOG_API_HOST }}
-          PUBLIC_POSTHOG_UI_HOST: ${{ vars.PUBLIC_POSTHOG_UI_HOST }}
+      - parallel:
+          - name: Check workflow and Nix configuration
+            run: nixfmt --check flake.nix && jactionlint
+          - name: Lint, format and typecheck
+            run: bun run check
+          - name: Test data synchronization
+            run: bun run test
+          - name: Build static site
+            run: bun run build
+            env:
+              PUBLIC_POSTHOG_TOKEN: ${{ vars.PUBLIC_POSTHOG_TOKEN }}
+              PUBLIC_POSTHOG_API_HOST: ${{ vars.PUBLIC_POSTHOG_API_HOST }}
+              PUBLIC_POSTHOG_UI_HOST: ${{ vars.PUBLIC_POSTHOG_UI_HOST }}
       - name: Upload static site
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -54,6 +59,7 @@ jobs:
     needs: build
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-26.04-arm
+    timeout-minutes: 15
     environment:
       name: production
       url: https://pan93.com
@@ -63,7 +69,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up Nix
-        uses: DeterminateSystems/determinate-nix-action@92957199488000b908fdad19f63711000965d8f3 # v3.24.1
+        uses: ./.github/actions/ci-setup
       - name: Install dependencies
         run: bun install --frozen-lockfile
       - name: Download static site

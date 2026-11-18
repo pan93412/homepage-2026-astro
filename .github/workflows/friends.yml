@@ -16,6 +16,7 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-slim
+    timeout-minutes: 10
     permissions:
       contents: write
       actions: write
@@ -39,6 +40,7 @@ jobs:
       - name: Commit changes and request deployment
         env:
           GH_TOKEN: ${{ github.token }}
+        shell: bash
         run: |
           if git diff --quiet -- src/data/friends.yaml; then
             echo 'Friend links are unchanged.'

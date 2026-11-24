@@ -1246,6 +1246,33 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
       break-after: avoid;
     }
 
+    .project {
+      display: block;
+    }
+    .ticks {
+      gap: 0.25rem;
+      font-size: 13px;
+    }
+    .ticks__item {
+      line-height: 1.6;
+      &::before {
+        top: 0.55em;
+        width: 0.375rem;
+        height: 0.375rem;
+      }
+    }
+    .project__link {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+      border-bottom: 0;
+      font-size: 12px;
+      white-space: nowrap;
+      :global(svg) {
+        display: none;
+      }
+    }
     /* Browsers leave out backgrounds when printing; the dots are one. */
     .ticks__item::before {
       print-color-adjust: exact;
@@ -1283,6 +1310,36 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
       &::after {
         overflow-wrap: anywhere;
       }
+    }
+
+    .intro,
+    .stat,
+    .project {
+      min-height: 0;
+      justify-content: flex-start;
+      padding-top: 0 !important;
+    }
+    .path {
+      padding-bottom: 0;
+    }
+    .avatars {
+      flex: none;
+      min-height: 0;
+      container-type: normal;
+    }
+    .avatars__stack {
+      width: 4rem;
+      height: 4rem;
+    }
+    .avatars__image {
+      width: 4rem;
+      height: 4rem;
+    }
+    .stat__number {
+      font-size: 40px;
+    }
+    .project__tags {
+      color: inherit;
     }
 
     [data-print-url]::after {

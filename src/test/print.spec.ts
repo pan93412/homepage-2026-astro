@@ -57,3 +57,12 @@ for (const path of ["/", "/zh/"])
       expect(printed).toBe(`" ${short}"`)
     }
   })
+
+test("printed tiles leave out the room kept for their charts", async ({ page }) => {
+  await print(page)
+  for (const tile of await page.locator(".intro, .stat, .project").all()) {
+    const { paddingTop, minHeight } = await tile.evaluate((el) => getComputedStyle(el))
+    expect(paddingTop, (await tile.getAttribute("id")) ?? "intro").toBe("0px")
+    expect(minHeight).toBe("0px")
+  }
+})

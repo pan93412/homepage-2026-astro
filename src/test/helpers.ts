@@ -78,3 +78,13 @@ export const avatarCells = async (page: Page) => {
     rows: distinct(boxes.map((b) => b.y + b.height / 2)),
   }
 }
+
+/** The friends heading and its link to the form, centred on one line when they share it. */
+export const expectFriendsHeaderAligned = async (page: Page) => {
+  const heading = await stableBox(page.locator(".friends__heading"))
+  const join = await stableBox(page.locator(".friends__join"))
+  if (join.y >= heading.bottom) return
+  expect(Math.abs(join.y + join.height / 2 - (heading.y + heading.height / 2))).toBeLessThanOrEqual(
+    1,
+  )
+}

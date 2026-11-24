@@ -1,5 +1,5 @@
 import { type Page } from "@playwright/test"
-import { expect, expectOpen, plus, stableBox, test } from "./helpers"
+import { expect, expectFriendsHeaderAligned, expectOpen, plus, stableBox, test } from "./helpers"
 
 const tiles = (page: Page) => page.locator("main > .tile")
 const contact = (page: Page) => page.locator("main > .tile--sage")
@@ -91,5 +91,12 @@ for (const width of [1300, 1000]) {
       await stableBox(page.locator("main"))
       await expectNoOverlap(page)
     })
+  })
+}
+
+for (const path of ["/", "/zh/"]) {
+  test(`the friends heading and its link line up on ${path}`, async ({ page }) => {
+    await page.goto(path)
+    await expectFriendsHeaderAligned(page)
   })
 }

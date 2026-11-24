@@ -1,4 +1,4 @@
-import { avatarCells, expect, expectOpen, plus, test } from "./helpers"
+import { avatarCells, expect, expectFriendsHeaderAligned, expectOpen, plus, test } from "./helpers"
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/")
@@ -34,3 +34,10 @@ test("no tile is wider than the screen", async ({ page }) => {
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth)
   expect(overflow).toBeLessThanOrEqual(width)
 })
+
+for (const path of ["/", "/zh/"]) {
+  test(`the friends heading and its link line up on ${path}`, async ({ page }) => {
+    await page.goto(path)
+    await expectFriendsHeaderAligned(page)
+  })
+}

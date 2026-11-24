@@ -97,10 +97,10 @@ export default {
       "自建 OCI Registry",
       "檔案管理 API",
       "OpenTelemetry 追蹤",
-      "用 Agent 建置（zbplan）",
+      "用 Agent 建置",
       "MCP 部署工具",
       "TCP 網路與 ingress",
-      "資料卷遷移與備份",
+      "磁碟區遷移與備份",
       "告警與服務復原",
       "GitOps 部署",
       "多雲基礎設施",
@@ -184,7 +184,7 @@ export default {
     Zeatend: {
       text: "透過 SSH 把一台 Linux 主機裝成 Kubernetes 叢集，支援 K3s、RKE2 與 KubeSolo。",
       detail: [
-        "zeatend apply 一個指令就裝好叢集，做法跟 k3sup 差不多，也有終端介面。",
+        "zeatend apply 一個指令就裝好叢集，做法跟 k3sup 差不多，也有終端機介面。",
         "安裝前先檢查主機：記憶體、磁碟、時鐘同步、swap，以及舊安裝留下的檔案。",
         "在新主機上裝 Zeabur OSS 之前，先跑這個。",
       ],

@@ -98,7 +98,7 @@ export default {
       "In-house OCI registry",
       "File management API",
       "OpenTelemetry tracing",
-      "Agent-driven builds (zbplan)",
+      "Agent-driven builds",
       "MCP deployment tooling",
       "TCP networking and ingress",
       "Volume migration and backup",

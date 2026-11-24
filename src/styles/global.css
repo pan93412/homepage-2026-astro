@@ -1,48 +1,162 @@
 @import "tailwindcss";
 
+/* Dark when the visitor picked it, or when the system is dark and they did not pick light. */
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme="light"]), :root:not([data-theme="light"]) *) {
+      @slot;
+    }
+  }
+}
+
+@theme {
+  --breakpoint-*: initial;
+  --breakpoint-sm: 561px;
+  --breakpoint-lg: 901px;
+
+  --color-paper: #ecebe4;
+  --color-tile: #fbfaf6;
+  --color-ink: #23271f;
+  --color-mute: #6c7166;
+  --color-sage: #5f7a63;
+  --color-clay: #c96f4a;
+  --color-intro: #dfe5d8;
+  --color-clay-tile: #c96f4a;
+  --color-sage-tile: #5f7a63;
+  --color-deep-tile: #23271f;
+  --color-chip: color-mix(in oklab, var(--color-sage) 12%, var(--color-tile));
+
+  --font-sans: "Geist", "Noto Sans TC", sans-serif;
+  --font-display: "Instrument Serif", serif;
+  --font-mono: ui-monospace, "SF Mono", monospace;
+
+  --radius-tile: 22px;
+  --radius-card: 14px;
+  --shadow-lift: 0 10px 30px -12px color-mix(in oklab, var(--color-ink) 25%, transparent);
+  --ease-fan: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  --animate-rise: rise 0.45s 0.1s both;
+  --animate-blink: blink 1.2s infinite;
+  --animate-blink-node: blink 2.4s var(--d, 0s) infinite;
+  --animate-blink-ring: blink 4s var(--d) infinite;
+  --animate-dash: dash 6s linear infinite;
+  --animate-dash-slow: dash 30s linear infinite;
+  --animate-grow: grow 4s calc(var(--i) * 0.3s) ease-out infinite;
+  --animate-row-in: row-in 0.5s calc(var(--i) * 0.12s) ease-out both;
+  --animate-fill: fill 4s calc(var(--i) * 0.5s) ease-in-out infinite;
+  --animate-bar: bar 0.7s calc(var(--i) * 0.08s) ease-out both;
+  --animate-eq: eq 1.4s var(--d) ease-in-out infinite alternate;
+  --animate-orbit: orbit 14s linear infinite;
+  --animate-orbit-slow: orbit 22s linear infinite;
+  --animate-orbit-fast: orbit 9s linear infinite reverse;
+}
+
 @layer base {
   :root {
-    color-scheme: light dark;
-  }
-  html {
-    @apply scroll-smooth motion-reduce:scroll-auto;
+    color-scheme: light;
+    @variant dark {
+      color-scheme: dark;
+      --color-paper: #121411;
+      --color-tile: #1c1f1a;
+      --color-ink: #e6e8df;
+      --color-mute: #9da394;
+      --color-sage: #93b096;
+      --color-clay: #e08c66;
+      --color-intro: #232a22;
+      --color-clay-tile: #9c4f31;
+      --color-sage-tile: #3f5843;
+      --color-deep-tile: #2b3028;
+    }
   }
   body {
-    @apply bg-neutral-50 font-serif leading-relaxed text-neutral-900 wrap-break-word dark:bg-neutral-900 dark:text-neutral-100;
-    text-autospace: normal;
+    @apply bg-paper font-sans text-ink;
   }
-  h1,
-  h2,
-  h3 {
-    @apply font-bold text-balance;
+  /* astro-icon leaves the size to CSS. */
+  svg[data-icon] {
+    width: 1em;
+    height: 1em;
+    flex: none;
   }
-  h1 {
-    @apply text-2xl;
+}
+
+::view-transition-group(*) {
+  overflow: clip;
+  border-radius: var(--radius-tile);
+  animation-duration: 0.5s;
+  animation-timing-function: var(--ease-fan);
+}
+::view-transition-old(*),
+::view-transition-new(*) {
+  width: 100%;
+  height: 100%;
+  object-fit: none;
+  object-position: left top;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    translate: 0 8px;
   }
-  h2 {
-    @apply mb-2 text-xl;
+}
+@keyframes blink {
+  50% {
+    opacity: 0.35;
   }
-  h3 {
-    @apply mb-1 text-lg;
+}
+@keyframes dash {
+  to {
+    stroke-dashoffset: -600;
   }
-  h2[id],
-  h3[id] {
-    @apply scroll-mt-4;
+}
+@keyframes grow {
+  0% {
+    scale: 0;
+    opacity: 0;
   }
-  a {
-    @apply text-blue-800 underline underline-offset-2 hover:decoration-2 dark:text-blue-400;
-    touch-action: manipulation;
+  20%,
+  85% {
+    scale: 1;
+    opacity: 1;
   }
-  :focus-visible {
-    @apply rounded-sm outline-2 outline-offset-4 outline-blue-800 dark:outline-blue-400;
+  100% {
+    scale: 1;
+    opacity: 0;
   }
-  section {
-    @apply mb-8;
+}
+@keyframes row-in {
+  from {
+    opacity: 0;
+    translate: -6px 0;
   }
-  section > p {
-    @apply mb-1.5;
+}
+@keyframes fill {
+  0%,
+  10%,
+  90%,
+  100% {
+    background: var(--color-tile);
   }
-  section section {
-    @apply mb-4;
+  30%,
+  70% {
+    background: var(--c);
+  }
+}
+@keyframes bar {
+  from {
+    scale: 0 1;
+  }
+}
+@keyframes eq {
+  from {
+    scale: 1 0.35;
+  }
+}
+@keyframes orbit {
+  to {
+    rotate: 360deg;
   }
 }

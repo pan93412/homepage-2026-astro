@@ -1,0 +1,547 @@
+---
+// The homepage: a bento grid. Each tile is one fact with a small scene of that work behind it;
+// tiles with a + expand in place for the detail.
+import { existsSync } from "node:fs"
+import { getRelativeLocaleUrl } from "astro:i18n"
+import { Image } from "astro:assets"
+import { Icon } from "astro-icon/components"
+import { parse } from "yaml"
+import friendsSource from "../../data/friends.yaml?raw"
+import BentoViz from "./BentoViz.astro"
+import Tile from "./Tile.astro"
+import "../../styles/global.css"
+import { avatars, contacts, content, name, projects, stats, talks, type Locale } from "./content"
+
+interface Props {
+  locale: Locale
+}
+const { locale } = Astro.props
+const t = content[locale]
+const other: Locale = locale === "zh" ? "en" : "zh"
+
+const friends = parse(friendsSource) as {
+  name: string
+  description: string
+  url: string
+  avatar: string
+}[]
+/** Friends see in their analytics that a visit came from this page. */
+const withUtm = (href: string) => {
+  const url = new URL(href)
+  url.searchParams.set("utm_source", "pan93.com")
+  url.searchParams.set("utm_medium", "friend_link")
+  return url.href
+}
+const extraAvatars = avatars.filter((a) =>
+  existsSync(new URL(`../../../public${a.src}`, import.meta.url)),
+)
+
+// Hover spreads the avatars into a row with a 12px gap.
+/** Beside the open Now tile the intro tile is tall: the avatars sit in a 2×2 grid, in these cells. */
+const gridSlots = [
+  [1, 0],
+  [0, 1],
+  [1, 1],
+]
+const avatarGrid =
+  "lg:in-[main:has([aria-controls=bt-now-more][aria-expanded=true])]:translate-x-[calc(var(--gx)*100px)]! lg:in-[main:has([aria-controls=bt-now-more][aria-expanded=true])]:translate-y-[calc(var(--gy)*100px)]! lg:in-[main:has([aria-controls=bt-now-more][aria-expanded=true])]:rotate-0! lg:in-[main:has([aria-controls=bt-now-more][aria-expanded=true])]:scale-100!"
+
+/** Every non-ASCII character the pages can show, so Google Fonts serves only those CJK glyphs. */
+const cjkText = [
+  ...new Set(JSON.stringify({ content, friends, talks, projects, contacts, avatars, name })),
+]
+  .filter((c) => c.charCodeAt(0) > 0x7f)
+  .sort()
+  .join("")
+
+const canonical = new URL(getRelativeLocaleUrl(locale), Astro.site)
+const talkIcon = { slide: "presentation-chart", page: "calendar-dots", article: "article" }
+
+const heading = "mb-3.5 flex items-center gap-2 text-[15px] font-medium text-mute"
+const headingIcon = "text-[20px] text-sage"
+const subheading = "mb-3 text-[14px] font-medium text-mute"
+const ticks = "grid gap-2"
+const tick =
+  "relative pl-5.5 leading-[1.7] before:absolute before:top-[0.7em] before:left-1 before:size-2 before:rounded-full before:bg-(--tick)"
+const statTile =
+  "flex flex-col justify-end data-open:justify-start data-open:pt-42.5 [--tick:var(--color-clay)]"
+const statNumber = "font-display text-[64px] leading-none font-normal"
+const pill = "rounded-full px-1.75 py-1 text-[11px] leading-none text-mute not-italic"
+---
+
+<!doctype html>
+<html lang={t.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={t.description} />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#ecebe4" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#121411" media="(prefers-color-scheme: dark)" />
+    <title>{name}</title>
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="en" href={new URL(getRelativeLocaleUrl("en"), Astro.site)} />
+    <link rel="alternate" hreflang="zh-TW" href={new URL(getRelativeLocaleUrl("zh"), Astro.site)} />
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href={new URL(getRelativeLocaleUrl("en"), Astro.site)}
+    />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content={name} />
+    <meta property="og:description" content={t.description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={t.ogLocale} />
+    <meta property="og:locale:alternate" content={content[other].ogLocale} />
+    <meta property="og:image" content={new URL("/avatar.png", Astro.site)} />
+    <meta property="og:image:alt" content={name} />
+    <meta name="twitter:card" content="summary" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Instrument+Serif&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href={`https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&text=${encodeURIComponent(cjkText)}&display=swap`}
+    />
+    <script is:inline>
+      try {
+        const theme = localStorage.getItem("theme")
+        if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme
+      } catch {}
+    </script>
+  </head>
+  <body class="min-h-dvh p-[clamp(16px,3vw,40px)] leading-[normal]">
+    <a
+      class="fixed top-2 left-2 z-10 -translate-y-[200%] rounded-full bg-ink px-3.5 py-2 text-paper focus:translate-y-0"
+      href="#main"
+    >
+      {t.ui.skip}
+    </a>
+    <main
+      class="mx-auto grid max-w-[1240px] grid-flow-row-dense auto-rows-[minmax(170px,auto)] grid-cols-1 gap-3.5 focus:outline-none sm:grid-cols-2 lg:grid-cols-4"
+      id="main"
+      tabindex="-1"
+    >
+      <Tile surface="intro" class="flex flex-col justify-end sm:col-span-2 sm:row-span-2">
+        <nav class="absolute top-4.5 right-4.5 flex gap-1.5">
+          <a
+            class="inline-flex h-8.5 items-center gap-1.5 rounded-full bg-ink/7 px-3 text-[13px] hover:bg-ink/13 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sage"
+            href={getRelativeLocaleUrl(other)}
+            lang={content[other].lang}
+            hreflang={content[other].lang}
+          >
+            <Icon name="ph:translate" />
+            {t.ui.language}
+          </a>
+          <button
+            class="theme grid size-8.5 cursor-pointer place-items-center rounded-full bg-ink/7 text-[16px] hover:bg-ink/13 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sage"
+            type="button"
+            aria-label={t.ui.theme}
+          >
+            <Icon name="ph:moon" class:list="dark:hidden" />
+            <Icon name="ph:sun" class:list="hidden dark:block" />
+          </button>
+        </nav>
+        <div
+          class="group/avatars relative mb-auto size-22 rounded-full outline-offset-6"
+          tabindex={extraAvatars.length ? 0 : undefined}
+        >
+          {extraAvatars.map((a, i) => (
+            <img
+              class:list={[
+                "absolute inset-0 size-22 scale-90 rounded-full object-cover transition-[translate,rotate,scale] duration-350 ease-fan motion-reduce:transition-none",
+                "group-hover/avatars:scale-100 group-focus-visible/avatars:scale-100 group-hover/avatars:translate-x-(--fan) group-hover/avatars:rotate-[calc(var(--n)*4deg)] group-focus-visible/avatars:translate-x-(--fan) group-focus-visible/avatars:rotate-[calc(var(--n)*4deg)]",
+                avatarGrid,
+              ]}
+              src={a.src}
+              alt={t.avatarAlts[a.alt]}
+              width="88"
+              height="88"
+              style={`--n:${extraAvatars.length - i};--fan:calc(${extraAvatars.length - i}*100px);--gx:${gridSlots[extraAvatars.length - i - 1][0]};--gy:${gridSlots[extraAvatars.length - i - 1][1]}`}
+            />
+          ))}
+          <img
+            class="absolute inset-0 size-22 rounded-full object-cover"
+            src="/avatar.avif"
+            alt={name}
+            width="88"
+            height="88"
+          />
+        </div>
+        <h1
+          class="mt-6 mb-2 font-display text-[clamp(40px,5vw,64px)] leading-none font-normal"
+          translate="no"
+        >
+          {name}
+        </h1>
+        <p class="mb-2.5 font-medium text-sage">{t.role}</p>
+        <p class="max-w-[30em] leading-[1.8]">{t.lead}</p>
+        <ul class="mt-5.5 grid grid-cols-2 gap-x-3 gap-y-4 border-t border-ink/14 pt-4.5 sm:grid-cols-4 sm:gap-y-3">
+          {stats.map((x) => (
+            <li>
+              <a class="group/stat block" href={x.url}>
+                <b class="block font-display text-[30px] leading-none font-normal group-hover/stat:text-clay group-focus-visible/stat:text-clay">
+                  {x.value}
+                </b>
+                <span class="mt-1.5 flex gap-1 text-[12px] leading-normal text-mute">
+                  <span class="flex h-lh items-center">
+                    <Icon name={`ph:${x.icon}`} />
+                  </span>
+                  {t.statLabels[x.key]}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </Tile>
+
+      <Tile
+        id="bt-now"
+        label={t.ui.expand(t.ui.now)}
+        class="sm:col-span-2 [--viz:var(--color-sage)]"
+      >
+        <BentoViz kind="cluster" ui={t.ui} class="group-data-open/tile:hidden" />
+        <h2 class={heading}>
+          <Icon name="ph:sun-horizon-duotone" class:list={headingIcon} />
+          {t.ui.now}
+        </h2>
+        <ul class="grid gap-3">
+          {t.now.map((n) => (
+            <li class="flex items-center gap-3">
+              <Icon name={`ph:${n.icon}-duotone`} class:list="text-[26px] text-clay" />
+              <div>
+                <b class="block">{n.title}</b>
+                <span class="text-[13px] text-mute">
+                  {n.role}
+                  <em class:list={[pill, "ml-1.5 bg-paper align-[1px]"]}>{n.since}</em>
+                </span>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <div slot="more" class="grid gap-6">
+          <div>
+            <h3 class={subheading}>{t.ui.ossHeading}</h3>
+            <ul class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+              {t.nowDetail.oss.map((o) => (
+                <li>
+                  <a
+                    class="group/repo block h-full rounded-card bg-paper p-3.5 transition-colors hover:bg-chip focus-visible:bg-chip"
+                    href={`https://github.com/zeabur-oss/${o.repo}`}
+                  >
+                    <b class="flex items-center justify-between gap-2">
+                      {o.title}
+                      <Icon
+                        name="ph:arrow-up-right"
+                        class:list="text-mute transition-transform group-hover/repo:translate-x-0.5 group-hover/repo:-translate-y-0.5 group-hover/repo:text-sage"
+                      />
+                    </b>
+                    <p class="mt-1 text-[13px] leading-[1.6] text-mute">{o.text}</p>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3 class={subheading}>{t.ui.zeaburHeading(t.nowDetail.zeabur.length)}</h3>
+            <ul class="flex flex-wrap gap-1.5">
+              {t.nowDetail.zeabur.map((z) => (
+                <li class="rounded-full bg-chip px-3 py-1.25 text-[13px]">{z}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </Tile>
+
+      <Tile id="bt-talks" label={t.ui.expand(t.ui.talks)} surface="clay" class={statTile}>
+        <BentoViz kind="wave" ui={t.ui} />
+        <b class={statNumber}>{talks.length}</b>
+        <span>{t.ui.talks}</span>
+        <p class="mt-2.5 text-[12px] leading-normal opacity-85 group-data-open/tile:hidden">
+          {t.ui.latest}
+          {talks[0].event} <span lang="zh-TW">{t.ui.quote(talks[0].title)}</span>
+        </p>
+        <ol slot="more" class="columns-1 gap-8 sm:columns-2">
+          {talks.map((talk) => (
+            <li class="break-inside-avoid border-b border-dashed border-white/22 py-2 text-[12px] text-[#ffe1cf]">
+              <span class="block">{talk.event}</span>
+              <span class="block" lang="zh-TW">
+                {talk.title}
+              </span>
+              <span class="mt-1.5 flex flex-wrap gap-1.5">
+                {talk.links.map((l) => (
+                  <a
+                    class="inline-flex items-center gap-1 rounded-full bg-white/16 px-2.25 py-0.75 text-white hover:bg-white hover:text-clay focus-visible:bg-white focus-visible:text-clay"
+                    href={l.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Icon name={`ph:${talkIcon[l.kind]}`} />
+                    {t.ui.talkLinks[l.kind]}
+                  </a>
+                ))}
+              </span>
+            </li>
+          ))}
+        </ol>
+      </Tile>
+
+      <Tile id="bt-l10n" label={t.ui.expand(t.ui.l10n)} surface="deep" class={statTile}>
+        <BentoViz kind="rings" ui={t.ui} />
+        <b class={statNumber}>{new Date().getFullYear() - 2018}</b>
+        <span>{t.ui.l10nYears}</span>
+        <p class="mt-2.5 text-[12px] leading-normal opacity-85 group-data-open/tile:hidden">
+          {t.ui.l10nNote}
+        </p>
+        <ul slot="more" class={ticks}>
+          {t.l10nDetail.map((l) => (
+            <li class={tick}>{l}</li>
+          ))}
+        </ul>
+      </Tile>
+
+      <Tile id="bt-skills" label={t.ui.expand(t.ui.skills)} class="sm:col-span-2 sm:row-span-2">
+        <h2 class={heading}>
+          <Icon name="ph:toolbox-duotone" class:list={headingIcon} />
+          {t.ui.skills}
+        </h2>
+        <ul class="grid grid-cols-2 gap-2.5 group-data-open/tile:hidden sm:grid-cols-4">
+          {t.skills.map((s) => (
+            <li class="flex flex-col items-center gap-1.5 rounded-card bg-paper px-1 py-4 text-center text-[14px]">
+              <Icon name={`ph:${s.icon}-duotone`} class:list="text-[30px] text-sage" />
+              {s.label}
+              <span class="flex flex-wrap justify-center gap-1">
+                {s.tags.map((tag) => (
+                  <small class:list={[pill, "bg-tile"]}>{tag}</small>
+                ))}
+              </span>
+            </li>
+          ))}
+        </ul>
+        <dl slot="more" class="grid grid-cols-1 gap-x-7 gap-y-3.5 sm:grid-cols-2">
+          {t.skills.map((s) => (
+            <div>
+              <dt class="flex items-center gap-2 font-medium">
+                <Icon name={`ph:${s.icon}-duotone`} class:list={headingIcon} />
+                {s.label}
+              </dt>
+              <dd class="mt-1 ml-7 text-[14px] leading-[1.7] text-mute">{s.detail}</dd>
+            </div>
+          ))}
+        </dl>
+      </Tile>
+
+      {projects.map((p) => {
+        const id = `bt-${p.key.replace(/\W+/g, "").toLowerCase()}`
+        const copy = t.projects[p.key]
+        return (
+          <Tile
+            id={id}
+            label={t.ui.expand(p.key)}
+            class="flex min-h-[274px] flex-col justify-end [--c:var(--base)] [--tick:var(--c)] [--viz:var(--c)] data-open:justify-start data-open:pt-42.5 dark:[--c:color-mix(in_oklab,var(--base)_55%,white)]"
+            style={`--base:${p.color}`}
+          >
+            <BentoViz kind={p.viz} ui={t.ui} />
+            <span class="inline-flex items-center gap-1.5 text-[12px] font-medium text-(--c)">
+              <Icon name={`ph:${p.icon}-duotone`} class:list="text-[16px]" />
+              {p.tags.map((tag) => (
+                <em class="rounded-full bg-(--c)/12 px-2 py-1 leading-none not-italic">{tag}</em>
+              ))}
+            </span>
+            <h3 class="mt-1 mb-1.5 font-display text-[28px] leading-[1.1] font-normal">{p.key}</h3>
+            <p class="text-[13px] leading-[1.6] text-mute">{copy.text}</p>
+            <div slot="more">
+              <ul class={ticks}>
+                {copy.detail.map((d) => (
+                  <li class={tick}>{d}</li>
+                ))}
+              </ul>
+              <a
+                class="mt-3.5 inline-flex items-center gap-1.5 border-b border-current text-[14px] text-(--c)"
+                href={p.url}
+              >
+                {t.ui.projectLink} <Icon name="ph:arrow-up-right" />
+              </a>
+            </div>
+          </Tile>
+        )
+      })}
+
+      <Tile
+        id="bt-path"
+        label={t.ui.expand(t.ui.path)}
+        class="sm:col-span-full lg:col-span-3"
+        open="data-open:col-span-full lg:data-open:col-span-full"
+      >
+        <BentoViz kind="route" ui={t.ui} class="group-data-open/tile:hidden" />
+        <h2 class={heading}>
+          <Icon name="ph:path-duotone" class:list={headingIcon} />
+          {t.ui.path}
+        </h2>
+        <ol class="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
+          {t.timeline.map((step) => (
+            <li class="border-t-2 border-sage pt-2 text-[13px] leading-normal text-balance wrap-break-word text-mute">
+              <b class="block font-display text-[22px] leading-[normal] font-normal text-ink">
+                {step.year}
+              </b>
+              {step.text}
+            </li>
+          ))}
+        </ol>
+        <table slot="more" class="w-full border-collapse text-[14px]">
+          <tbody>
+            {t.experiences.map((e) => (
+              <tr class="flex flex-wrap items-baseline gap-x-2 border-b border-ink/8 py-2.25 *:text-left sm:table-row sm:*:border-b sm:*:border-ink/8 sm:*:px-2.5 sm:*:py-2.25">
+                <td class="w-full whitespace-nowrap text-sage sm:w-[calc(8em+20px)]">{e.when}</td>
+                <th class="font-medium wrap-break-word">{e.title}</th>
+                <td class="text-mute">{e.role}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Tile>
+
+      <Tile surface="sage">
+        <BentoViz kind="orbit" ui={t.ui} />
+        <h2 class="mb-3.5 font-['Instrument_Serif','Noto_Sans_TC',serif] text-[30px] font-normal">
+          {t.ui.contact}
+        </h2>
+        <ul class="flex flex-wrap gap-2">
+          {contacts.map((c) => (
+            <li>
+              <a
+                class="grid size-11 place-items-center rounded-full bg-white/14 text-[22px] hover:bg-white hover:text-sage"
+                href={c.url}
+                aria-label={c.name === "blog" ? t.blog : c.name}
+              >
+                <Icon name={`ph:${c.icon}-duotone`} />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </Tile>
+
+      <Tile class="col-span-full">
+        <header class="mb-4 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
+          <h2 class="flex items-center gap-2 text-[15px] font-medium text-mute">
+            <Icon name="ph:users-three-duotone" class:list={headingIcon} />
+            {t.ui.friends}
+          </h2>
+          <a class="text-[14px] text-sage" href="https://link.pan93.com/friendship-links">
+            {t.ui.friendsJoin}
+          </a>
+        </header>
+        <ul class="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-1">
+          {friends.map((f) => (
+            <li>
+              <a
+                class="flex items-center gap-3 rounded-card p-2 hover:bg-paper focus-visible:bg-paper"
+                href={withUtm(f.url)}
+                target="_blank"
+                rel="noopener"
+              >
+                <Image
+                  class="size-10 flex-none rounded-full bg-paper object-cover"
+                  src={f.avatar}
+                  alt=""
+                  width={80}
+                  height={80}
+                  format={f.avatar.endsWith(".svg") ? "svg" : "avif"}
+                />
+                <span class="grid min-w-0">
+                  <b class="truncate font-semibold">{f.name}</b>
+                  <small class="truncate text-[13px] text-mute">{f.description}</small>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </Tile>
+    </main>
+  </body>
+</html>
+
+<script>
+  const grid = document.querySelector<HTMLElement>("#main")!
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)")
+
+  const setOpen = (tile: Element, open: boolean) => {
+    tile.toggleAttribute("data-open", open)
+    tile.querySelector(".toggle")?.setAttribute("aria-expanded", String(open))
+    const more = tile.querySelector<HTMLElement>(".more")
+    if (more) more.hidden = !open
+  }
+
+  const toggle = (tile: HTMLElement) => {
+    const opening = !tile.hasAttribute("data-open")
+    const apply = () => {
+      grid.querySelectorAll("[data-tile][data-open]").forEach((t) => setOpen(t, false))
+      if (opening) setOpen(tile, true)
+    }
+    const done = () =>
+      opening &&
+      tile.scrollIntoView({ block: "nearest", behavior: reduce.matches ? "auto" : "smooth" })
+    if (document.startViewTransition && !reduce.matches) {
+      const transition = document.startViewTransition(apply)
+      transition.ready.catch(() => {})
+      transition.finished.then(done, done)
+    } else {
+      apply()
+      done()
+    }
+  }
+
+  grid.addEventListener("click", (event) => {
+    const target = event.target as HTMLElement
+    if (target.closest(".more a")) return
+    if (target.closest(".more") && !target.closest(".toggle")) return
+    const tile = target.closest<HTMLElement>("[data-tile]")
+    if (tile) toggle(tile)
+  })
+
+  addEventListener("keydown", (event: KeyboardEvent) => {
+    if (event.key !== "Escape") return
+    const open = grid.querySelector<HTMLElement>("[data-tile][data-open]")
+    if (!open) return
+    toggle(open)
+    open.querySelector<HTMLElement>(".toggle")?.focus()
+  })
+</script>
+
+<script>
+  const root = document.documentElement
+  const dark = matchMedia("(prefers-color-scheme: dark)")
+  document.querySelector(".theme")?.addEventListener("click", () => {
+    const current = root.dataset.theme ?? (dark.matches ? "dark" : "light")
+    const next = current === "dark" ? "light" : "dark"
+    root.dataset.theme = next
+    try {
+      localStorage.setItem("theme", next)
+    } catch {}
+  })
+</script>
+
+<script>
+  const token = import.meta.env.PUBLIC_POSTHOG_TOKEN
+  const apiHost = import.meta.env.PUBLIC_POSTHOG_API_HOST
+  const uiHost = import.meta.env.PUBLIC_POSTHOG_UI_HOST
+  if (import.meta.env.PROD && token && apiHost && uiHost) {
+    const { default: posthog } = await import("posthog-js")
+    posthog.init(token, {
+      api_host: apiHost,
+      ui_host: uiHost,
+      defaults: "2026-08-30",
+      capture_pageview: true,
+      capture_pageleave: true,
+      person_profiles: "identified_only",
+      disable_session_recording: true,
+    })
+  }
+</script>

@@ -1,0 +1,273 @@
+import type { Content } from "./types"
+
+export default {
+  lang: "en",
+  ogLocale: "en_US",
+  description:
+    "Yi-Jyun Pan is a platform engineer at Zeabur, working on build tooling and cloud infrastructure.",
+  ui: {
+    skip: "Skip to content",
+    language: "中文",
+    theme: "Toggle dark mode",
+    now: "Now",
+    ossHeading: "Zeabur Open Source projects",
+    zeaburHeading: () => "What I’ve worked on at Zeabur",
+    talks: "talks",
+    quote: (title) => `“${title}”`,
+    latest: "Latest: ",
+    talkLinks: { slide: "Slides", page: "Session", article: "Article" },
+    l10nYears: "years of open-source translation",
+    l10nNote: "Git, GNOME and KDE in Traditional Chinese; I run SLAT’s Weblate",
+    l10n: "translating open-source software",
+    skills: "Skills",
+    projectLink: "View on GitHub",
+    path: "Timeline",
+    contact: "Say hi!",
+    friends: "Friends",
+    friendsJoin: "Let’s swap links! Fill out this form ↗",
+    expand: (name) => `Show more: ${name}`,
+    pipeline: "detects Node.js, Go, Python",
+    l10nRing: "Localization",
+  },
+  role: "Platform engineer and open-source translator",
+  lead: "I’m a platform engineer at Zeabur, working on build tooling and cloud infrastructure. I’m also a master’s student at NKUST, and I design, translate, and volunteer at tech conferences.",
+  avatarAlts: { sitcon: "Speaking at SITCON 2026", ferris: "A hand-drawn Ferris the crab" },
+  statLabels: {
+    pullRequests: "merged PRs",
+    contributions: "contributions this year",
+    followers: "followers",
+    stars: "stars on my repos",
+  },
+  now: [
+    {
+      icon: "cube",
+      title: "Zeabur Open Source",
+      role: "Development Lead",
+      since: "now",
+      text: "A self-hosted PaaS in Rust for your own Kubernetes.",
+    },
+    {
+      icon: "cloud",
+      title: "Zeabur",
+      role: "Platform Engineer",
+      since: "since 2023",
+      text: "Build tooling and cloud infrastructure.",
+    },
+    {
+      icon: "graduation-cap",
+      title: "NKUST",
+      role: "M.S. in Intelligent Commerce",
+      since: "since 2026",
+      text: "Most of my course projects are open source.",
+    },
+  ],
+  nowDetail: {
+    oss: [
+      {
+        repo: "zeabur",
+        title: "Zeabur",
+        text: "Deploy apps on your own cluster.",
+      },
+      {
+        repo: "identity",
+        title: "Zeabur Identity",
+        text: "Accounts and sign-in for your cluster.",
+      },
+      {
+        repo: "builder",
+        title: "Zeabur Builder",
+        text: "Builds images inside your cluster.",
+      },
+      {
+        repo: "catalog",
+        title: "Zeabur Catalog",
+        text: "App templates, tested before release.",
+      },
+      {
+        repo: "zeatend",
+        title: "Zeatend",
+        text: "Turns a Linux server into a cluster.",
+      },
+      {
+        repo: "website",
+        title: "Website",
+        text: "Site and docs. I design and write them.",
+      },
+    ],
+    zeabur: [
+      "zbpack packaging system",
+      "Service specification",
+      "Own OCI registry",
+      "File management API",
+      "OpenTelemetry tracing",
+      "Agent-driven builds (zbplan)",
+      "MCP deployment tooling",
+      "TCP networking and ingress",
+      "Volume migration and backup",
+      "Alerting and recovery",
+      "GitOps deployments",
+      "Multi-cloud infrastructure",
+      "Edge traffic and protection",
+      "Dedicated servers and clusters",
+      "Customer-facing CI/CD",
+      "AI tooling and usage controls",
+      "API authorization",
+      "SOC 2 audit readiness",
+      "Subscriptions and billing",
+      "Technical support",
+    ],
+  },
+  skills: [
+    {
+      icon: "browser",
+      label: "Frontend",
+      tags: ["React", "Astro", "TanStack"],
+      detail:
+        "Mainly React, TypeScript, Next.js, Astro and TanStack. Vue, Nuxt and Vite for small projects.",
+    },
+    {
+      icon: "terminal-window",
+      label: "Backend",
+      tags: ["Go", "Rust", "PHP"],
+      detail: "Mainly Go, Rust, PHP and Node.js.",
+    },
+    {
+      icon: "graph",
+      label: "Microservices",
+      tags: ["gRPC", "NATS", "GraphQL"],
+      detail: "gRPC, GraphQL, NATS and RabbitMQ. I designed Zeabur’s service specification.",
+    },
+    {
+      icon: "shield-check",
+      label: "Security",
+      tags: ["OIDC", "Passkey", "Zero trust"],
+      detail:
+        "OAuth 2.0, OIDC and passkeys. I build Zeabur Identity and moved API authorization to scoped tokens. When Zeabur was attacked, I was on the blue team. I also rolled out AWS Secrets Manager, and Tailscale with ACLs for zero-trust access.",
+    },
+    {
+      icon: "stack",
+      label: "Infrastructure",
+      tags: ["Kubernetes", "Flux", "BuildKit"],
+      detail:
+        "Self-hosted K3s clusters, deployed with Helm and Flux CD (migrated from Argo CD). CI/CD on GitHub Actions.",
+    },
+    {
+      icon: "pulse",
+      label: "Observability",
+      tags: ["OpenTelemetry", "Grafana"],
+      detail:
+        "OpenTelemetry tracing, Grafana dashboards and alerts, and VictoriaMetrics, VictoriaLogs and VictoriaTraces in production.",
+    },
+    {
+      icon: "snowflake",
+      label: "Nix",
+      tags: ["Flakes", "Reproducible"],
+      detail: "Flakes for dev environments, my own machines, and packaging.",
+    },
+    {
+      icon: "sparkle",
+      label: "LLM",
+      tags: ["Agent", "Vibe Coding"],
+      detail:
+        "Builder uses an AI agent to read projects and fix failed builds. I write most of my code with agents.",
+    },
+    {
+      icon: "chart-line-up",
+      label: "Data",
+      tags: ["pandas", "Polars"],
+      detail: "Data analysis with pandas and Polars; charts with Matplotlib, Seaborn and Plotly.",
+    },
+    {
+      icon: "device-mobile",
+      label: "Apple",
+      tags: ["SwiftUI", "Xcode Cloud", "Notarization"],
+      detail:
+        "Swift apps for macOS and iOS, like a String Catalog merger. Xcode Cloud, and notarization on GitHub Actions.",
+    },
+    {
+      icon: "pen-nib",
+      label: "Design",
+      tags: ["Figma", "Adobe"],
+      detail: "UI mockups and wireframes in Figma, plus Photoshop, Illustrator and Premiere Pro.",
+    },
+    {
+      icon: "translate",
+      label: "Localization",
+      tags: ["Git", "GNOME", "KDE"],
+      detail: "I translate Git, GNOME and KDE with l10n-tw, and maintain SLAT’s Weblate.",
+    },
+  ],
+  projects: {
+    Zeatend: {
+      text: "Turn one Linux server into a Kubernetes cluster with K3s, RKE2 or KubeSolo.",
+      detail: [
+        "One command, zeatend apply, sets up the cluster, like k3sup. Comes with a terminal UI.",
+        "Checks the host first: memory, disk, clock sync, swap and leftovers from earlier installs.",
+        "The first step to running Zeabur on a new server.",
+      ],
+    },
+    Zeabur: {
+      text: "Deploy apps on your own server from Git, Docker Compose or an app template.",
+      detail: [
+        "Projects, services, domains, variables, logs and rollbacks work just like on Zeabur.",
+        "Runs on Kubernetes and keeps state in standard Kubernetes objects. No database.",
+        "Shows every field-level change before applying it. You pick the servers and the plan.",
+      ],
+    },
+    Builder: {
+      text: "Push your code to GitHub and get an image that’s ready to go live.",
+      detail: [
+        "zbplan’s AI agent reads the project and picks a Dockerfile. If a build fails, it reads the log and tries again.",
+        "Railpack detects Node.js, Python, Go, PHP, Ruby, Java, Rust and more. An existing Dockerfile is used as is.",
+        "Rebuilds on every branch update, and Keel rolls out the new image.",
+        "Build secrets go in as secrets and never end up in the image.",
+        "Also works on its own as a Kubernetes operator that hands image digests to your deploy tool.",
+      ],
+    },
+    "YOLO-RS": {
+      text: "Ultralytics YOLO object detection in Rust: YOLOv8, YOLO11, YOLO12 and YOLO26.",
+      detail: [
+        "Runs on ONNX Runtime with CPU, CoreML or CUDA.",
+        "YOLO11x takes about 45 ms per image with CoreML on an M3 Max.",
+        "CI runs every model on the same image and checks they find the same objects.",
+      ],
+    },
+  },
+  timeline: [
+    { year: "2018", text: "Joined l10n-tw" },
+    { year: "2019", text: "SMHS Open Source Organization" },
+    { year: "2020", text: "Wrote UNM in Rust" },
+    { year: "2022", text: "NKUST GDSC, MOPCON" },
+    { year: "2023", text: "Joined Zeabur" },
+    { year: "2025", text: "COSCUP IT team" },
+    { year: "Now", text: "Leading Zeabur Open Source" },
+  ],
+  l10nDetail: [
+    "Translate Git, GNOME, KDE and more under the name l10n-tw.",
+    "Maintain the Weblate translation platform for SLAT.",
+    "Moderator and translator in the Telegram community.",
+    "Spoke at COSCUP 2026 about the Git zh-TW translation workflow.",
+  ],
+  experiences: [
+    { when: "Now", title: "Zeabur Open Source", role: "Development Lead" },
+    { when: "2023–", title: "Zeabur", role: "Intern → Platform Engineer" },
+    { when: "2026", title: "SITCON", role: "Ticketing system contributor" },
+    { when: "2025–2026", title: "COSCUP", role: "IT team member" },
+    { when: "2022", title: "MOPCON", role: "Agenda Group volunteer" },
+    { when: "2022–2024", title: "NKUST GDSC", role: "Core Member" },
+    { when: "2022–2023", title: "WMJTYD", role: "Volunteer, libstock (Rust FFI)" },
+    { when: "2020–", title: "UnblockNeteaseMusic", role: "Volunteer, JS and Rust versions" },
+    { when: "2020–2024", title: "CISC", role: "Volunteer, information group" },
+    {
+      when: "2019–2022",
+      title: "SMHS Open Source Organization",
+      role: "Volunteer, CSCheckin frontend",
+    },
+    {
+      when: "2018–",
+      title: "Taiwan F.O.S.S. Localization Community",
+      role: "Volunteer translator",
+    },
+  ],
+  blog: "Blog",
+} satisfies Content

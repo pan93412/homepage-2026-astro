@@ -2,17 +2,29 @@ import { test as base, expect, type Locator, type Page } from "@playwright/test"
 
 export { expect }
 
-/** Requests leave only for the site under test, so the tests send no analytics and need no network. */
+/** The site loads its fonts from these hosts; the layout depends on them. */
+const fontHosts = new Set(["fonts.googleapis.com", "fonts.gstatic.com"])
+
+/** Requests leave only for the site under test and its fonts, so the tests send no analytics. */
 export const test = base.extend({
   context: async ({ context, baseURL }, use) => {
     const origin = new URL(baseURL!).origin
     await context.route(
-      (url) => url.origin !== origin,
+      (url) => url.origin !== origin && !fontHosts.has(url.hostname),
       (route) => route.abort(),
     )
     await use(context)
   },
 })
+
+/** Waits until the web fonts have loaded, so measured sizes match what a visitor sees. */
+export const fontsLoaded = async (page: Page) => {
+  const loaded = await page.evaluate(async () => {
+    await document.fonts.ready
+    return [...document.fonts].filter((f) => f.status === "loaded").map((f) => f.family)
+  })
+  expect(loaded, "no web font loaded; the layout would use fallback fonts").not.toEqual([])
+}
 
 export const tile = (page: Page, id: string) => page.locator(`#${id}`)
 export const details = (page: Page, id: string) => page.locator(`#${id} > .tile__details`)
@@ -38,6 +50,7 @@ export const box = (locator: Locator) =>
 
 /** The box once it stops moving, after a view transition or a slide. */
 export const stableBox = async (locator: Locator) => {
+  await fontsLoaded(locator.page())
   let last = ""
   let current = await box(locator)
   await expect
@@ -54,6 +67,7 @@ export const stableBox = async (locator: Locator) => {
 
 /** The distinct rows and columns the avatars sit in, once they stop moving. */
 export const avatarCells = async (page: Page) => {
+  await fontsLoaded(page)
   const images = page.locator(".avatars__image")
   const boxes = []
   for (let i = 0; i < (await images.count()); i++) boxes.push(await stableBox(images.nth(i)))

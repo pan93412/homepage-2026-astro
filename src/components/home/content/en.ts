@@ -1,0 +1,250 @@
+import type { Content } from "./types"
+
+export default {
+  lang: "en",
+  ogLocale: "en_US",
+  description: "Yi-Jyun Pan: platform engineer at Zeabur, open-source contributor and translator.",
+  ui: {
+    skip: "Skip to main content",
+    language: "中文",
+    theme: "Toggle dark mode",
+    now: "Now",
+    ossHeading: "Four open-source projects at Zeabur Open Source",
+    zeaburHeading: (count) => `${count} things I worked on at Zeabur`,
+    talks: "talks",
+    quote: (title) => `“${title}”`,
+    latest: "Latest: ",
+    talkLinks: { slide: "Slides", page: "Session", article: "Article" },
+    years: (count) => `${count} yrs`,
+    l10n: "of open-source translation",
+    skills: "Skills",
+    projectLink: "GitHub repository",
+    path: "Path",
+    contact: "Let’s be friends!",
+    friends: "Friends",
+    friendsJoin: "Let’s swap links! Fill in this form ↗",
+    expand: (name) => `Expand “${name}”`,
+    pipeline: "picks Node.js, Go or Python",
+    l10nRing: "Localization",
+  },
+  role: "Platform engineer, open-source contributor and translator",
+  lead: "I build a cloud platform and open-source tools at Zeabur, and study for a master’s degree at NKUST. Outside of that, I design, translate, and volunteer at tech conferences.",
+  avatarAlts: { sitcon: "Speaking at SITCON 2026", ferris: "A hand-drawn Ferris the crab" },
+  statLabels: {
+    pullRequests: "merged PRs",
+    contributions: "contributions this year",
+    followers: "GitHub followers",
+    stars: "stars on my repositories",
+  },
+  now: [
+    {
+      icon: "cube",
+      title: "Zeabur Open Source",
+      role: "Development lead",
+      since: "now",
+      text: "A PaaS in Rust that you install on your own Kubernetes, with passkey sign-in and BuildKit builds.",
+    },
+    {
+      icon: "cloud",
+      title: "Zeabur",
+      role: "Platform engineer",
+      since: "since 2023",
+      text: "From intern to platform engineer: builds, the OCI registry, observability, GitOps and clusters on several clouds.",
+    },
+    {
+      icon: "graduation-cap",
+      title: "NKUST",
+      role: "Master’s student, Intelligent Commerce",
+      since: "from 2026",
+      text: "Most of my course projects are open source too.",
+    },
+  ],
+  nowDetail: {
+    oss: [
+      {
+        title: "Self-hosted PaaS",
+        text: "Written in Rust. It shows Kubernetes as projects and services and previews field-level changes before it applies them. No extra database.",
+      },
+      {
+        title: "Zeabur Identity",
+        text: "Passkey sign-in for kubectl and OIDC apps. Short-lived tokens replace long-lived shared admin credentials.",
+      },
+      {
+        title: "Zeabur Builder",
+        text: "A Kubernetes operator that builds images from Git with BuildKit and scales to zero when idle.",
+      },
+      {
+        title: "Zeabur Catalog",
+        text: "Pinned chart versions and values. CI installs and tests every entry, then publishes signed bundles.",
+      },
+    ],
+    zeabur: [
+      "zbpack packaging",
+      "Service specification",
+      "Own OCI registry",
+      "File management API",
+      "OpenTelemetry tracing",
+      "Agent-driven builds",
+      "MCP deployment tools",
+      "TCP networking and ingress",
+      "Volume migration and backup",
+      "Alerting and recovery",
+      "GitOps deployments",
+      "Multi-cloud infrastructure",
+      "Edge traffic and protection",
+      "Dedicated servers and clusters",
+      "Customer-facing CI/CD",
+      "AI tooling and usage limits",
+      "API authorization",
+      "SOC 2 audit readiness",
+      "Subscriptions and billing",
+      "Technical support",
+    ],
+  },
+  skills: [
+    {
+      icon: "browser",
+      label: "Frontend",
+      tags: ["React", "Astro", "TanStack"],
+      detail:
+        "Mostly React, TypeScript, Next.js, Astro and the TanStack libraries; Vue, Nuxt and Vite for small projects.",
+    },
+    {
+      icon: "terminal-window",
+      label: "Backend",
+      tags: ["Go", "Rust", "PHP"],
+      detail: "Go, Rust, PHP and Node.js.",
+    },
+    {
+      icon: "graph",
+      label: "Microservices",
+      tags: ["gRPC", "NATS", "GraphQL"],
+      detail:
+        "Services talk over gRPC and GraphQL, and pass messages through NATS and RabbitMQ. I designed Zeabur’s service specification.",
+    },
+    {
+      icon: "shield-check",
+      label: "Identity & security",
+      tags: ["OIDC", "Passkey", "Zero trust"],
+      detail:
+        "OAuth 2.0, OpenID Connect and passkeys (WebAuthn). I build Zeabur Identity and redesigned API authorization around OAuth scopes. When Zeabur came under attack, I was on the blue team. I brought in AWS Secrets Manager for secrets, and Tailscale with ACLs for zero-trust access.",
+    },
+    {
+      icon: "stack",
+      label: "Infrastructure",
+      tags: ["Kubernetes", "Flux", "BuildKit"],
+      detail:
+        "Self-hosted K3s clusters, deployed with Helm and Flux CD (moved over from Argo CD), with CI/CD on GitHub Actions.",
+    },
+    {
+      icon: "pulse",
+      label: "Observability",
+      tags: ["OpenTelemetry", "Grafana"],
+      detail:
+        "Distributed tracing with OpenTelemetry, dashboards and alerts in Grafana, and VictoriaMetrics, VictoriaLogs and VictoriaTraces in production.",
+    },
+    {
+      icon: "snowflake",
+      label: "Nix",
+      tags: ["Flakes", "Reproducible"],
+      detail: "Nix flakes for dev environments and my own machines, and for packaging software.",
+    },
+    {
+      icon: "sparkle",
+      label: "LLM",
+      tags: ["Agent", "Vibe Coding"],
+      detail:
+        "Builder uses an AI agent to read projects and fix failed builds. I also write most of my code with agents.",
+    },
+    {
+      icon: "chart-line-up",
+      label: "Data",
+      tags: ["pandas", "Polars"],
+      detail: "Analysis with pandas and Polars, charts with Matplotlib, Seaborn and Plotly.",
+    },
+    {
+      icon: "device-mobile",
+      label: "Apple",
+      tags: ["SwiftUI", "Xcode Cloud", "Notarization"],
+      detail:
+        "macOS and iOS apps in Swift, such as a String Catalog merger. I know my way around Xcode Cloud and set up notarization on GitHub Actions.",
+    },
+    {
+      icon: "pen-nib",
+      label: "Design",
+      tags: ["Figma", "Adobe"],
+      detail: "UI mockups and wireframes in Figma, plus the Adobe apps.",
+    },
+    {
+      icon: "translate",
+      label: "Localization",
+      tags: ["Git", "GNOME", "KDE"],
+      detail: "Member of l10n-tw. I translate Git, GNOME and KDE and maintain Weblate.",
+    },
+  ],
+  projects: {
+    Zeatend: {
+      text: "Turns a Linux host into a Kubernetes cluster over SSH. Supports K3s, RKE2 and KubeSolo.",
+      detail: [
+        "One command, zeatend apply, installs the cluster, in the spirit of k3sup. It also has a terminal UI.",
+        "Before it installs, it checks the host: memory, disk, clock sync, swap and files left by earlier installs.",
+        "The first step to run Zeabur OSS on a new host. Still in early development.",
+      ],
+    },
+    Zeabur: {
+      text: "Deploy on your own servers the same way as on Zeabur: from Git, Docker Compose or a template.",
+      detail: [
+        "Projects, services, domains, environment variables, logs and rollbacks work as on Zeabur.",
+        "Runs on Kubernetes and keeps its state in standard Kubernetes objects. No extra database.",
+        "Previews field-level changes before it applies them. You choose the hosts and the plan.",
+      ],
+    },
+    Builder: {
+      text: "Push to GitHub and get an image. With zbplan, an AI agent reads the project and picks a Dockerfile.",
+      detail: [
+        "With zbplan, an AI agent analyses the project and picks a Dockerfile. When a build fails, it reads the log and tries again.",
+        "Railpack detects Node.js, Python, Go, PHP, Ruby, Java, Rust and more. An existing Dockerfile is used as is.",
+        "Rebuilds when a branch changes, and Keel rolls out the new version.",
+        "Build secrets go in as secrets and do not stay in the image.",
+        "Also works on its own as a Kubernetes operator that hands image digests to your deployment tool.",
+      ],
+    },
+    "YOLO-RS": {
+      text: "Ultralytics YOLO object detection in Rust, with YOLOv8, YOLO11, YOLO12 and YOLO26.",
+      detail: [
+        "Inference through ONNX Runtime on CPU, CoreML or CUDA.",
+        "YOLO11x takes about 45 ms per image with CoreML on an M3 Max.",
+        "CI runs every model on the same test image and checks that they find the same people and objects.",
+      ],
+    },
+  },
+  timeline: [
+    { year: "2018", text: "Joined l10n-tw to translate Git, GNOME and KDE" },
+    { year: "2019", text: "SMHS open-source club, a check-in system" },
+    { year: "2020", text: "UnblockNeteaseMusic, wrote the Rust version" },
+    { year: "2022", text: "GDSC core member, MOPCON agenda team" },
+    { year: "2023", text: "Joined Zeabur" },
+    { year: "2025", text: "COSCUP IT team" },
+    { year: "Now", text: "Zeabur OSS development lead" },
+  ],
+  l10nDetail: [
+    "Translate Git, GNOME and KDE as part of l10n-tw.",
+    "Maintain the Weblate instance of SLAT.",
+    "Moderator and translator in the Telegram localization community.",
+    "Talked about the Git zh-TW translation workflow at COSCUP 2026.",
+  ],
+  experiences: [
+    { when: "Now", title: "Zeabur Open Source", role: "Development lead" },
+    { when: "2023–", title: "Zeabur", role: "Intern → platform engineer" },
+    { when: "2026", title: "SITCON", role: "Ticketing system" },
+    { when: "2025–2026", title: "COSCUP", role: "IT team" },
+    { when: "2022", title: "MOPCON", role: "Agenda team volunteer" },
+    { when: "2022–2024", title: "NKUST GDSC", role: "Core member" },
+    { when: "2022–2023", title: "WMJTYD", role: "Volunteer, libstock (Rust FFI)" },
+    { when: "2020–", title: "UnblockNeteaseMusic", role: "Volunteer, JS and Rust versions" },
+    { when: "2020–2024", title: "CISC", role: "IT volunteer" },
+    { when: "2019–2022", title: "SMHS open-source club", role: "Volunteer, CSCheckin frontend" },
+    { when: "2018–", title: "Taiwan FOSS localization community", role: "Translator, Weblate" },
+  ],
+  blog: "Blog",
+} satisfies Content

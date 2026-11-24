@@ -1,0 +1,1360 @@
+---
+// The homepage: a bento grid. Each tile is one fact with a small scene of that work behind it;
+// tiles with a + expand in place for the detail.
+import { existsSync } from "node:fs"
+import { getRelativeLocaleUrl } from "astro:i18n"
+import { Image } from "astro:assets"
+import { Icon } from "astro-icon/components"
+import { parse } from "yaml"
+import friendsSource from "../../data/friends.yaml?raw"
+import BentoViz from "./BentoViz.astro"
+import { avatars, contacts, content, name, projects, stats, talks, type Locale } from "./content"
+
+interface Props {
+  locale: Locale
+}
+const { locale } = Astro.props
+const t = content[locale]
+const other: Locale = locale === "zh" ? "en" : "zh"
+
+const friends = parse(friendsSource) as {
+  name: string
+  description: string
+  url: string
+  avatar: string
+}[]
+/** Friends see in their analytics that a visit came from this page. */
+const withUtm = (href: string) => {
+  const url = new URL(href)
+  url.searchParams.set("utm_source", "pan93.com")
+  url.searchParams.set("utm_medium", "friend_link")
+  return url.href
+}
+const extraAvatars = avatars.filter((a) =>
+  existsSync(new URL(`../../../public${a.src}`, import.meta.url)),
+)
+
+const canonical = new URL(getRelativeLocaleUrl(locale), Astro.site)
+const talkIcon = { slide: "presentation-chart", page: "calendar-dots", article: "article" }
+---
+
+<!doctype html>
+<html lang={t.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={t.description} />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#ecebe4" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#121411" media="(prefers-color-scheme: dark)" />
+    <title>{name}</title>
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="en" href={new URL(getRelativeLocaleUrl("en"), Astro.site)} />
+    <link rel="alternate" hreflang="zh-TW" href={new URL(getRelativeLocaleUrl("zh"), Astro.site)} />
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href={new URL(getRelativeLocaleUrl("en"), Astro.site)}
+    />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content={name} />
+    <meta property="og:description" content={t.description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={t.ogLocale} />
+    <meta property="og:locale:alternate" content={content[other].ogLocale} />
+    <meta property="og:image" content={new URL("/avatar.png", Astro.site)} />
+    <meta property="og:image:alt" content={name} />
+    <meta name="twitter:card" content="summary" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Noto+Sans+TC:wght@400;500;700&display=swap"
+    />
+    <script is:inline>
+      try {
+        const theme = localStorage.getItem("theme")
+        if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">
+      {t.ui.skip}
+    </a>
+    <div class="bento">
+      <main class="grid" id="main" tabindex="-1">
+        <section class="tile intro">
+          <nav class="prefs">
+            <a
+              href={getRelativeLocaleUrl(other)}
+              lang={content[other].lang}
+              hreflang={content[other].lang}
+            >
+              <Icon name="ph:translate" />
+              {t.ui.language}
+            </a>
+            <button class="theme" type="button" aria-label={t.ui.theme}>
+              <span class="moon">
+                <Icon name="ph:moon" />
+              </span>
+              <span class="sun">
+                <Icon name="ph:sun" />
+              </span>
+            </button>
+          </nav>
+          <div class="avatars" tabindex={extraAvatars.length ? 0 : undefined}>
+            {extraAvatars.map((a, i) => (
+              <img
+                class="alt"
+                src={a.src}
+                alt={t.avatarAlts[a.alt]}
+                width="88"
+                height="88"
+                style={`--n:${extraAvatars.length - i}`}
+              />
+            ))}
+            <img class="main" src="/avatar.avif" alt={name} width="88" height="88" />
+          </div>
+          <h1 translate="no">{name}</h1>
+          <p class="role">{t.role}</p>
+          <p class="lead">{t.lead}</p>
+          <ul class="stats">
+            {stats.map((x) => (
+              <li>
+                <a href={x.url}>
+                  <b>{x.value}</b>
+                  <span>
+                    <Icon name={`ph:${x.icon}`} />
+                    {t.statLabels[x.key]}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section class="tile now w2" data-tile style="view-transition-name: bt-now">
+          <BentoViz kind="cluster" ui={t.ui} />
+          <h2>
+            <Icon name="ph:sun-horizon-duotone" />
+            {t.ui.now}
+          </h2>
+          <ul class="summary">
+            {t.now.map((n) => (
+              <li>
+                <Icon name={`ph:${n.icon}-duotone`} />
+                <div>
+                  <b>{n.title}</b>
+                  <span>
+                    {n.role}
+                    <em class="pill">{n.since}</em>
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <button class="toggle" type="button" aria-expanded="false" aria-controls="bt-now-more">
+            <span class="sr">{t.ui.expand(t.ui.now)}</span>
+            <Icon name="ph:plus" />
+          </button>
+          <div class="more" id="bt-now-more" hidden>
+            <div class="split">
+              <div>
+                <h3>{t.ui.ossHeading}</h3>
+                <ul class="cards">
+                  {t.nowDetail.oss.map((o) => (
+                    <li>
+                      <b>{o.title}</b>
+                      <p>{o.text}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h3>{t.ui.zeaburHeading(t.nowDetail.zeabur.length)}</h3>
+                <ul class="chips">
+                  {t.nowDetail.zeabur.map((z) => (
+                    <li>{z}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tile stat talks" data-tile style="view-transition-name: bt-talks">
+          <BentoViz kind="wave" ui={t.ui} />
+          <b>{talks.length}</b>
+          <span>{t.ui.talks}</span>
+          <p class="latest">
+            {t.ui.latest}
+            {talks[0].event} <span lang="zh-TW">{t.ui.quote(talks[0].title)}</span>
+          </p>
+          <button class="toggle" type="button" aria-expanded="false" aria-controls="bt-talks-more">
+            <span class="sr">{t.ui.expand(t.ui.talks)}</span>
+            <Icon name="ph:plus" />
+          </button>
+          <div class="more" id="bt-talks-more" hidden>
+            <ol class="talk-list">
+              {talks.map((talk) => (
+                <li>
+                  <span>{talk.event}</span>
+                  <span class="title" lang="zh-TW">
+                    {talk.title}
+                  </span>
+                  <span class="talk-links">
+                    {talk.links.map((l) => (
+                      <a href={l.url} target="_blank" rel="noopener noreferrer">
+                        <Icon name={`ph:${talkIcon[l.kind]}`} />
+                        {t.ui.talkLinks[l.kind]}
+                      </a>
+                    ))}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        <section class="tile stat alt" data-tile style="view-transition-name: bt-l10n">
+          <BentoViz kind="rings" ui={t.ui} />
+          <b>{t.ui.years(new Date().getFullYear() - 2018)}</b>
+          <span>{t.ui.l10n}</span>
+          <button class="toggle" type="button" aria-expanded="false" aria-controls="bt-l10n-more">
+            <span class="sr">{t.ui.expand(t.ui.l10n)}</span>
+            <Icon name="ph:plus" />
+          </button>
+          <div class="more" id="bt-l10n-more" hidden>
+            <ul class="ticks">
+              {t.l10nDetail.map((l) => (
+                <li>{l}</li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section class="tile skills w2 h2" data-tile style="view-transition-name: bt-skills">
+          <h2>
+            <Icon name="ph:toolbox-duotone" />
+            {t.ui.skills}
+          </h2>
+          <ul class="summary icons">
+            {t.skills.map((s) => (
+              <li>
+                <Icon name={`ph:${s.icon}-duotone`} />
+                {s.label}
+                <span class="chips">
+                  {s.tags.map((tag) => (
+                    <small>{tag}</small>
+                  ))}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <button class="toggle" type="button" aria-expanded="false" aria-controls="bt-skills-more">
+            <span class="sr">{t.ui.expand(t.ui.skills)}</span>
+            <Icon name="ph:plus" />
+          </button>
+          <div class="more" id="bt-skills-more" hidden>
+            <dl class="defs">
+              {t.skills.map((s) => (
+                <div>
+                  <dt>
+                    <Icon name={`ph:${s.icon}-duotone`} />
+                    {s.label}
+                  </dt>
+                  <dd>{s.detail}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+
+        {projects.map((p) => {
+          const id = `bt-${p.key.replace(/\W+/g, "").toLowerCase()}`
+          const copy = t.projects[p.key]
+          return (
+            <section
+              class="tile project"
+              data-tile
+              style={`--base:${p.color};view-transition-name:${id}`}
+            >
+              <BentoViz kind={p.viz} ui={t.ui} />
+              <span class="tag">
+                <Icon name={`ph:${p.icon}-duotone`} />
+                {p.tags.map((tag) => (
+                  <em>{tag}</em>
+                ))}
+              </span>
+              <h3>{p.key}</h3>
+              <p>{copy.text}</p>
+              <button
+                class="toggle"
+                type="button"
+                aria-expanded="false"
+                aria-controls={`${id}-more`}
+              >
+                <span class="sr">{t.ui.expand(p.key)}</span>
+                <Icon name="ph:plus" />
+              </button>
+              <div class="more" id={`${id}-more`} hidden>
+                <ul class="ticks">
+                  {copy.detail.map((d) => (
+                    <li>{d}</li>
+                  ))}
+                </ul>
+                <a class="out" href={p.url}>
+                  {t.ui.projectLink} <Icon name="ph:arrow-up-right" />
+                </a>
+              </div>
+            </section>
+          )
+        })}
+
+        <section class="tile path w3" data-tile style="view-transition-name: bt-path">
+          <BentoViz kind="route" ui={t.ui} />
+          <h2>
+            <Icon name="ph:path-duotone" />
+            {t.ui.path}
+          </h2>
+          <ol class="summary steps">
+            {t.timeline.map((step) => (
+              <li>
+                <b>{step.year}</b>
+                {step.text}
+              </li>
+            ))}
+          </ol>
+          <button class="toggle" type="button" aria-expanded="false" aria-controls="bt-path-more">
+            <span class="sr">{t.ui.expand(t.ui.path)}</span>
+            <Icon name="ph:plus" />
+          </button>
+          <div class="more" id="bt-path-more" hidden>
+            <table class="exp">
+              <tbody>
+                {t.experiences.map((e) => (
+                  <tr>
+                    <td>{e.when}</td>
+                    <th>{e.title}</th>
+                    <td>{e.role}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="tile contact">
+          <BentoViz kind="orbit" ui={t.ui} />
+          <h2>{t.ui.contact}</h2>
+          <ul>
+            {contacts.map((c) => (
+              <li>
+                <a href={c.url} aria-label={c.name === "blog" ? t.blog : c.name}>
+                  <Icon name={`ph:${c.icon}-duotone`} />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section class="tile friends">
+          <header>
+            <h2>
+              <Icon name="ph:users-three-duotone" />
+              {t.ui.friends}
+            </h2>
+            <a href="https://link.pan93.com/friendship-links">{t.ui.friendsJoin}</a>
+          </header>
+          <ul class="friend-list">
+            {friends.map((f) => (
+              <li>
+                <a href={withUtm(f.url)} target="_blank" rel="noopener">
+                  <Image
+                    src={f.avatar}
+                    alt=""
+                    width={80}
+                    height={80}
+                    format={f.avatar.endsWith(".svg") ? "svg" : "avif"}
+                  />
+                  <span>
+                    <b>{f.name}</b>
+                    <small>{f.description}</small>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
+
+<script>
+  const grid = document.querySelector<HTMLElement>(".bento .grid")!
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)")
+
+  const setOpen = (tile: Element, open: boolean) => {
+    tile.classList.toggle("open", open)
+    tile.querySelector(".toggle")?.setAttribute("aria-expanded", String(open))
+    const more = tile.querySelector<HTMLElement>(".more")
+    if (more) more.hidden = !open
+  }
+
+  const toggle = (tile: HTMLElement) => {
+    const opening = !tile.classList.contains("open")
+    const apply = () => {
+      grid.querySelectorAll(".tile.open").forEach((t) => setOpen(t, false))
+      if (opening) setOpen(tile, true)
+    }
+    const done = () =>
+      opening &&
+      tile.scrollIntoView({ block: "nearest", behavior: reduce.matches ? "auto" : "smooth" })
+    if (document.startViewTransition && !reduce.matches) {
+      const transition = document.startViewTransition(apply)
+      transition.ready.catch(() => {})
+      transition.finished.then(done, done)
+    } else {
+      apply()
+      done()
+    }
+  }
+
+  grid.addEventListener("click", (event) => {
+    const target = event.target as HTMLElement
+    if (target.closest(".more a, .contact a")) return
+    if (target.closest(".more") && !target.closest(".toggle")) return
+    const tile = target.closest<HTMLElement>("[data-tile]")
+    if (tile) toggle(tile)
+  })
+
+  addEventListener("keydown", (event: KeyboardEvent) => {
+    if (event.key !== "Escape") return
+    const open = grid.querySelector<HTMLElement>(".tile.open")
+    if (!open) return
+    toggle(open)
+    open.querySelector<HTMLElement>(".toggle")?.focus()
+  })
+</script>
+
+<script>
+  const root = document.documentElement
+  const dark = matchMedia("(prefers-color-scheme: dark)")
+  document.querySelector(".theme")?.addEventListener("click", () => {
+    const current = root.dataset.theme ?? (dark.matches ? "dark" : "light")
+    const next = current === "dark" ? "light" : "dark"
+    root.dataset.theme = next
+    try {
+      localStorage.setItem("theme", next)
+    } catch {}
+  })
+</script>
+
+<script>
+  const token = import.meta.env.PUBLIC_POSTHOG_TOKEN
+  const apiHost = import.meta.env.PUBLIC_POSTHOG_API_HOST
+  const uiHost = import.meta.env.PUBLIC_POSTHOG_UI_HOST
+  if (import.meta.env.PROD && token && apiHost && uiHost) {
+    const { default: posthog } = await import("posthog-js")
+    posthog.init(token, {
+      api_host: apiHost,
+      ui_host: uiHost,
+      defaults: "2026-08-30",
+      capture_pageview: true,
+      capture_pageleave: true,
+      person_profiles: "identified_only",
+      disable_session_recording: true,
+    })
+  }
+</script>
+
+<style is:global>
+  :root {
+    --bg: #ecebe4;
+    --tile: #fbfaf6;
+    --ink: #23271f;
+    --mute: #6c7166;
+    --sage: #5f7a63;
+    --clay: #c96f4a;
+    --intro: #dfe5d8;
+    --clay-tile: #c96f4a;
+    --sage-tile: #5f7a63;
+    --deep-tile: #23271f;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #121411;
+      --tile: #1c1f1a;
+      --ink: #e6e8df;
+      --mute: #9da394;
+      --sage: #93b096;
+      --clay: #e08c66;
+      --intro: #232a22;
+      --clay-tile: #9c4f31;
+      --sage-tile: #3f5843;
+      --deep-tile: #2b3028;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #121411;
+    --tile: #1c1f1a;
+    --ink: #e6e8df;
+    --mute: #9da394;
+    --sage: #93b096;
+    --clay: #e08c66;
+    --intro: #232a22;
+    --clay-tile: #9c4f31;
+    --sage-tile: #3f5843;
+    --deep-tile: #2b3028;
+    color-scheme: dark;
+  }
+  html,
+  body {
+    margin: 0;
+    background: var(--bg);
+  }
+  .bento svg[data-icon] {
+    width: 1em;
+    height: 1em;
+    flex: none;
+  }
+
+  ::view-transition-group(*) {
+    animation-duration: 0.5s;
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    height: 100%;
+    width: 100%;
+    object-fit: none;
+    object-position: left top;
+  }
+  ::view-transition-group(*) {
+    overflow: clip;
+    border-radius: 22px;
+  }
+</style>
+
+<style>
+  .bento {
+    background: var(--bg);
+    color: var(--ink);
+    font-family:
+      -apple-system, BlinkMacSystemFont, ui-sans-serif, system-ui, "Noto Sans TC", sans-serif;
+    min-height: 100dvh;
+    padding: clamp(16px, 3vw, 40px);
+  }
+  .skip {
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    z-index: 10;
+    padding: 8px 14px;
+    border-radius: 99px;
+    background: var(--ink);
+    color: var(--bg);
+    translate: 0 -200%;
+  }
+  .skip:focus {
+    translate: 0;
+  }
+  .grid:focus {
+    outline: none;
+  }
+  .prefs {
+    position: absolute !important;
+    top: 18px;
+    right: 18px;
+    display: flex;
+    gap: 6px;
+  }
+  .prefs a,
+  .prefs button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 34px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 99px;
+    font: inherit;
+    font-size: 13px;
+    color: inherit;
+    cursor: pointer;
+    background: color-mix(in srgb, var(--ink) 7%, transparent);
+  }
+  .prefs button {
+    width: 34px;
+    padding: 0;
+    justify-content: center;
+    font-size: 16px;
+  }
+  .prefs a:hover,
+  .prefs button:hover {
+    background: color-mix(in srgb, var(--ink) 13%, transparent);
+  }
+  .prefs :focus-visible {
+    outline: 2px solid var(--sage);
+    outline-offset: 2px;
+  }
+  .theme span {
+    display: flex;
+  }
+  .theme .sun,
+  :global(:root[data-theme="dark"]) .theme .moon {
+    display: none;
+  }
+  :global(:root[data-theme="dark"]) .theme .sun {
+    display: flex;
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme="light"])) .theme .moon {
+      display: none;
+    }
+    :global(:root:not([data-theme="light"])) .theme .sun {
+      display: flex;
+    }
+  }
+  .bento a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .grid {
+    max-width: 1240px;
+    margin: 0 auto;
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: minmax(170px, auto);
+    grid-auto-flow: row dense;
+  }
+  .w2 {
+    grid-column: span 2;
+  }
+  .w3 {
+    grid-column: span 3;
+  }
+  .h2 {
+    grid-row: span 2;
+  }
+  .intro {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+
+  .tile {
+    background: var(--tile);
+    border-radius: 22px;
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .tile > :not(.viz) {
+    position: relative;
+  }
+  .tile[data-tile] {
+    cursor: pointer;
+    transition:
+      box-shadow 0.25s,
+      translate 0.25s;
+  }
+  .tile[data-tile]:not(.open):hover {
+    translate: 0 -3px;
+    box-shadow: 0 10px 30px -12px color-mix(in srgb, var(--ink) 25%, transparent);
+  }
+  .tile.open {
+    grid-column: span 2;
+    grid-row: span 2;
+    cursor: default;
+    box-shadow: 0 0 0 2px var(--sage);
+  }
+  .tile h2 {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--mute);
+    margin: 0 0 14px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .tile h2 :global(svg) {
+    font-size: 20px;
+    color: var(--sage);
+  }
+
+  .toggle {
+    position: absolute !important;
+    top: 14px;
+    right: 14px;
+    z-index: 2;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 0;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    font-size: 16px;
+    background: color-mix(in srgb, var(--ink) 6%, transparent);
+    color: inherit;
+    transition:
+      rotate 0.3s,
+      background 0.2s;
+  }
+  .toggle:hover {
+    background: color-mix(in srgb, var(--ink) 12%, transparent);
+  }
+  .toggle:focus-visible {
+    outline: 2px solid var(--sage);
+    outline-offset: 2px;
+  }
+  .open .toggle {
+    rotate: 45deg;
+  }
+  .stat .toggle,
+  .contact .toggle {
+    background: rgb(255 255 255 / 0.16);
+  }
+  .more {
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
+    animation: rise 0.45s 0.1s both;
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      translate: 0 8px;
+    }
+  }
+  .more h3 {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--mute);
+    margin: 0 0 12px;
+  }
+
+  .intro {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background: var(--intro);
+  }
+  .avatars {
+    position: relative;
+    width: 88px;
+    height: 88px;
+    margin-bottom: auto;
+    border-radius: 50%;
+    outline-offset: 6px;
+  }
+  .avatars img {
+    position: absolute;
+    inset: 0;
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .avatars .main {
+    scale: 1.2;
+  }
+  .avatars .alt {
+    box-shadow: 0 0 0 4px var(--intro);
+    transition:
+      translate 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+      rotate 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .avatars:hover .alt,
+  .avatars:focus-visible .alt {
+    translate: calc(var(--n) * 76px) 0;
+    rotate: calc(var(--n) * 4deg);
+  }
+  .intro h1 {
+    font:
+      400 clamp(40px, 5vw, 64px)/1 "Instrument Serif",
+      serif;
+    margin: 24px 0 8px;
+  }
+  .role {
+    color: var(--sage);
+    font-weight: 500;
+    margin: 0 0 10px;
+  }
+  .intro .lead {
+    margin: 0;
+    line-height: 1.8;
+    max-width: 30em;
+  }
+  .stats {
+    list-style: none;
+    margin: 22px 0 0;
+    padding: 18px 0 0;
+    border-top: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .stats a {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+  .stats b {
+    display: block;
+    font:
+      400 30px/1 "Instrument Serif",
+      serif;
+  }
+  .stats span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--mute);
+  }
+  .stats a:hover b,
+  .stats a:focus-visible b {
+    color: var(--clay);
+  }
+
+  .now {
+    --viz: var(--sage);
+  }
+  .now .summary {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+  }
+  .now .summary li {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .now .summary li > :global(svg) {
+    font-size: 26px;
+    color: var(--clay);
+  }
+  .now .summary b {
+    display: block;
+  }
+  .now .summary span {
+    font-size: 13px;
+    color: var(--mute);
+  }
+  .split {
+    display: grid;
+    gap: 24px;
+  }
+  .cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .cards li {
+    background: var(--bg);
+    border-radius: 14px;
+    padding: 14px;
+  }
+  .cards p {
+    margin: 4px 0 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--mute);
+  }
+  .chips {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .chips li {
+    font-size: 13px;
+    padding: 5px 12px;
+    border-radius: 99px;
+    background: color-mix(in oklab, var(--sage) 12%, var(--tile));
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background: var(--clay-tile);
+    color: #fff8f0;
+    --viz: #fff8f0;
+  }
+  .stat.alt {
+    background: var(--deep-tile);
+    --viz: #e9efe2;
+  }
+  .stat b {
+    font:
+      400 64px/1 "Instrument Serif",
+      serif;
+  }
+  .stat small {
+    font-size: 20px;
+    margin-left: 4px;
+  }
+  .stat .corner {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    font-size: 30px;
+    opacity: 0.8;
+  }
+  .stat .more {
+    border-color: rgb(255 255 255 / 0.15);
+  }
+  .ticks {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .ticks li {
+    padding-left: 22px;
+    position: relative;
+    line-height: 1.7;
+  }
+  .ticks li::before {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 0.7em;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--c, var(--sage));
+  }
+  .stat .ticks li::before {
+    background: var(--clay);
+  }
+  .stat.open {
+    justify-content: flex-start;
+  }
+
+  .icons {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .icons li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 16px 4px;
+    border-radius: 14px;
+    background: var(--bg);
+    font-size: 14px;
+    text-align: center;
+  }
+  .icons li :global(svg) {
+    font-size: 30px;
+    color: var(--sage);
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+  }
+  .chips small,
+  .pill {
+    font-size: 11px;
+    font-style: normal;
+    line-height: 1;
+    color: var(--mute);
+    padding: 4px 7px;
+    border-radius: 99px;
+    background: var(--tile);
+  }
+  .pill {
+    margin-left: 6px;
+    background: var(--bg);
+    vertical-align: 1px;
+  }
+  .skills.open .summary {
+    display: none;
+  }
+  .defs {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px 28px;
+  }
+  .defs dt {
+    font-weight: 500;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .defs dt :global(svg) {
+    color: var(--sage);
+    font-size: 20px;
+  }
+  .defs dd {
+    margin: 4px 0 0 28px;
+    color: var(--mute);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .project {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 230px;
+    --c: var(--base);
+    --viz: var(--c);
+  }
+  :global(:root[data-theme="dark"]) .project {
+    --c: color-mix(in oklab, var(--base) 55%, white);
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme="light"])) .project {
+      --c: color-mix(in oklab, var(--base) 55%, white);
+    }
+  }
+  .path.open {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+  .tile.open > :global(.viz) {
+    bottom: auto;
+    height: 150px;
+  }
+  .project.open,
+  .stat.open {
+    justify-content: flex-start;
+    padding-top: 170px;
+  }
+  .now.open > :global(.viz),
+  .path.open > :global(.viz) {
+    display: none;
+  }
+  .tag {
+    font-size: 12px;
+    color: var(--c);
+    font-weight: 500;
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .tag :global(svg) {
+    font-size: 16px;
+  }
+  .tag em {
+    font-style: normal;
+    line-height: 1;
+    padding: 4px 8px;
+    border-radius: 99px;
+    background: color-mix(in srgb, var(--c) 12%, transparent);
+  }
+  .project h3 {
+    font:
+      400 28px/1.1 "Instrument Serif",
+      serif;
+    margin: 4px 0 6px;
+  }
+  .project > p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--mute);
+    margin: 0;
+  }
+  .out {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    margin-top: 14px;
+    font-size: 14px;
+    color: var(--c) !important;
+    border-bottom: 1px solid currentColor;
+  }
+
+  .latest {
+    margin: 10px 0 0;
+    font-size: 12px;
+    line-height: 1.5;
+    opacity: 0.85;
+  }
+  .talks.open .latest {
+    display: none;
+  }
+  .talk-list span {
+    display: block;
+    font-size: 12px;
+    color: #ffe1cf;
+  }
+  .talk-list .talk-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+  }
+  .talk-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 99px;
+    font-size: 12px;
+    color: #fff;
+    text-decoration: none;
+    background: rgb(255 255 255 / 0.16);
+  }
+  .talk-links a:hover,
+  .talk-links a:focus-visible {
+    background: #fff;
+    color: var(--clay);
+  }
+  .talk-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    columns: 2;
+    column-gap: 32px;
+  }
+  .talk-list li {
+    break-inside: avoid;
+    padding: 8px 0;
+    border-bottom: 1px dashed rgb(255 255 255 / 0.22);
+  }
+
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+  }
+  .steps li {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--mute);
+    border-top: 2px solid var(--sage);
+    padding-top: 8px;
+  }
+  .steps b {
+    display: block;
+    font:
+      400 22px "Instrument Serif",
+      serif;
+    color: var(--ink);
+  }
+  .exp {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .exp td,
+  .exp th {
+    text-align: left;
+    padding: 9px 10px;
+    border-bottom: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+  }
+  .exp th {
+    font-weight: 500;
+  }
+  .exp td:first-child {
+    color: var(--sage);
+    white-space: nowrap;
+    width: 8em;
+  }
+  .exp td:last-child {
+    color: var(--mute);
+  }
+
+  .contact {
+    background: var(--sage-tile);
+    color: #f3f6ef;
+    --viz: #f3f6ef;
+  }
+  .contact h2 {
+    color: inherit;
+    font:
+      400 30px "Instrument Serif",
+      "Noto Sans TC",
+      serif;
+  }
+  .contact ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .contact a {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.14);
+    font-size: 22px;
+  }
+  .contact a:hover {
+    background: #fff;
+    color: var(--sage);
+  }
+
+  .friends {
+    grid-column: 1 / -1;
+  }
+  .friends header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px 16px;
+    margin-bottom: 16px;
+  }
+  .friends h2 {
+    margin: 0;
+  }
+  .friends header a {
+    font-size: 14px;
+    color: var(--sage);
+  }
+  .friend-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 4px;
+  }
+  .friend-list a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    border-radius: 14px;
+    color: inherit;
+    text-decoration: none;
+  }
+  .friend-list a:hover,
+  .friend-list a:focus-visible {
+    background: var(--bg);
+  }
+  .friend-list :global(img) {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--bg);
+  }
+  .friend-list span {
+    min-width: 0;
+    display: grid;
+  }
+  .friend-list b,
+  .friend-list small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .friend-list b {
+    font-weight: 600;
+  }
+  .friend-list small {
+    font-size: 13px;
+    color: var(--mute);
+  }
+
+  @media (max-width: 900px) {
+    .grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .w3 {
+      grid-column: 1 / -1;
+    }
+    .steps {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .split {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 560px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    .w2,
+    .w3,
+    .intro {
+      grid-column: auto;
+    }
+    .intro,
+    .h2 {
+      grid-row: auto;
+    }
+    .stats {
+      grid-template-columns: repeat(2, 1fr);
+      row-gap: 16px;
+    }
+    .icons {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .steps {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .cards,
+    .defs {
+      grid-template-columns: 1fr;
+    }
+    .talk-list {
+      columns: 1;
+    }
+    .tile.open {
+      grid-column: auto;
+      grid-row: auto;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .avatars .alt {
+      transition: none;
+    }
+    .more {
+      animation: none;
+    }
+    .tile[data-tile] {
+      transition: none;
+    }
+  }
+</style>

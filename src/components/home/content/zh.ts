@@ -204,7 +204,7 @@ export default {
         "zbplan 的 AI Agent 會讀專案、挑 Dockerfile；建置失敗時，它會讀日誌再試一次。",
         "Railpack 認得 Node.js、Python、Go、PHP、Ruby、Java、Rust 等語言；專案裡有 Dockerfile 就直接用。",
         "分支一更新就重新建置，Keel 再把服務換成新映像檔。",
-        "建置用的機密以 secret 傳入，不會留在映像檔裡。",
+        "建置用的金鑰以 secret 傳入，不會留在映像檔裡。",
         "也可以單獨當 Kubernetes operator 用，把映像檔 digest 交給你自己的部署工具。",
       ],
     },

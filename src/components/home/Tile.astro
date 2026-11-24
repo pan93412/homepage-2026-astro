@@ -37,7 +37,7 @@ const onColor = surface !== "tile" && surface !== "intro"
     surfaces[surface],
     id && [
       "cursor-pointer transition-[box-shadow,translate] duration-250 motion-reduce:transition-none",
-      "not-data-open:hover:-translate-y-0.75 not-data-open:hover:shadow-lift",
+      "not-data-open:hover:-translate-y-0.75 not-data-open:hover:shadow-(--lift)",
       "data-open:cursor-default data-open:ring-2 data-open:ring-sage",
       open,
     ],

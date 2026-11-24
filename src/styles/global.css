@@ -42,7 +42,6 @@
 
   --radius-tile: 22px;
   --radius-card: 14px;
-  --shadow-lift: 0 10px 30px -12px color-mix(in oklab, var(--color-ink) 25%, transparent);
   --ease-fan: cubic-bezier(0.2, 0.8, 0.2, 1);
 
   --animate-rise: rise 0.45s 0.1s both;
@@ -64,6 +63,8 @@
 @layer base {
   :root {
     color-scheme: light;
+    /* Not in @theme: Tailwind copies theme shadows into each utility, so the dark value would never apply. */
+    --lift: 0 10px 30px -12px color-mix(in oklab, var(--color-ink) 25%, transparent);
     @variant dark {
       color-scheme: dark;
       --color-paper: #121411;
@@ -76,10 +77,10 @@
       --color-clay-tile: #9c4f31;
       --color-sage-tile: #3f5843;
       --color-deep-tile: #2b3028;
-      /* A shadow barely shows on a dark page, so a lifted tile gets lighter instead. */
-      --shadow-lift:
-        inset 0 0 0 100vmax color-mix(in oklab, var(--color-ink) 5%, transparent),
-        inset 0 0 0 1px color-mix(in oklab, var(--color-ink) 12%, transparent);
+      /* Ink is light here, so a shadow made from it would glow. */
+      --lift:
+        0 12px 32px -12px rgb(0 0 0 / 0.7),
+        0 0 0 1px color-mix(in oklab, var(--color-ink) 10%, transparent);
     }
   }
   body {

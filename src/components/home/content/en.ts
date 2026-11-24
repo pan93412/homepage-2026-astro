@@ -8,7 +8,9 @@ export default {
   ui: {
     skip: "Skip to content",
     language: "中文",
-    theme: "Toggle dark mode",
+    theme: "Theme",
+    avatars: "Show my other avatars",
+    themes: { system: "System", light: "Light", dark: "Dark" },
     now: "Now",
     ossHeading: "Zeabur Open Source projects",
     zeaburHeading: () => "What I’ve worked on at Zeabur",

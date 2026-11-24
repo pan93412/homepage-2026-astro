@@ -2,7 +2,6 @@
 import { defineConfig } from "astro/config"
 import sitemap from "@astrojs/sitemap"
 import icon from "astro-icon"
-import tailwindcss from "@tailwindcss/vite"
 
 export default defineConfig({
   output: "static",
@@ -11,7 +10,8 @@ export default defineConfig({
   redirects: {
     "/index.zh-TW.html": "/zh/",
   },
-  vite: { plugins: [tailwindcss()] },
+  // Lets a component style the root of a child component it passes a class to.
+  scopedStyleStrategy: "class",
   image: {
     remotePatterns: [
       { protocol: "https", hostname: "assets.blog.pan93.com", pathname: "/friends/**" },

@@ -34,27 +34,17 @@ const timings = [
   { model: "YOLO12x", coreml: 164, cpu: 373 },
   { model: "YOLO26x", coreml: 47, cpu: 345 },
 ]
-const stroke = "stroke-(--c) stroke-[1.2]"
-const grow = "origin-top-left transition-[scale] duration-300 sm:group-data-open/tile:scale-140"
 ---
 
-<div
-  class:list={[
-    "pointer-events-none absolute inset-0 -z-1 text-(--viz)",
-    kind !== "rings" && "group-data-open/tile:bottom-auto group-data-open/tile:h-37.5",
-    "motion-reduce:**:animate-none!",
-    className,
-  ]}
-  aria-hidden="true"
->
+<div class:list={["viz", `viz--${kind}`, className]} aria-hidden="true">
   {kind === "bootstrap" && (
-    <svg class="absolute top-5.5 left-5.5 w-[calc(100%-96px)] max-w-65" viewBox="0 0 220 110">
-      <rect class:list={[stroke, "fill-(--c)/10"]} x="8" y="22" width="62" height="66" rx="6" />
+    <svg class="viz__bootstrap" viewBox="0 0 220 110">
+      <rect class="viz__stroke viz__terminal" x="8" y="22" width="62" height="66" rx="6" />
       {[40, 55, 70].map((y) => (
-        <line class:list={[stroke, "opacity-60"]} x1="18" y1={y} x2="52" y2={y} />
+        <line class="viz__stroke viz__terminal-line" x1="18" y1={y} x2="52" y2={y} />
       ))}
-      <circle class="animate-blink fill-(--c)" cx="60" cy="40" r="2.5" />
-      <path class:list={[stroke, "animate-dash [stroke-dasharray:4_4]"]} d="M78 55 H118" />
+      <circle class="viz__cursor" cx="60" cy="40" r="2.5" />
+      <path class="viz__stroke viz__wire" d="M78 55 H118" />
       {[
         [146, 30],
         [190, 30],
@@ -63,7 +53,7 @@ const grow = "origin-top-left transition-[scale] duration-300 sm:group-data-open
         [168, 55],
       ].map(([x, y], i) => (
         <polygon
-          class:list={[stroke, "origin-center animate-grow fill-(--c)/18 [transform-box:fill-box]"]}
+          class="viz__stroke viz__node"
           style={`--i:${i}`}
           points={hex(x, y, i === 4 ? 15 : 12)}
         />
@@ -71,12 +61,7 @@ const grow = "origin-top-left transition-[scale] duration-300 sm:group-data-open
     </svg>
   )}
   {kind === "diff" && (
-    <div
-      class:list={[
-        grow,
-        "absolute top-5.5 right-16 left-5.5 grid gap-0.75 font-mono text-[11px] leading-[1.7]",
-      ]}
-    >
+    <div class="viz__grow viz__diff">
       {[
         { m: " ", k: "service", v: "web" },
         { m: "-", k: "image", v: "main-a1b2c3" },
@@ -85,73 +70,57 @@ const grow = "origin-top-left transition-[scale] duration-300 sm:group-data-open
       ].map((r, i) => (
         <div
           class:list={[
-            "grid animate-row-in grid-cols-[14px_auto_1fr] gap-2 rounded-sm px-2",
-            r.m === "+" && "bg-sage/16 text-ink",
-            r.m === "-" && "bg-clay/16 text-mute line-through decoration-clay/60",
-            r.m === " " && "text-mute",
+            "viz__diff-row",
+            r.m === "+" && "viz__diff-row--add",
+            r.m === "-" && "viz__diff-row--remove",
           ]}
           style={`--i:${i}`}
         >
-          <span class:list={[r.m === "+" && "text-sage", r.m === "-" && "text-clay"]}>{r.m}</span>
-          <span class="text-(--c)">{r.k}</span>
-          <span class="truncate">{r.v}</span>
+          <span class="viz__diff-mark">{r.m}</span>
+          <span class="viz__diff-key">{r.k}</span>
+          <span class="viz__diff-value">{r.v}</span>
         </div>
       ))}
     </div>
   )}
   {kind === "pipeline" && (
-    <div class:list={[grow, "absolute top-4.5 right-5.5 left-5.5"]}>
-      <div class="relative flex max-w-[min(240px,calc(100%-42px))] items-center justify-between before:absolute before:top-1/2 before:right-5 before:left-1.75 before:h-0.5 before:-translate-y-1/2 before:bg-(--c)/30">
+    <div class="viz__grow viz__pipeline">
+      <div class="viz__steps">
         {[0, 1, 2, 3].map((i) => (
-          <span
-            class="relative size-3.5 animate-fill rounded-full border-2 border-(--c) bg-tile"
-            style={`--i:${i}`}
-          />
+          <span class="viz__step" style={`--i:${i}`} />
         ))}
-        <span class="relative grid size-8.5 place-items-center rounded-[9px] bg-(--c) text-[19px] text-tile">
+        <span class="viz__package">
           <Icon name="ph:package-duotone" />
         </span>
       </div>
-      <p class="mt-3 truncate text-[12px] leading-normal text-[color-mix(in_oklab,var(--c)_75%,var(--color-tile))]">
-        <b class="font-semibold text-(--c)">AI Agent</b> {ui.pipeline}
+      <p class="viz__caption">
+        <b>AI Agent</b> {ui.pipeline}
       </p>
     </div>
   )}
   {kind === "detect" && (
-    <div
-      class:list={[
-        grow,
-        "absolute top-5 right-16 left-5.5 grid gap-1.25 font-mono text-[11px] leading-[1.4] text-mute",
-      ]}
-    >
-      <p class="mb-0.5 flex gap-3">
+    <div class="viz__grow viz__detect">
+      <p class="viz__legend">
         M3 Max
-        <span class="inline-flex items-center gap-1.25 before:size-2 before:rounded-[2px] before:bg-(--c)">
-          CoreML
-        </span>
-        <span class="inline-flex items-center gap-1.25 before:size-2 before:rounded-[2px] before:bg-(--c)/22">
-          CPU
-        </span>
+        <span class="viz__key viz__key--coreml">CoreML</span>
+        <span class="viz__key viz__key--cpu">CPU</span>
       </p>
       {timings.map((t, i) => (
-        <div
-          class="grid grid-cols-[7ch_1fr_6ch] items-center gap-2"
-          style={`--i:${i};--coreml:${t.coreml / 400};--cpu:${t.cpu / 400}`}
-        >
-          <span class="text-ink">{t.model}</span>
-          <span class="relative h-2">
-            <span class="absolute inset-y-0 left-0 w-[calc(var(--cpu)*100%)] origin-left animate-bar rounded-[2px] bg-(--c)/22" />
-            <span class="absolute inset-y-0 left-0 w-[calc(var(--coreml)*100%)] origin-left animate-bar rounded-[2px] bg-(--c)" />
+        <div class="viz__timing" style={`--i:${i};--coreml:${t.coreml / 400};--cpu:${t.cpu / 400}`}>
+          <span class="viz__model">{t.model}</span>
+          <span class="viz__bars">
+            <span class="viz__bar viz__bar--cpu" />
+            <span class="viz__bar viz__bar--coreml" />
           </span>
-          <span class="text-right text-(--c)">{t.coreml} ms</span>
+          <span class="viz__ms">{t.coreml} ms</span>
         </div>
       ))}
     </div>
   )}
   {kind === "cluster" && (
-    <svg class="absolute -right-2.5 -bottom-2.5 w-[62%] opacity-55" viewBox="0 0 240 160">
+    <svg class="viz__cluster" viewBox="0 0 240 160">
       <path
-        class="fill-none stroke-current stroke-1 [stroke-dasharray:3_4]"
+        class="viz__links"
         d="M60 40 L120 80 L190 45 M120 80 L80 130 M120 80 L175 125 M190 45 L175 125 M60 40 L80 130"
       />
       {[
@@ -161,16 +130,16 @@ const grow = "origin-top-left transition-[scale] duration-300 sm:group-data-open
         [175, 125],
       ].map(([x, y], i) => (
         <g style={`--d:${i * 0.6}s`}>
-          <polygon class="fill-current/10 stroke-current stroke-[1.2]" points={hex(x, y, 16)} />
-          <circle class="animate-blink-node fill-current" cx={x} cy={y} r="4" />
+          <polygon class="viz__host" points={hex(x, y, 16)} />
+          <circle class="viz__light" cx={x} cy={y} r="4" />
         </g>
       ))}
-      <polygon class="fill-current/22 stroke-current stroke-[1.2]" points={hex(120, 80, 22)} />
-      <circle class="animate-blink-node fill-current" cx="120" cy="80" r="6" />
-      <circle class="fill-clay motion-reduce:hidden" r="3">
+      <polygon class="viz__host viz__host--main" points={hex(120, 80, 22)} />
+      <circle class="viz__light" cx="120" cy="80" r="6" />
+      <circle class="viz__packet" r="3">
         <animateMotion dur="3.2s" repeatCount="indefinite" path="M60 40 L120 80 L175 125" />
       </circle>
-      <circle class="fill-clay motion-reduce:hidden" r="3">
+      <circle class="viz__packet" r="3">
         <animateMotion
           dur="2.6s"
           begin="1s"
@@ -181,69 +150,396 @@ const grow = "origin-top-left transition-[scale] duration-300 sm:group-data-open
     </svg>
   )}
   {kind === "wave" && (
-    <div class="absolute top-5.5 right-5.5 left-5.5 flex h-[44%] items-end gap-0.75 opacity-40">
+    <div class="viz__wave">
       {waveBars.map((h, i) => (
-        <span
-          class="h-[calc(var(--h)*100%)] flex-1 origin-bottom animate-eq rounded-[2px] bg-current"
-          style={`--h:${h};--d:${(i % 7) * 0.12}s`}
-        />
+        <span class="viz__wave-bar" style={`--h:${h};--d:${(i % 7) * 0.12}s`} />
       ))}
     </div>
   )}
   {kind === "rings" && (
-    <svg class="absolute top-0 right-0 size-[max(240px,min(100%,360px))]" viewBox="0 0 240 240">
+    <svg class="viz__rings" viewBox="0 0 240 240">
       {rings.map((r, i) => (
-        <circle
-          class="animate-blink-ring fill-none stroke-current stroke-1 opacity-18"
-          cx="200"
-          cy="40"
-          r={r}
-          style={`--d:${i * 0.15}s`}
-        />
+        <circle class="viz__ring" cx="200" cy="40" r={r} style={`--d:${i * 0.15}s`} />
       ))}
       <defs>
         <path id="ring-path" d="M200 40 m-96 0 a96 96 0 1 0 192 0 a96 96 0 1 0 -192 0" />
       </defs>
-      <text class="fill-current text-[9px] tracking-[0.12em] opacity-50">
+      <text class="viz__ring-text">
         <textPath href="#ring-path">{`Git · GNOME · KDE · Telegram · Weblate · ${ui.l10nRing} · `}</textPath>
       </text>
     </svg>
   )}
   {kind === "route" && (
-    <svg
-      class="absolute inset-x-0 bottom-2 h-10 w-full"
-      viewBox="0 0 1000 120"
-      preserveAspectRatio="none"
-    >
+    <svg class="viz__route" viewBox="0 0 1000 120" preserveAspectRatio="none">
       <path
-        class="animate-dash-slow fill-none stroke-sage stroke-[1.5] opacity-35 [stroke-dasharray:6_6]"
+        class="viz__route-path"
         d="M0 90 C 120 20, 220 110, 340 60 S 560 10, 680 70 S 880 100, 1000 30"
       />
     </svg>
   )}
   {kind === "orbit" && (
-    <svg class="absolute -right-10 -bottom-10 w-[110%]" viewBox="0 0 200 200">
+    <svg class="viz__orbit" viewBox="0 0 200 200">
       {[40, 70, 100].map((r) => (
-        <circle class="fill-none stroke-current opacity-20" cx="150" cy="150" r={r} />
+        <circle class="viz__orbit-ring" cx="150" cy="150" r={r} />
       ))}
-      <circle
-        class="origin-[150px_150px] animate-orbit fill-current opacity-70"
-        cx="150"
-        cy="80"
-        r="5"
-      />
-      <circle
-        class="origin-[150px_150px] animate-orbit-slow fill-current opacity-70"
-        cx="50"
-        cy="150"
-        r="4"
-      />
-      <circle
-        class="origin-[150px_150px] animate-orbit-fast fill-current opacity-70"
-        cx="150"
-        cy="110"
-        r="3"
-      />
+      <circle class="viz__planet viz__planet--1" cx="150" cy="80" r="5" />
+      <circle class="viz__planet viz__planet--2" cx="50" cy="150" r="4" />
+      <circle class="viz__planet viz__planet--3" cx="150" cy="110" r="3" />
     </svg>
   )}
 </div>
+
+<style>
+  .viz {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    color: var(--viz);
+  }
+  /* An open tile keeps the scene in a 150px band at the top. */
+  :global(.tile:has(> .tile__details[open])) .viz:not(.viz--rings) {
+    bottom: auto;
+    height: 9.375rem;
+  }
+
+  .viz__stroke {
+    stroke: var(--c);
+    stroke-width: 1.2;
+  }
+  .viz__grow {
+    transform-origin: top left;
+    transition: scale 300ms var(--ease-default);
+    @media (width >= 561px) {
+      :global(.tile:has(> .tile__details[open])) & {
+        scale: 1.4;
+      }
+    }
+  }
+
+  .viz__bootstrap {
+    position: absolute;
+    top: 1.375rem;
+    left: 1.375rem;
+    width: calc(100% - 96px);
+    max-width: 16.25rem;
+  }
+  .viz__terminal {
+    fill: color-mix(in oklab, var(--c) 10%, transparent);
+  }
+  .viz__terminal-line {
+    opacity: 0.6;
+  }
+  .viz__cursor {
+    fill: var(--c);
+    animation: blink 1.2s infinite;
+  }
+  .viz__wire {
+    stroke-dasharray: 4 4;
+    animation: dash 6s linear infinite;
+  }
+  .viz__node {
+    fill: color-mix(in oklab, var(--c) 18%, transparent);
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: grow 4s calc(var(--i) * 0.3s) ease-out infinite;
+  }
+
+  .viz__diff {
+    position: absolute;
+    top: 1.375rem;
+    right: 4rem;
+    left: 1.375rem;
+    display: grid;
+    gap: 0.1875rem;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1.7;
+  }
+  .viz__diff-row {
+    display: grid;
+    grid-template-columns: 14px auto 1fr;
+    gap: 0.5rem;
+    border-radius: 0.25rem;
+    padding-inline: 0.5rem;
+    color: var(--color-mute);
+    animation: row-in 0.5s calc(var(--i) * 0.12s) ease-out both;
+  }
+  .viz__diff-row--add {
+    background-color: color-mix(in oklab, var(--color-sage) 16%, transparent);
+    color: var(--color-ink);
+    .viz__diff-mark {
+      color: var(--color-sage);
+    }
+  }
+  .viz__diff-row--remove {
+    background-color: color-mix(in oklab, var(--color-clay) 16%, transparent);
+    text-decoration-line: line-through;
+    text-decoration-color: color-mix(in oklab, var(--color-clay) 60%, transparent);
+    .viz__diff-mark {
+      color: var(--color-clay);
+    }
+  }
+  .viz__diff-key {
+    color: var(--c);
+  }
+  .viz__diff-value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .viz__pipeline {
+    position: absolute;
+    top: 1.125rem;
+    right: 1.375rem;
+    left: 1.375rem;
+  }
+  .viz__steps {
+    position: relative;
+    display: flex;
+    max-width: min(240px, calc(100% - 42px));
+    align-items: center;
+    justify-content: space-between;
+    &::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: 1.25rem;
+      left: 0.4375rem;
+      height: 0.125rem;
+      translate: 0 -50%;
+      background-color: color-mix(in oklab, var(--c) 30%, transparent);
+    }
+  }
+  .viz__step {
+    position: relative;
+    width: 0.875rem;
+    height: 0.875rem;
+    border: 2px solid var(--c);
+    border-radius: 9999px;
+    background-color: var(--color-tile);
+    /* light-dark() in a keyframe follows the system theme, not the theme switch, so the fill fades in on top. */
+    &::after {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      background-color: var(--c);
+      animation: fill 4s calc(var(--i) * 0.5s) ease-in-out infinite;
+    }
+  }
+  .viz__package {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 2.125rem;
+    height: 2.125rem;
+    border-radius: 9px;
+    background-color: var(--c);
+    font-size: 19px;
+    color: var(--color-tile);
+  }
+  .viz__caption {
+    margin-top: 0.75rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+    line-height: 1.5;
+    color: color-mix(in oklab, var(--c) 75%, var(--color-tile));
+    b {
+      font-weight: 600;
+      color: var(--c);
+    }
+  }
+
+  .viz__detect {
+    position: absolute;
+    top: 1.25rem;
+    right: 4rem;
+    left: 1.375rem;
+    display: grid;
+    gap: 0.3125rem;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1.4;
+    color: var(--color-mute);
+    /* .viz__grow scales the open chart by 1.4 from its left edge; this width keeps it inside the same insets. */
+    @media (width >= 561px) {
+      :global(.tile:has(> .tile__details[open])) & {
+        right: auto;
+        width: calc((100% - 5.375rem) / 1.4);
+      }
+    }
+  }
+  .viz__legend {
+    margin-bottom: 0.125rem;
+    display: flex;
+    white-space: nowrap;
+    gap: 0.75rem;
+  }
+  .viz__key {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3125rem;
+    &::before {
+      content: "";
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 2px;
+      background-color: var(--c);
+    }
+  }
+  .viz__key--cpu::before {
+    background-color: color-mix(in oklab, var(--c) 22%, transparent);
+  }
+  .viz__timing {
+    display: grid;
+    grid-template-columns: 7ch 1fr 6ch;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .viz__model {
+    color: var(--color-ink);
+  }
+  .viz__bars {
+    position: relative;
+    height: 0.5rem;
+  }
+  .viz__bar {
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    transform-origin: left;
+    border-radius: 2px;
+    animation: bar 0.7s calc(var(--i) * 0.08s) ease-out both;
+  }
+  .viz__bar--cpu {
+    width: calc(var(--cpu) * 100%);
+    background-color: color-mix(in oklab, var(--c) 22%, transparent);
+  }
+  .viz__bar--coreml {
+    width: calc(var(--coreml) * 100%);
+    background-color: var(--c);
+  }
+  .viz__ms {
+    text-align: right;
+    color: var(--c);
+  }
+
+  .viz__cluster {
+    position: absolute;
+    right: -0.625rem;
+    bottom: -0.625rem;
+    width: 62%;
+    opacity: 0.55;
+  }
+  .viz__links {
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 1;
+    stroke-dasharray: 3 4;
+  }
+  .viz__host {
+    fill: color-mix(in oklab, currentcolor 10%, transparent);
+    stroke: currentcolor;
+    stroke-width: 1.2;
+  }
+  .viz__host--main {
+    fill: color-mix(in oklab, currentcolor 22%, transparent);
+  }
+  .viz__light {
+    fill: currentcolor;
+    animation: blink 2.4s var(--d, 0s) infinite;
+  }
+  .viz__packet {
+    fill: var(--color-clay);
+    @media (prefers-reduced-motion: reduce) {
+      display: none;
+    }
+  }
+
+  .viz__wave {
+    position: absolute;
+    top: 1.375rem;
+    right: 1.375rem;
+    left: 1.375rem;
+    display: flex;
+    height: 44%;
+    align-items: flex-end;
+    gap: 0.1875rem;
+    opacity: 0.4;
+  }
+  .viz__wave-bar {
+    height: calc(var(--h) * 100%);
+    flex: 1;
+    transform-origin: bottom;
+    border-radius: 2px;
+    background-color: currentcolor;
+    animation: eq 1.4s var(--d) ease-in-out infinite alternate;
+  }
+
+  .viz__rings {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: max(240px, min(100%, 360px));
+    height: max(240px, min(100%, 360px));
+  }
+  .viz__ring {
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 1;
+    opacity: 0.18;
+    animation: blink 4s var(--d) infinite;
+  }
+  .viz__ring-text {
+    fill: currentcolor;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    opacity: 0.5;
+  }
+
+  .viz__route {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0.5rem;
+    height: 2.5rem;
+    width: 100%;
+  }
+  .viz__route-path {
+    fill: none;
+    stroke: var(--color-sage);
+    stroke-width: 1.5;
+    stroke-dasharray: 6 6;
+    opacity: 0.35;
+    animation: dash 30s linear infinite;
+  }
+
+  .viz__orbit {
+    position: absolute;
+    right: -2.5rem;
+    bottom: -2.5rem;
+    width: 110%;
+  }
+  .viz__orbit-ring {
+    fill: none;
+    stroke: currentcolor;
+    opacity: 0.2;
+  }
+  .viz__planet {
+    fill: currentcolor;
+    opacity: 0.7;
+    transform-origin: 150px 150px;
+  }
+  .viz__planet--1 {
+    animation: orbit 14s linear infinite;
+  }
+  .viz__planet--2 {
+    animation: orbit 22s linear infinite;
+  }
+  .viz__planet--3 {
+    animation: orbit 9s linear infinite reverse;
+  }
+</style>

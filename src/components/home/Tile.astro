@@ -1,78 +1,246 @@
 ---
-// A bento tile. With an id it toggles open in place and shows the "more" slot.
+// A bento tile. With an id it opens in place, as one of an exclusive <details> group, and shows the "more" slot.
 import { Icon } from "astro-icon/components"
 
 interface Props {
   id?: string
   /** Screen-reader text of the + button. */
   label?: string
-  surface?: keyof typeof surfaces
-  /** Grid span while open. */
-  open?: string
+  surface?: "tile" | "intro" | "clay" | "deep" | "sage"
+  /** Take the full row while open. */
+  wide?: boolean
   class?: string
   style?: string
 }
 
-const surfaces = {
-  tile: "bg-tile",
-  intro: "bg-intro",
-  clay: "bg-clay-tile text-[#fff8f0] [--viz:#fff8f0]",
-  deep: "bg-deep-tile text-[#fff8f0] [--viz:#e9efe2]",
-  sage: "bg-sage-tile text-[#f3f6ef] [--viz:#f3f6ef]",
-}
-const {
-  id,
-  label,
-  surface = "tile",
-  open = "sm:data-open:col-span-2 sm:data-open:row-span-2",
-  class: className,
-  style,
-} = Astro.props
+const { id, label, surface = "tile", wide = false, class: className, style } = Astro.props
 const onColor = surface !== "tile" && surface !== "intro"
 ---
 
 <section
+  id={id}
   class:list={[
-    "group/tile relative isolate overflow-hidden rounded-tile p-5.5",
-    surfaces[surface],
-    id && [
-      "cursor-pointer transition-[box-shadow,translate] duration-250 motion-reduce:transition-none",
-      "not-data-open:hover:-translate-y-0.75 not-data-open:hover:shadow-(--lift)",
-      "data-open:cursor-default data-open:ring-2 data-open:ring-sage",
-      open,
-    ],
+    "tile",
+    `tile--${surface}`,
+    id && "tile--expandable",
+    wide && "tile--wide",
     className,
   ]}
-  data-tile={id ? "" : undefined}
   style={id ? `view-transition-name:${id};${style ?? ""}` : style}
 >
   <slot />
   {id && (
-    <>
-      <button
-        class:list={[
-          "toggle absolute top-3.5 right-3.5 z-2 grid size-8.5 cursor-pointer place-items-center rounded-full text-[16px]",
-          "transition-[rotate,background-color] duration-300 group-data-open/tile:rotate-45",
-          "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sage",
-          onColor ? "bg-white/16 hover:bg-white/24" : "bg-ink/6 hover:bg-ink/12",
-        ]}
-        type="button"
-        aria-expanded="false"
-        aria-controls={`${id}-more`}
-      >
-        <span class="sr-only">{label}</span>
-        <Icon name="ph:plus" />
-      </button>
-      <div
-        class:list={[
-          "more mt-5.5 animate-rise border-t pt-5 motion-reduce:animate-none",
-          onColor ? "border-white/15" : "border-ink/10",
-        ]}
-        id={`${id}-more`}
-        hidden
-      >
+    <details class:list={["tile__details", onColor && "tile__details--on-color"]} name="tile">
+      <summary class="tile__summary">
+        <span class="tile__toggle">
+          <span class="sr-only">{label}</span>
+          <Icon name="ph:plus" />
+        </span>
+      </summary>
+      <div class="tile__more">
         <slot name="more" />
       </div>
-    </>
+    </details>
   )}
 </section>
+
+<script>
+  // The tiles open and close without this script. It adds the morph between layouts,
+  // closing with Escape or a click outside the tile, and scrolls an opened tile into view.
+  // The open tile is also in the URL hash, so Back closes it and a link can open one.
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)")
+
+  const detailsFor = (id: string) =>
+    id
+      ? document.getElementById(id)?.querySelector<HTMLDetailsElement>(":scope > .tile__details")
+      : null
+
+  const setOpen = (details: HTMLDetailsElement, open: boolean) => {
+    const apply = () => {
+      details.open = open
+    }
+    const done = () =>
+      open &&
+      details.parentElement?.scrollIntoView({
+        block: "nearest",
+        behavior: reduce.matches ? "auto" : "smooth",
+      })
+    if (document.startViewTransition && !reduce.matches) {
+      const transition = document.startViewTransition(apply)
+      transition.ready.catch(() => {})
+      transition.finished.then(done, done)
+    } else {
+      apply()
+      done()
+    }
+  }
+
+  // One history entry stands for "a tile is open": switching tiles replaces it, and closing goes back past it.
+  const toggle = (details: HTMLDetailsElement, open: boolean) => {
+    const pushed = history.state?.tile === true
+    if (open) {
+      const url = `#${details.parentElement!.id}`
+      if (pushed) history.replaceState({ tile: true }, "", url)
+      else history.pushState({ tile: true }, "", url)
+      setOpen(details, true)
+    } else if (pushed) {
+      history.back()
+    } else {
+      history.replaceState(null, "", location.pathname + location.search)
+      setOpen(details, false)
+    }
+  }
+
+  addEventListener("popstate", () => {
+    const target = detailsFor(location.hash.slice(1))
+    const open = document.querySelector<HTMLDetailsElement>(".tile__details[open]")
+    if (target && !target.open) setOpen(target, true)
+    else if (!target && open) setOpen(open, false)
+  })
+
+  const linked = detailsFor(location.hash.slice(1))
+  if (linked) {
+    linked.open = true
+    linked.parentElement!.scrollIntoView({ block: "nearest" })
+  }
+
+  document.addEventListener("click", (event) => {
+    const target = event.target as Element
+    const details = target.closest(".tile__summary")?.parentElement
+    if (details instanceof HTMLDetailsElement) {
+      event.preventDefault()
+      toggle(details, !details.open)
+      return
+    }
+    const open = document.querySelector<HTMLDetailsElement>(".tile__details[open]")
+    // A drag that selects text ends in a click on the common ancestor; keep the tile open for it.
+    if (open && !open.parentElement?.contains(target) && getSelection()?.isCollapsed !== false)
+      toggle(open, false)
+  })
+
+  addEventListener("keydown", (event: KeyboardEvent) => {
+    if (event.key !== "Escape") return
+    const open = document.querySelector<HTMLDetailsElement>(".tile__details[open]")
+    if (!open) return
+    toggle(open, false)
+    open.querySelector<HTMLElement>(".tile__summary")?.focus()
+  })
+</script>
+
+<style>
+  .tile {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: var(--radius-tile);
+    padding: 1.375rem;
+  }
+  .tile--tile {
+    background-color: var(--color-tile);
+  }
+  .tile--intro {
+    background-color: var(--color-intro);
+  }
+  .tile--clay {
+    background-color: var(--color-clay-tile);
+    color: #fff8f0;
+    --viz: #fff8f0;
+  }
+  .tile--deep {
+    background-color: var(--color-deep-tile);
+    color: #fff8f0;
+    --viz: #e9efe2;
+  }
+  .tile--sage {
+    background-color: var(--color-sage-tile);
+    color: #f3f6ef;
+    --viz: #f3f6ef;
+  }
+
+  .tile--expandable {
+    transition-property: box-shadow, translate;
+    transition-duration: 250ms;
+    transition-timing-function: var(--ease-default);
+    &:not(:has(> .tile__details[open])):hover {
+      translate: 0 -0.1875rem;
+      box-shadow: var(--lift);
+    }
+    &:has(> .tile__details[open]) {
+      box-shadow: var(--lift);
+      @media (width >= 561px) {
+        grid-column: span 2 / span 2;
+        grid-row: span 2 / span 2;
+      }
+    }
+  }
+  .tile--wide:has(> .tile__details[open]) {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+
+  .tile__summary {
+    display: block;
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+    &::-webkit-details-marker {
+      display: none;
+    }
+    &:focus-visible {
+      outline: none;
+    }
+    /* A closed tile opens from a click anywhere on it. */
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+    .tile__details[open] > &::after {
+      display: none;
+    }
+  }
+
+  .tile__toggle {
+    position: absolute;
+    top: 0.875rem;
+    right: 0.875rem;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 2.125rem;
+    height: 2.125rem;
+    border-radius: 9999px;
+    font-size: 16px;
+    background-color: color-mix(in oklab, var(--color-ink) 6%, transparent);
+    transition-property: rotate, background-color;
+    transition-duration: 300ms;
+    transition-timing-function: var(--ease-default);
+    &:hover {
+      background-color: color-mix(in oklab, var(--color-ink) 12%, transparent);
+    }
+    .tile__details--on-color & {
+      background-color: rgb(255 255 255 / 0.16);
+    }
+    .tile__details--on-color &:hover {
+      background-color: rgb(255 255 255 / 0.24);
+    }
+    .tile__summary:focus-visible & {
+      outline: 2px solid var(--color-sage);
+      outline-offset: 2px;
+    }
+    .tile__details[open] & {
+      rotate: 45deg;
+    }
+  }
+
+  .tile__more {
+    margin-top: 1.375rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid color-mix(in oklab, var(--color-ink) 10%, transparent);
+    animation: rise 0.45s 0.1s both;
+    .tile__details--on-color & {
+      border-top-color: rgb(255 255 255 / 0.15);
+    }
+  }
+</style>

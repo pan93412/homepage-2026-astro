@@ -7,7 +7,9 @@ export default {
   ui: {
     skip: "跳至主要內容",
     language: "English",
-    theme: "切換深色模式",
+    theme: "主題",
+    avatars: "看看我的其他頭貼",
+    themes: { system: "跟隨系統", light: "淺色", dark: "深色" },
     now: "現在",
     ossHeading: "Zeabur Open Source 的開源專案",
     zeaburHeading: (count) => `在 Zeabur 做過的 ${count} 件事`,

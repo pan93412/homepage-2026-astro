@@ -5,7 +5,11 @@ export interface Content {
   ui: {
     skip: string
     language: string
+    /** Name of the theme switch, and its three choices. */
     theme: string
+    themes: { system: string; light: string; dark: string }
+    /** Screen-reader name of the toggle that spreads out the avatars. */
+    avatars: string
     now: string
     ossHeading: string
     zeaburHeading: (count: number) => string

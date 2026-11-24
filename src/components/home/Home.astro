@@ -365,7 +365,7 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
         </table>
       </Tile>
 
-      <Tile surface="sage">
+      <Tile surface="sage" class="contact">
         <BentoViz kind="orbit" ui={t.ui} />
         <h2 class="contact__heading">{t.ui.contact}</h2>
         <ul class="contact__links">
@@ -1103,6 +1103,16 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
   }
 
   /* Contact */
+  .contact {
+    /* With two columns it is alone on its row, unless an open stat or project tile, now two columns
+       wide, leaves an odd one for it to sit beside. */
+    @media (561px <= width < 901px) {
+      grid-column: 1 / -1;
+      :global(.bento:has(> :is(.stat, .project) > .tile__details[open])) & {
+        grid-column: auto;
+      }
+    }
+  }
   .contact__heading {
     margin-bottom: 0.875rem;
     font-family: "Instrument Serif", "Noto Sans TC", serif;

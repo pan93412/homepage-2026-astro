@@ -21,6 +21,7 @@ export default {
     l10nNote: "Git、GNOME、KDE 正體中文翻譯，維護 SLAT 的 Weblate",
     l10n: "開源翻譯與社群",
     skills: "擅長",
+    projects: "專案",
     projectLink: "GitHub 專案",
     path: "足跡",
     contact: "來跟我交朋友！",

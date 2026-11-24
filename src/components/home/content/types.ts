@@ -23,6 +23,8 @@ export interface Content {
     l10nNote: string
     l10n: string
     skills: string
+    /** Heading above the projects, shown only in print. */
+    projects: string
     projectLink: string
     path: string
     contact: string

@@ -132,6 +132,26 @@ const onColor = surface !== "tile" && surface !== "intro"
     toggle(open, false)
     open.querySelector<HTMLElement>(".tile__summary")?.focus()
   })
+
+  // Print shows closed details through ::details-content. Without it, open every tile while printing;
+  // the name that keeps one tile open would close the others, so it comes off until after.
+  if (!CSS.supports("selector(::details-content)")) {
+    const opened: HTMLDetailsElement[] = []
+    addEventListener("beforeprint", () => {
+      for (const details of document.querySelectorAll<HTMLDetailsElement>(".tile__details")) {
+        if (details.open) continue
+        details.removeAttribute("name")
+        details.open = true
+        opened.push(details)
+      }
+    })
+    addEventListener("afterprint", () => {
+      for (const details of opened.splice(0)) {
+        details.open = false
+        details.setAttribute("name", "tile")
+      }
+    })
+  }
 </script>
 
 <style>
@@ -248,6 +268,34 @@ const onColor = surface !== "tile" && surface !== "intro"
     animation: rise 0.45s 0.1s both;
     .tile__details--on-color & {
       border-top-color: rgb(255 255 255 / 0.15);
+    }
+  }
+
+  /* Print: every tile is a plain section with its details shown, closed or not. */
+  @media print {
+    .tile {
+      overflow: visible;
+      isolation: auto;
+      border-radius: 0;
+      padding: 0;
+      background: none;
+      color: inherit;
+    }
+    .tile--expandable {
+      box-shadow: none !important;
+      translate: none !important;
+    }
+    .tile__summary {
+      display: none;
+    }
+    .tile__details::details-content {
+      content-visibility: visible;
+    }
+    .tile__more {
+      margin-top: 0.75rem;
+      padding-top: 0;
+      border-top: 0;
+      animation: none;
     }
   }
 </style>

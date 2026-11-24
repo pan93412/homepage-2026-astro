@@ -37,14 +37,14 @@ const extraAvatars = avatars.filter((a) =>
 )
 
 // Hover spreads the avatars into a row with a 12px gap.
-/** Beside the open Now tile the intro tile is tall: the avatars sit in a 2×2 grid, in these cells. */
+/** When the intro tile has room, the avatars sit in a 2×2 grid, in these cells. */
 const gridSlots = [
   [1, 0],
   [0, 1],
   [1, 1],
 ]
 const avatarGrid =
-  "lg:in-[main:has([aria-controls=bt-now-more][aria-expanded=true])]:translate-x-[calc(var(--gx)*100px)]! lg:in-[main:has([aria-controls=bt-now-more][aria-expanded=true])]:translate-y-[calc(var(--gy)*100px)]! lg:in-[main:has([aria-controls=bt-now-more][aria-expanded=true])]:rotate-0! lg:in-[main:has([aria-controls=bt-now-more][aria-expanded=true])]:scale-100!"
+  "roomy:translate-x-[calc(var(--gx)*100px)]! roomy:translate-y-[calc(var(--gy)*100px)]! roomy:rotate-0! roomy:scale-100!"
 
 /** Every non-ASCII character the pages can show, so Google Fonts serves only those CJK glyphs. */
 const cjkText = [
@@ -81,7 +81,6 @@ const pill = "rounded-full px-1.75 py-1 text-[11px] leading-none text-mute not-i
     <meta name="theme-color" content="#121411" media="(prefers-color-scheme: dark)" />
     <title>{name}</title>
     <link rel="icon" href="/favicon.ico" sizes="any" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="canonical" href={canonical} />
     <link rel="alternate" hreflang="en" href={new URL(getRelativeLocaleUrl("en"), Astro.site)} />
     <link rel="alternate" hreflang="zh-TW" href={new URL(getRelativeLocaleUrl("zh"), Astro.site)} />
@@ -149,31 +148,33 @@ const pill = "rounded-full px-1.75 py-1 text-[11px] leading-none text-mute not-i
             <Icon name="ph:sun" class:list="hidden dark:block" />
           </button>
         </nav>
-        <div
-          class="group/avatars relative mb-auto size-22 rounded-full outline-offset-6"
-          tabindex={extraAvatars.length ? 0 : undefined}
-        >
-          {extraAvatars.map((a, i) => (
+        <div class="min-h-22 flex-1 [container:avatars/size]">
+          <div
+            class="group/avatars relative size-22 rounded-full outline-offset-6"
+            tabindex={extraAvatars.length ? 0 : undefined}
+          >
+            {extraAvatars.map((a, i) => (
+              <img
+                class:list={[
+                  "absolute inset-0 size-22 scale-90 rounded-full object-cover transition-[translate,rotate,scale] duration-350 ease-fan motion-reduce:transition-none",
+                  "group-hover/avatars:scale-100 group-focus-visible/avatars:scale-100 group-hover/avatars:translate-x-(--fan) group-hover/avatars:rotate-[calc(var(--n)*4deg)] group-focus-visible/avatars:translate-x-(--fan) group-focus-visible/avatars:rotate-[calc(var(--n)*4deg)]",
+                  avatarGrid,
+                ]}
+                src={a.src}
+                alt={t.avatarAlts[a.alt]}
+                width="88"
+                height="88"
+                style={`--n:${extraAvatars.length - i};--fan:calc(${extraAvatars.length - i}*100px);--gx:${gridSlots[extraAvatars.length - i - 1][0]};--gy:${gridSlots[extraAvatars.length - i - 1][1]}`}
+              />
+            ))}
             <img
-              class:list={[
-                "absolute inset-0 size-22 scale-90 rounded-full object-cover transition-[translate,rotate,scale] duration-350 ease-fan motion-reduce:transition-none",
-                "group-hover/avatars:scale-100 group-focus-visible/avatars:scale-100 group-hover/avatars:translate-x-(--fan) group-hover/avatars:rotate-[calc(var(--n)*4deg)] group-focus-visible/avatars:translate-x-(--fan) group-focus-visible/avatars:rotate-[calc(var(--n)*4deg)]",
-                avatarGrid,
-              ]}
-              src={a.src}
-              alt={t.avatarAlts[a.alt]}
+              class="absolute inset-0 size-22 rounded-full object-cover"
+              src="/avatar.avif"
+              alt={name}
               width="88"
               height="88"
-              style={`--n:${extraAvatars.length - i};--fan:calc(${extraAvatars.length - i}*100px);--gx:${gridSlots[extraAvatars.length - i - 1][0]};--gy:${gridSlots[extraAvatars.length - i - 1][1]}`}
             />
-          ))}
-          <img
-            class="absolute inset-0 size-22 rounded-full object-cover"
-            src="/avatar.avif"
-            alt={name}
-            width="88"
-            height="88"
-          />
+          </div>
         </div>
         <h1
           class="mt-6 mb-2 font-display text-[clamp(40px,5vw,64px)] leading-none font-normal"
@@ -377,7 +378,7 @@ const pill = "rounded-full px-1.75 py-1 text-[11px] leading-none text-mute not-i
       <Tile
         id="bt-path"
         label={t.ui.expand(t.ui.path)}
-        class="sm:col-span-full lg:col-span-3"
+        class="pb-14 data-open:pb-5.5 sm:col-span-full lg:col-span-3"
         open="data-open:col-span-full lg:data-open:col-span-full"
       >
         <BentoViz kind="route" ui={t.ui} class="group-data-open/tile:hidden" />

@@ -30,7 +30,7 @@ export default {
     expand: (name) => `展開「${name}」`,
   },
   role: "平台工程師，也做開源與翻譯",
-  lead: "在 Zeabur 開發雲端平台與開源工具，目前在高科大念碩士班。課餘做設計和翻譯，也常在研討會當志工。",
+  lead: "我在 Zeabur 當平台工程師，做建置工具和雲端基礎設施，現在也在高科大念碩士班。課餘翻譯開源軟體、在研討會當志工，也做設計。",
   avatarAlts: { sitcon: "在 SITCON 2026 演講", ferris: "手繪的 Ferris 螃蟹" },
   statLabels: {
     pullRequests: "合併的 PR",
@@ -49,7 +49,7 @@ export default {
       title: "Zeabur",
       role: "平台工程師",
       since: "2023 年起",
-      text: "從實習生轉為平台工程師，負責建置流程、OCI Registry、可觀測性、GitOps 與多雲叢集。",
+      text: "從實習生做到平台工程師，負責建置流程、OCI Registry、可觀測性、GitOps 和多雲叢集。",
     },
     {
       title: "國立高雄科技大學",
@@ -97,7 +97,7 @@ export default {
       "自建 OCI Registry",
       "檔案管理 API",
       "OpenTelemetry 追蹤",
-      "Agent 驅動建置",
+      "用 Agent 建置（zbplan）",
       "MCP 部署工具",
       "TCP 網路與 ingress",
       "資料卷遷移與備份",
@@ -134,7 +134,7 @@ export default {
       label: "身分與資安",
       tags: ["OIDC", "Passkey", "零信任"],
       detail:
-        "OAuth 2.0、OpenID Connect 與 Passkey（WebAuthn）；開發 Zeabur Identity，也用 OAuth scope 重新設計 API 授權。Zeabur 遭受攻擊時參與藍隊防禦，導入 AWS Secrets Manager 管理機密；也導入 Tailscale、設定 ACL，協助建立零信任存取。",
+        "OAuth 2.0、OpenID Connect 和 Passkey（WebAuthn）。我在開發 Zeabur Identity，也用 OAuth scope 重新設計了 Zeabur 的 API 授權。Zeabur 被攻擊時我在藍隊；另外導入了 AWS Secrets Manager 管機密，也架了 Tailscale、設好 ACL，建立零信任存取。",
     },
     {
       label: "基礎設施",
@@ -156,7 +156,7 @@ export default {
     {
       label: "LLM",
       tags: ["Agent", "Vibe Coding"],
-      detail: "在 Builder 裡接上 AI Agent 讀專案、修建置；日常寫程式也大量用 Agent。",
+      detail: "Builder 裡有個 AI Agent 會讀專案、修建置；日常寫程式也大量用 Agent。",
     },
     {
       label: "資料",
@@ -167,45 +167,45 @@ export default {
       label: "Apple",
       tags: ["SwiftUI", "公證", "Xcode Cloud"],
       detail:
-        "用 Swift 寫 macOS 和 iOS App，例如 String Catalog 合併工具；熟悉 Xcode Cloud，也在 GitHub Actions 導入公證（notarization）流程。",
+        "用 Swift 寫 macOS 和 iOS App，例如 String Catalog 合併工具。熟悉 Xcode Cloud，也在 GitHub Actions 上做 App 公證（notarization）。",
     },
     {
       label: "設計",
       tags: ["Figma", "Adobe"],
-      detail: "Figma 做 UI mockup 與 wireframe，也用 Adobe 套件。",
+      detail: "用 Figma 畫 UI mockup 和 wireframe，也會用 Photoshop、Illustrator、Premiere Pro。",
     },
     {
       label: "在地化",
       tags: ["Git", "GNOME", "KDE"],
-      detail: "l10n-tw 成員，翻譯 Git、GNOME、KDE，維護 Weblate。",
+      detail: "l10n-tw 成員，翻譯 Git、GNOME、KDE，維護 SLAT 的 Weblate。",
     },
   ],
   projects: {
     Zeatend: {
       text: "透過 SSH 把一台 Linux 主機裝成 Kubernetes 叢集，支援 K3s、RKE2 與 KubeSolo。",
       detail: [
-        "zeatend apply 一個指令裝好叢集，承襲 k3sup 的做法，另附終端介面。",
+        "zeatend apply 一個指令就裝好叢集，做法跟 k3sup 差不多，也有終端介面。",
         "安裝前先檢查主機：記憶體、磁碟、時鐘同步、swap，以及舊安裝留下的檔案。",
-        "新主機裝 Zeabur OSS 的第一步。",
+        "在新主機上裝 Zeabur OSS 之前，先跑這個。",
       ],
     },
     Zeabur: {
-      text: "在自己的主機上部署，用法和 Zeabur 一樣：從 Git、Docker Compose 或範本直接上線。",
+      text: "在自己的主機上，從 Git、Docker Compose 或範本部署服務。",
       detail: [
-        "專案、服務、網域、環境變數、日誌與回滾，用法都和 Zeabur 相同。",
-        "跑在 Kubernetes 上，狀態存在標準 Kubernetes 物件裡，不需額外資料庫。",
-        "套用變更前先預覽欄位差異；主機與方案由你自己選。",
+        "專案、服務、網域、環境變數、日誌和回滾，用起來都跟 Zeabur 一樣。",
+        "跑在 Kubernetes 上，狀態就存在標準的 Kubernetes 物件裡，不用另外架資料庫。",
+        "套用前會先列出每個欄位改了什麼。主機和方案你自己選。",
       ],
     },
     Builder: {
       scene: ["讀專案", "寫出 Dockerfile", "建置失敗，讀日誌", "再建置，成功"],
-      text: "推上 GitHub 就建置成映像檔；整合 zbplan，讓 AI Agent 讀專案後挑出合適的 Dockerfile。",
+      text: "程式碼推上 GitHub，Builder 就建出可以直接部署的映像檔。",
       detail: [
-        "整合 zbplan：AI Agent 分析專案、挑出最適合的 Dockerfile，建置失敗時，Agent 會讀日誌再試一次。",
-        "用 Railpack 辨識 Node.js、Python、Go、PHP、Ruby、Java、Rust 等語言；有 Dockerfile 就直接用。",
-        "分支一更新就重新建置，搭配 Keel 自動換到新版本。",
-        "建置用的密鑰以 secret 傳入，不會留在映像檔裡。",
-        "也能單獨當 Kubernetes operator 用，把映像檔 digest 交給你的部署工具。",
+        "zbplan 的 AI Agent 會讀專案、挑 Dockerfile；建置失敗時，它會讀日誌再試一次。",
+        "Railpack 認得 Node.js、Python、Go、PHP、Ruby、Java、Rust 等語言；專案裡有 Dockerfile 就直接用。",
+        "分支一更新就重新建置，Keel 再把服務換成新映像檔。",
+        "建置用的機密以 secret 傳入，不會留在映像檔裡。",
+        "也可以單獨當 Kubernetes operator 用，把映像檔 digest 交給你自己的部署工具。",
       ],
     },
     "YOLO-RS": {
@@ -214,7 +214,7 @@ export default {
       detail: [
         "透過 ONNX Runtime 推論，可用 CPU、CoreML 或 CUDA。",
         "M3 Max 上用 CoreML，YOLO11x 一張圖約 45 ms。",
-        "CI 讓每個模型實際偵測同一張測試圖，確認找到的人和物件一致。",
+        "CI 會讓每個模型都跑同一張測試圖，檢查找到的人和物件是不是一樣。",
       ],
     },
   },
@@ -231,7 +231,7 @@ export default {
     "以 l10n-tw 名義翻譯 Git、GNOME、KDE。",
     "維護 SLAT 的 Weblate 翻譯平台。",
     "Telegram 在地化社群的版主與翻譯者。",
-    "COSCUP 2026 分享 Git 繁中翻譯流程治理。",
+    "在 COSCUP 2026 分享 Git 正體中文翻譯的流程治理。",
   ],
   experiences: [
     { when: "現在", title: "Zeabur Open Source", role: "開發 Lead" },

@@ -31,7 +31,7 @@ export default {
     expand: (name) => `Show more: ${name}`,
   },
   role: "Platform engineer and open-source translator",
-  lead: "I’m a platform engineer at Zeabur, working on build tooling and cloud infrastructure. I’m also a master’s student at NKUST, and I design, translate, and volunteer at tech conferences.",
+  lead: "I’m a platform engineer at Zeabur, working on build tooling and cloud infrastructure. I’m also a master’s student at NKUST. Outside work I translate open-source software and volunteer at tech conferences. I also do some design.",
   avatarAlts: { sitcon: "Speaking at SITCON 2026", ferris: "A hand-drawn Ferris the crab" },
   statLabels: {
     pullRequests: "merged PRs",
@@ -95,7 +95,7 @@ export default {
     zeabur: [
       "zbpack packaging system",
       "Service specification",
-      "Own OCI registry",
+      "In-house OCI registry",
       "File management API",
       "OpenTelemetry tracing",
       "Agent-driven builds (zbplan)",
@@ -136,7 +136,7 @@ export default {
       label: "Security",
       tags: ["OIDC", "Passkey", "Zero trust"],
       detail:
-        "OAuth 2.0, OIDC and passkeys. I build Zeabur Identity and moved API authorization to scoped tokens. When Zeabur was attacked, I was on the blue team. I also rolled out AWS Secrets Manager, and Tailscale with ACLs for zero-trust access.",
+        "OAuth 2.0, OIDC and passkeys. I build Zeabur Identity, and moved the Zeabur API to scoped tokens. When Zeabur was attacked, I was on the blue team. I also set up AWS Secrets Manager, and Tailscale with ACLs for zero-trust access.",
     },
     {
       label: "Infrastructure",
@@ -159,7 +159,7 @@ export default {
       label: "LLM",
       tags: ["Agent", "Vibe Coding"],
       detail:
-        "Builder uses an AI agent to read projects and fix failed builds. I write most of my code with agents.",
+        "Builder has an AI agent that reads projects and fixes failed builds. I write most of my code with agents.",
     },
     {
       label: "Data",
@@ -187,9 +187,9 @@ export default {
     Zeatend: {
       text: "Turn one Linux server into a Kubernetes cluster with K3s, RKE2 or KubeSolo.",
       detail: [
-        "One command, zeatend apply, sets up the cluster, like k3sup. Comes with a terminal UI.",
+        "zeatend apply sets up the whole cluster in one command, much like k3sup. It also has a terminal UI.",
         "Checks the host first: memory, disk, clock sync, swap and leftovers from earlier installs.",
-        "The first step to running Zeabur on a new server.",
+        "On a new server, run this before installing Zeabur.",
       ],
     },
     Zeabur: {
@@ -197,7 +197,7 @@ export default {
       detail: [
         "Projects, services, domains, variables, logs and rollbacks work just like on Zeabur.",
         "Runs on Kubernetes and keeps state in standard Kubernetes objects. No database.",
-        "Shows every field-level change before applying it. You pick the servers and the plan.",
+        "Before anything is applied, you see the change field by field. You choose the servers and the plan.",
       ],
     },
     Builder: {
@@ -207,13 +207,13 @@ export default {
         "Build fails; reads the log",
         "Builds again",
       ],
-      text: "Push your code to GitHub and get an image that’s ready to go live.",
+      text: "Push to GitHub and Builder turns your code into an image ready to deploy.",
       detail: [
-        "zbplan’s AI agent reads the project and picks a Dockerfile. If a build fails, it reads the log and tries again.",
+        "zbplan’s AI agent reads the project and picks a Dockerfile. When a build fails, it reads the log and tries again.",
         "Railpack detects Node.js, Python, Go, PHP, Ruby, Java, Rust and more. An existing Dockerfile is used as is.",
-        "Rebuilds on every branch update, and Keel rolls out the new image.",
-        "Build secrets go in as secrets and never end up in the image.",
-        "Also works on its own as a Kubernetes operator that hands image digests to your deploy tool.",
+        "Rebuilds whenever a branch is updated, and Keel rolls out the new image.",
+        "Build secrets are mounted only during the build, so they never end up in the image.",
+        "Can also run on its own as a Kubernetes operator that passes image digests to your deploy tool.",
       ],
     },
     "YOLO-RS": {

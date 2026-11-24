@@ -38,9 +38,14 @@ const withUtm = (href: string, content: string, medium = "referral") => {
   return url.href
 }
 /** The link as printed after its text: host and path, without the scheme, "www." or the query. */
+/** The address printed after a link: no scheme, no www, no tracking parameters. */
 const printUrl = (href: string) => {
   const url = new URL(href)
-  return `${url.hostname.replace(/^www\./, "")}${url.pathname.replace(/\/$/, "")}`
+  const query = new URLSearchParams(
+    [...url.searchParams].filter(([key]) => !key.startsWith("utm_")),
+  ).toString()
+  const path = query ? `${url.pathname}?${query}` : url.pathname.replace(/\/$/, "")
+  return `${url.hostname.replace(/^www\./, "")}${path}`
 }
 const extraAvatars = avatars.filter((a) =>
   existsSync(new URL(`../../../public${a.src}`, import.meta.url)),
@@ -1220,17 +1225,17 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
       display: none !important;
     }
 
+    /* Chrome drops grid items at some page breaks, so print lays the tiles out as wrapping flex lines in source order. */
     .bento {
+      display: flex;
+      flex-wrap: wrap;
       max-width: none;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      grid-auto-rows: auto;
       gap: 7mm 10mm;
       > :global(.tile) {
-        grid-column: 1 / -1 !important;
-        grid-row: auto !important;
+        flex: 1 1 100%;
       }
       > :global(.project) {
-        grid-column: auto !important;
+        flex-basis: calc(50% - 5mm);
         break-inside: avoid;
       }
     }
@@ -1258,11 +1263,8 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
     }
     .projects-heading {
       display: flex;
-      grid-column: 1 / -1;
+      flex-basis: 100%;
       margin-bottom: -3mm;
-      /* Grid rows do not keep a heading with the next row, so the projects start a page. */
-      break-before: page;
-      break-after: auto;
     }
     .ticks {
       gap: 0.25rem;

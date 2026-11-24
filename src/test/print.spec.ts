@@ -53,13 +53,19 @@ for (const path of ["/", "/zh/"])
     expect(links.length).toBeGreaterThan(20)
     for (const { href, printed } of links) {
       const url = new URL(href)
-      const short = `${url.hostname.replace(/^www\./, "")}${url.pathname.replace(/\/$/, "")}`
-      expect(printed).toBe(`" ${short}"`)
+      expect(printed, href).not.toMatch(/https?:|utm_/)
+      expect(printed, href).toContain(url.hostname.replace(/^www\./, ""))
+      for (const [key, value] of url.searchParams)
+        if (!key.startsWith("utm_")) expect(printed, href).toContain(`${key}=${value}`)
     }
   })
 
-test("printed tiles leave out the room kept for their charts", async ({ page }) => {
-  await print(page)
+test("printed tiles leave out the room kept for their charts, even an open one", async ({
+  page,
+}) => {
+  await page.goto("/#bt-talks")
+  await expect(page.locator("#bt-talks > .tile__details")).toHaveAttribute("open")
+  await page.emulateMedia({ media: "print" })
   for (const tile of await page.locator(".intro, .stat, .project").all()) {
     const { paddingTop, minHeight } = await tile.evaluate((el) => getComputedStyle(el))
     expect(paddingTop, (await tile.getAttribute("id")) ?? "intro").toBe("0px")

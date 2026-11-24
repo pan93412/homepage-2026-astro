@@ -100,3 +100,43 @@ for (const path of ["/", "/zh/"]) {
     await expectFriendsHeaderAligned(page)
   })
 }
+
+test.describe("two columns at 700px", () => {
+  test.use({ viewport: { width: 700, height: 900 } })
+
+  const states = [
+    null,
+    "bt-now",
+    "bt-talks",
+    "bt-l10n",
+    "bt-skills",
+    "bt-zeatend",
+    "bt-yolors",
+    "bt-path",
+  ]
+  for (const id of states) {
+    test(`Contact leaves no empty half row ${id ? `while ${id} is open` : "with every tile closed"}`, async ({
+      page,
+    }) => {
+      await page.goto("/")
+      if (id) await open(page, id)
+      const bento = await stableBox(page.locator("main"))
+      const sage = await stableBox(contact(page))
+      const mates = await tiles(page).evaluateAll(
+        (all, c) =>
+          all.filter((t) => {
+            const r = t.getBoundingClientRect()
+            return (
+              !t.classList.contains("tile--sage") &&
+              r.top + scrollY < c.bottom - 1 &&
+              r.bottom + scrollY > c.y + 1
+            )
+          }).length,
+        sage,
+      )
+      if (mates === 0) expect(sage.width).toBeCloseTo(bento.width, 0)
+      else expect(sage.width).toBeLessThan(bento.width / 2 + 1)
+      await expectNoOverlap(page)
+    })
+  }
+})

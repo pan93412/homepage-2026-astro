@@ -224,3 +224,18 @@
     rotate: 360deg;
   }
 }
+
+/* Print: always light, ink on white paper, without the paper colour behind the tiles. */
+@page {
+  size: A4;
+  margin: 14mm 15mm;
+}
+@media print {
+  :root,
+  :root:has(#theme-dark:checked) {
+    color-scheme: light;
+  }
+  body {
+    background: none;
+  }
+}

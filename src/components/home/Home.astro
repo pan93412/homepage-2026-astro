@@ -37,14 +37,14 @@ const extraAvatars = avatars.filter((a) =>
 )
 
 // Hover spreads the avatars into a row with a 12px gap.
-/** Beside the open Now tile the intro tile is tall: the avatars sit in a 2×2 grid, in these cells. */
+/** When the intro tile has room, the avatars sit in a 2×2 grid, in these cells. */
 const gridSlots = [
   [1, 0],
   [0, 1],
   [1, 1],
 ]
 const avatarGrid =
-  "lg:in-[main:has([aria-controls=bt-now-more][aria-expanded=true])]:translate-x-[calc(var(--gx)*100px)]! lg:in-[main:has([aria-controls=bt-now-more][aria-expanded=true])]:translate-y-[calc(var(--gy)*100px)]! lg:in-[main:has([aria-controls=bt-now-more][aria-expanded=true])]:rotate-0! lg:in-[main:has([aria-controls=bt-now-more][aria-expanded=true])]:scale-100!"
+  "group-data-grid/avatars:translate-x-[calc(var(--gx)*100px)]! group-data-grid/avatars:translate-y-[calc(var(--gy)*100px)]! group-data-grid/avatars:rotate-0! group-data-grid/avatars:scale-100!"
 
 /** Every non-ASCII character the pages can show, so Google Fonts serves only those CJK glyphs. */
 const cjkText = [
@@ -151,6 +151,7 @@ const pill = "rounded-full px-1.75 py-1 text-[11px] leading-none text-mute not-i
         </nav>
         <div
           class="group/avatars relative mb-auto size-22 rounded-full outline-offset-6"
+          data-avatars
           tabindex={extraAvatars.length ? 0 : undefined}
         >
           {extraAvatars.map((a, i) => (
@@ -513,6 +514,19 @@ const pill = "rounded-full px-1.75 py-1 text-[11px] leading-none text-mute not-i
     toggle(open)
     open.querySelector<HTMLElement>(".toggle")?.focus()
   })
+</script>
+
+<script>
+  // The grid adds a second 100px row. Use it when the space above the name can hold it.
+  const avatars = document.querySelector<HTMLElement>("[data-avatars]")
+  const name = avatars?.nextElementSibling
+  if (avatars?.childElementCount && avatars.childElementCount > 1 && name) {
+    const fit = () => {
+      const room = name.getBoundingClientRect().top - avatars.getBoundingClientRect().bottom
+      avatars.toggleAttribute("data-grid", room >= 160)
+    }
+    new ResizeObserver(fit).observe(avatars.parentElement!)
+  }
 </script>
 
 <script>

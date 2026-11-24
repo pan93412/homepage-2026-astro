@@ -69,6 +69,10 @@
       --color-clay-tile: #9c4f31;
       --color-sage-tile: #3f5843;
       --color-deep-tile: #2b3028;
+      /* Ink is light here, so a shadow made from it would glow. */
+      --shadow-lift:
+        0 12px 32px -12px rgb(0 0 0 / 0.7),
+        0 0 0 1px color-mix(in oklab, var(--color-ink) 10%, transparent);
     }
   }
   body {

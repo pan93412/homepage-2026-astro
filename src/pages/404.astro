@@ -23,32 +23,61 @@ import "../styles/global.css"
     />
   </head>
   <body>
-    <main class="mx-auto max-w-3xl px-6 py-12 leading-relaxed">
-      <h1 class="mb-6 font-display text-6xl">404</h1>
-      <section class="mb-8" aria-labelledby="not-found-en" lang="en">
-        <h2 class="mb-2 text-xl font-bold" id="not-found-en">
+    <main class="not-found">
+      <h1 class="not-found__code">404</h1>
+      <section class="not-found__section" aria-labelledby="not-found-en" lang="en">
+        <h2 class="not-found__title" id="not-found-en">
           Page not found
         </h2>
-        <p class="mb-1.5">The page you requested could not be found.</p>
-        <a
-          class="text-sage underline underline-offset-2 hover:decoration-2"
-          href={getRelativeLocaleUrl("en")}
-        >
+        <p class="not-found__text">The page you requested could not be found.</p>
+        <a class="not-found__link" href={getRelativeLocaleUrl("en")}>
           Back to the English homepage
         </a>
       </section>
-      <section class="mb-8" aria-labelledby="not-found-zh" lang="zh-TW">
-        <h2 class="mb-2 text-xl font-bold" id="not-found-zh">
+      <section class="not-found__section" aria-labelledby="not-found-zh" lang="zh-TW">
+        <h2 class="not-found__title" id="not-found-zh">
           找不到頁面
         </h2>
-        <p class="mb-1.5">您要找的頁面不存在。</p>
-        <a
-          class="text-sage underline underline-offset-2 hover:decoration-2"
-          href={getRelativeLocaleUrl("zh")}
-        >
+        <p class="not-found__text">您要找的頁面不存在。</p>
+        <a class="not-found__link" href={getRelativeLocaleUrl("zh")}>
           回到繁體中文首頁
         </a>
       </section>
     </main>
   </body>
 </html>
+
+<style>
+  .not-found {
+    margin-inline: auto;
+    max-width: 48rem;
+    padding: 3rem 1.5rem;
+    line-height: 1.625;
+  }
+  .not-found__code {
+    margin-bottom: 1.5rem;
+    font-family: var(--font-display);
+    font-size: 3.75rem;
+    line-height: 1;
+  }
+  .not-found__section {
+    margin-bottom: 2rem;
+  }
+  .not-found__title {
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+    line-height: 1.4;
+    font-weight: 700;
+  }
+  .not-found__text {
+    margin-bottom: 0.375rem;
+  }
+  .not-found__link {
+    color: var(--color-sage);
+    text-decoration-line: underline;
+    text-underline-offset: 2px;
+    &:hover {
+      text-decoration-thickness: 2px;
+    }
+  }
+</style>

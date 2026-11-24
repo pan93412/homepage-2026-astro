@@ -1,39 +1,22 @@
-@import "tailwindcss";
+@layer reset, base;
 
-/* Dark when the visitor picked it, or when the system is dark and they did not pick light. */
-@custom-variant dark {
-  &:where([data-theme="dark"], [data-theme="dark"] *) {
-    @slot;
-  }
-  @media (prefers-color-scheme: dark) {
-    &:where(:root:not([data-theme="light"]), :root:not([data-theme="light"]) *) {
-      @slot;
-    }
-  }
-}
+/*
+ * The theme follows the system unless the visitor picks one in the theme switch.
+ * Colours use light-dark(), so each token is written once.
+ */
+:root {
+  color-scheme: light dark;
 
-/* The 2×2 avatar grid adds a 100px row. Use it when the avatar area above the name is this tall. */
-@custom-variant roomy {
-  @container avatars (min-height: 224px) {
-    @slot;
-  }
-}
-
-@theme {
-  --breakpoint-*: initial;
-  --breakpoint-sm: 561px;
-  --breakpoint-lg: 901px;
-
-  --color-paper: #ecebe4;
-  --color-tile: #fbfaf6;
-  --color-ink: #23271f;
-  --color-mute: #6c7166;
-  --color-sage: #5f7a63;
-  --color-clay: #c96f4a;
-  --color-intro: #dfe5d8;
-  --color-clay-tile: #c96f4a;
-  --color-sage-tile: #5f7a63;
-  --color-deep-tile: #23271f;
+  --color-paper: light-dark(#ecebe4, #121411);
+  --color-tile: light-dark(#fbfaf6, #1c1f1a);
+  --color-ink: light-dark(#23271f, #e6e8df);
+  --color-mute: light-dark(#6c7166, #9da394);
+  --color-sage: light-dark(#5f7a63, #93b096);
+  --color-clay: light-dark(#c96f4a, #e08c66);
+  --color-intro: light-dark(#dfe5d8, #232a22);
+  --color-clay-tile: light-dark(#c96f4a, #9c4f31);
+  --color-sage-tile: light-dark(#5f7a63, #3f5843);
+  --color-deep-tile: light-dark(#23271f, #2b3028);
   --color-chip: color-mix(in oklab, var(--color-sage) 12%, var(--color-tile));
 
   --font-sans: "Geist", "Noto Sans TC", sans-serif;
@@ -43,54 +26,123 @@
   --radius-tile: 22px;
   --radius-card: 14px;
   --ease-fan: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
 
-  --animate-rise: rise 0.45s 0.1s both;
-  --animate-blink: blink 1.2s infinite;
-  --animate-blink-node: blink 2.4s var(--d, 0s) infinite;
-  --animate-blink-ring: blink 4s var(--d) infinite;
-  --animate-dash: dash 6s linear infinite;
-  --animate-dash-slow: dash 30s linear infinite;
-  --animate-grow: grow 4s calc(var(--i) * 0.3s) ease-out infinite;
-  --animate-row-in: row-in 0.5s calc(var(--i) * 0.12s) ease-out both;
-  --animate-fill: fill 4s calc(var(--i) * 0.5s) ease-in-out infinite;
-  --animate-bar: bar 0.7s calc(var(--i) * 0.08s) ease-out both;
-  --animate-eq: eq 1.4s var(--d) ease-in-out infinite alternate;
-  --animate-orbit: orbit 14s linear infinite;
-  --animate-orbit-slow: orbit 22s linear infinite;
-  --animate-orbit-fast: orbit 9s linear infinite reverse;
+  /* Ink is light in dark mode, so the dark shadow is black, with a hairline to show the edge. */
+  --lift:
+    0 10px 30px -12px
+      light-dark(color-mix(in oklab, var(--color-ink) 25%, transparent), transparent),
+    0 12px 32px -12px light-dark(transparent, rgb(0 0 0 / 0.7)),
+    0 0 0 1px light-dark(transparent, color-mix(in oklab, var(--color-ink) 10%, transparent));
+}
+:root:has(#theme-light:checked) {
+  color-scheme: light;
+}
+:root:has(#theme-dark:checked) {
+  color-scheme: dark;
+}
+
+@layer reset {
+  *,
+  ::after,
+  ::before,
+  ::backdrop {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0 solid;
+  }
+  html {
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    tab-size: 4;
+    -webkit-tap-highlight-color: transparent;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+  a {
+    color: inherit;
+    text-decoration: inherit;
+  }
+  b,
+  strong {
+    font-weight: bolder;
+  }
+  small {
+    font-size: 80%;
+  }
+  table {
+    text-indent: 0;
+    border-color: inherit;
+    border-collapse: collapse;
+  }
+  ol,
+  ul,
+  menu {
+    list-style: none;
+  }
+  img,
+  svg,
+  video {
+    display: block;
+    vertical-align: middle;
+  }
+  img,
+  video {
+    max-width: 100%;
+    height: auto;
+  }
+  button,
+  input {
+    font: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    background-color: transparent;
+    border-radius: 0;
+  }
+  [hidden]:where(:not([hidden="until-found"])) {
+    display: none !important;
+  }
 }
 
 @layer base {
-  :root {
-    color-scheme: light;
-    /* Not in @theme: Tailwind copies theme shadows into each utility, so the dark value would never apply. */
-    --lift: 0 10px 30px -12px color-mix(in oklab, var(--color-ink) 25%, transparent);
-    @variant dark {
-      color-scheme: dark;
-      --color-paper: #121411;
-      --color-tile: #1c1f1a;
-      --color-ink: #e6e8df;
-      --color-mute: #9da394;
-      --color-sage: #93b096;
-      --color-clay: #e08c66;
-      --color-intro: #232a22;
-      --color-clay-tile: #9c4f31;
-      --color-sage-tile: #3f5843;
-      --color-deep-tile: #2b3028;
-      /* Ink is light here, so a shadow made from it would glow. */
-      --lift:
-        0 12px 32px -12px rgb(0 0 0 / 0.7),
-        0 0 0 1px color-mix(in oklab, var(--color-ink) 10%, transparent);
-    }
-  }
   body {
-    @apply bg-paper font-sans text-ink;
+    background-color: var(--color-paper);
+    font-family: var(--font-sans);
+    color: var(--color-ink);
   }
   /* astro-icon leaves the size to CSS. */
   svg[data-icon] {
     width: 1em;
     height: 1em;
     flex: none;
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation: none !important;
+    transition: none !important;
   }
 }
 
@@ -150,11 +202,11 @@
   10%,
   90%,
   100% {
-    background: var(--color-tile);
+    opacity: 0;
   }
   30%,
   70% {
-    background: var(--c);
+    opacity: 1;
   }
 }
 @keyframes bar {

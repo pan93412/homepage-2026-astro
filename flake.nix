@@ -37,6 +37,12 @@
               })
             ];
           };
+          # The end-to-end tests run on this Chromium; @playwright/test is pinned to the same version.
+          browsers = pkgs.playwright-driver.browsers.override {
+            withFirefox = false;
+            withWebkit = false;
+            withFfmpeg = false;
+          };
         in
         {
           default = pkgs.mkShell {
@@ -48,8 +54,12 @@
               shellcheck
               nixfmt
             ];
+            env = {
+              PLAYWRIGHT_BROWSERS_PATH = "${browsers}";
+              PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "true";
+            }
             # Native frontend dependencies need libstdc++ on non-NixOS Linux runners.
-            env = pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+            // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
               LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [ pkgs.stdenv.cc.cc.lib ];
             };
           };

@@ -398,9 +398,9 @@ const pill = "rounded-full px-1.75 py-1 text-[11px] leading-none text-mute not-i
         <table slot="more" class="w-full border-collapse text-[14px]">
           <tbody>
             {t.experiences.map((e) => (
-              <tr class="*:border-b *:border-ink/8 *:px-2.5 *:py-2.25 *:text-left">
-                <td class="w-[calc(8em+20px)] whitespace-nowrap text-sage">{e.when}</td>
-                <th class="font-medium">{e.title}</th>
+              <tr class="flex flex-wrap items-baseline gap-x-2 border-b border-ink/8 py-2.25 *:text-left sm:table-row sm:*:border-b sm:*:border-ink/8 sm:*:px-2.5 sm:*:py-2.25">
+                <td class="w-full whitespace-nowrap text-sage sm:w-[calc(8em+20px)]">{e.when}</td>
+                <th class="font-medium wrap-break-word">{e.title}</th>
                 <td class="text-mute">{e.role}</td>
               </tr>
             ))}

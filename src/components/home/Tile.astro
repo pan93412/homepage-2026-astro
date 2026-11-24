@@ -94,12 +94,19 @@ const onColor = surface !== "tile" && surface !== "intro"
   addEventListener("popstate", () => {
     const target = detailsFor(location.hash.slice(1))
     const open = document.querySelector<HTMLDetailsElement>(".tile__details[open]")
+    // A link to a tile's hash adds an entry without our state; mark it so the tile closes by going back.
+    if (target && history.state === null) history.replaceState({ tile: true }, "")
     if (target && !target.open) setOpen(target, true)
     else if (!target && open) setOpen(open, false)
   })
 
   const linked = detailsFor(location.hash.slice(1))
   if (linked) {
+    // Put an entry without the hash under the linked tile, so it is closed and switched like one opened here.
+    if (history.state?.tile !== true) {
+      history.replaceState(null, "", location.pathname + location.search)
+      history.pushState({ tile: true }, "", `#${linked.parentElement!.id}`)
+    }
     linked.open = true
     linked.parentElement!.scrollIntoView({ block: "nearest" })
   }

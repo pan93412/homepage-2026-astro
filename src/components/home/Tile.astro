@@ -1,0 +1,78 @@
+---
+// A bento tile. With an id it toggles open in place and shows the "more" slot.
+import { Icon } from "astro-icon/components"
+
+interface Props {
+  id?: string
+  /** Screen-reader text of the + button. */
+  label?: string
+  surface?: keyof typeof surfaces
+  /** Grid span while open. */
+  open?: string
+  class?: string
+  style?: string
+}
+
+const surfaces = {
+  tile: "bg-tile",
+  intro: "bg-intro",
+  clay: "bg-clay-tile text-[#fff8f0] [--viz:#fff8f0]",
+  deep: "bg-deep-tile text-[#fff8f0] [--viz:#e9efe2]",
+  sage: "bg-sage-tile text-[#f3f6ef] [--viz:#f3f6ef]",
+}
+const {
+  id,
+  label,
+  surface = "tile",
+  open = "sm:data-open:col-span-2 sm:data-open:row-span-2",
+  class: className,
+  style,
+} = Astro.props
+const onColor = surface !== "tile" && surface !== "intro"
+---
+
+<section
+  class:list={[
+    "group/tile relative isolate overflow-hidden rounded-tile p-5.5",
+    surfaces[surface],
+    id && [
+      "cursor-pointer transition-[box-shadow,translate] duration-250 motion-reduce:transition-none",
+      "not-data-open:hover:-translate-y-0.75 not-data-open:hover:shadow-lift",
+      "data-open:cursor-default data-open:ring-2 data-open:ring-sage",
+      open,
+    ],
+    className,
+  ]}
+  data-tile={id ? "" : undefined}
+  style={id ? `view-transition-name:${id};${style ?? ""}` : style}
+>
+  <slot />
+  {id && (
+    <>
+      <button
+        class:list={[
+          "toggle absolute top-3.5 right-3.5 z-2 grid size-8.5 cursor-pointer place-items-center rounded-full text-[16px]",
+          "transition-[rotate,background-color] duration-300 group-data-open/tile:rotate-45",
+          "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sage",
+          onColor ? "bg-white/16 hover:bg-white/24" : "bg-ink/6 hover:bg-ink/12",
+        ]}
+        type="button"
+        aria-expanded="false"
+        aria-controls={`${id}-more`}
+      >
+        <span class="sr-only">{label}</span>
+        <Icon name="ph:plus" />
+      </button>
+      <div
+        class:list={[
+          "more mt-5.5 animate-rise border-t pt-5 motion-reduce:animate-none",
+          onColor ? "border-white/15" : "border-ink/10",
+        ]}
+        id={`${id}-more`}
+        hidden
+      >
+        <slot name="more" />
+      </div>
+    </>
+  )}
+</section>

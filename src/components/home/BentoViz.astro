@@ -12,14 +12,11 @@ interface Props {
     | "cluster"
     | "wave"
     | "rings"
-    | "layers"
-    | "builds"
-    | "table"
-    | "slides"
     | "route"
     | "orbit"
+  class?: string
 }
-const { kind, ui } = Astro.props
+const { kind, ui, class: className } = Astro.props
 const waveBars = Array.from(
   { length: 28 },
   (_, i) => 0.25 + 0.75 * Math.abs(Math.sin(i * 1.7) * Math.cos(i * 0.6)),
@@ -30,8 +27,6 @@ const hex = (x: number, y: number, r: number) =>
     const a = (Math.PI / 3) * i + Math.PI / 6
     return `${(x + r * Math.cos(a)).toFixed(1)},${(y + r * Math.sin(a)).toFixed(1)}`
   }).join(" ")
-const tableRows = 6
-const tableCols = 4
 // yolo-rs README, "Performance": median ms on an M3 Max MacBook Pro.
 const timings = [
   { model: "YOLOv8x", coreml: 28, cpu: 374 },
@@ -39,19 +34,27 @@ const timings = [
   { model: "YOLO12x", coreml: 164, cpu: 373 },
   { model: "YOLO26x", coreml: 47, cpu: 345 },
 ]
+const stroke = "stroke-(--c) stroke-[1.2]"
+const grow = "origin-top-left transition-[scale] duration-300 sm:group-data-open/tile:scale-140"
 ---
 
-<div class={`viz viz-${kind}`} aria-hidden="true">
+<div
+  class:list={[
+    "pointer-events-none absolute inset-0 -z-1 text-(--viz)",
+    kind !== "rings" && "group-data-open/tile:bottom-auto group-data-open/tile:h-37.5",
+    "motion-reduce:**:animate-none!",
+    className,
+  ]}
+  aria-hidden="true"
+>
   {kind === "bootstrap" && (
-    <svg viewBox="0 0 220 110">
-      <g class="server">
-        <rect x="8" y="22" width="62" height="66" rx="6" />
-        <line x1="18" y1="40" x2="52" y2="40" />
-        <line x1="18" y1="55" x2="52" y2="55" />
-        <line x1="18" y1="70" x2="52" y2="70" />
-        <circle class="led" cx="60" cy="40" r="2.5" />
-      </g>
-      <path class="ssh" d="M78 55 H118" />
+    <svg class="absolute top-5.5 left-5.5 w-[calc(100%-96px)] max-w-65" viewBox="0 0 220 110">
+      <rect class:list={[stroke, "fill-(--c)/10"]} x="8" y="22" width="62" height="66" rx="6" />
+      {[40, 55, 70].map((y) => (
+        <line class:list={[stroke, "opacity-60"]} x1="18" y1={y} x2="52" y2={y} />
+      ))}
+      <circle class="animate-blink fill-(--c)" cx="60" cy="40" r="2.5" />
+      <path class:list={[stroke, "animate-dash [stroke-dasharray:4_4]"]} d="M78 55 H118" />
       {[
         [146, 30],
         [190, 30],
@@ -59,83 +62,115 @@ const timings = [
         [190, 80],
         [168, 55],
       ].map(([x, y], i) => (
-        <polygon class="hexnode" style={`--i:${i}`} points={hex(x, y, i === 4 ? 15 : 12)} />
+        <polygon
+          class:list={[stroke, "origin-center animate-grow fill-(--c)/18 [transform-box:fill-box]"]}
+          style={`--i:${i}`}
+          points={hex(x, y, i === 4 ? 15 : 12)}
+        />
       ))}
     </svg>
   )}
   {kind === "diff" && (
-    <div class="diff">
+    <div
+      class:list={[
+        grow,
+        "absolute top-5.5 right-16 left-5.5 grid gap-0.75 font-mono text-[11px] leading-[1.7]",
+      ]}
+    >
       {[
         { m: " ", k: "service", v: "web" },
         { m: "-", k: "image", v: "main-a1b2c3" },
         { m: "+", k: "image", v: "main-3e1a9c" },
         { m: "+", k: "domain", v: "app.example.com" },
       ].map((r, i) => (
-        <div class={`r ${r.m === "+" ? "add" : r.m === "-" ? "del" : ""}`} style={`--i:${i}`}>
-          <span class="m">{r.m}</span>
-          <span class="k">{r.k}</span>
-          <span class="v">{r.v}</span>
+        <div
+          class:list={[
+            "grid animate-row-in grid-cols-[14px_auto_1fr] gap-2 rounded-sm px-2",
+            r.m === "+" && "bg-sage/16 text-ink",
+            r.m === "-" && "bg-clay/16 text-mute line-through decoration-clay/60",
+            r.m === " " && "text-mute",
+          ]}
+          style={`--i:${i}`}
+        >
+          <span class:list={[r.m === "+" && "text-sage", r.m === "-" && "text-clay"]}>{r.m}</span>
+          <span class="text-(--c)">{r.k}</span>
+          <span class="truncate">{r.v}</span>
         </div>
       ))}
     </div>
   )}
   {kind === "pipeline" && (
-    <div class="pipe">
-      <div class="rail">
+    <div class:list={[grow, "absolute top-4.5 right-5.5 left-5.5"]}>
+      <div class="relative flex max-w-[min(240px,calc(100%-42px))] items-center justify-between before:absolute before:top-1/2 before:right-5 before:left-1.75 before:h-0.5 before:-translate-y-1/2 before:bg-(--c)/30">
         {[0, 1, 2, 3].map((i) => (
-          <span class="commit" style={`--i:${i}`}></span>
+          <span
+            class="relative size-3.5 animate-fill rounded-full border-2 border-(--c) bg-tile"
+            style={`--i:${i}`}
+          />
         ))}
-        <span class="image">
+        <span class="relative grid size-8.5 place-items-center rounded-[9px] bg-(--c) text-[19px] text-tile">
           <Icon name="ph:package-duotone" />
         </span>
       </div>
-      <p class="langs">
-        <b>AI Agent</b> {ui.pipeline}
+      <p class="mt-3 truncate text-[12px] leading-normal text-[color-mix(in_oklab,var(--c)_75%,var(--color-tile))]">
+        <b class="font-semibold text-(--c)">AI Agent</b> {ui.pipeline}
       </p>
     </div>
   )}
   {kind === "detect" && (
-    <div class="bench">
-      <p class="legend">
-        M3 Max<span class="k coreml">CoreML</span>
-        <span class="k cpu">CPU</span>
+    <div
+      class:list={[
+        grow,
+        "absolute top-5 right-16 left-5.5 grid gap-1.25 font-mono text-[11px] leading-[1.4] text-mute",
+      ]}
+    >
+      <p class="mb-0.5 flex gap-3">
+        M3 Max
+        <span class="inline-flex items-center gap-1.25 before:size-2 before:rounded-[2px] before:bg-(--c)">
+          CoreML
+        </span>
+        <span class="inline-flex items-center gap-1.25 before:size-2 before:rounded-[2px] before:bg-(--c)/22">
+          CPU
+        </span>
       </p>
       {timings.map((t, i) => (
-        <div class="row" style={`--i:${i};--coreml:${t.coreml / 400};--cpu:${t.cpu / 400}`}>
-          <span class="name">{t.model}</span>
-          <span class="track">
-            <span class="bar cpu"></span>
-            <span class="bar coreml"></span>
+        <div
+          class="grid grid-cols-[7ch_1fr_6ch] items-center gap-2"
+          style={`--i:${i};--coreml:${t.coreml / 400};--cpu:${t.cpu / 400}`}
+        >
+          <span class="text-ink">{t.model}</span>
+          <span class="relative h-2">
+            <span class="absolute inset-y-0 left-0 w-[calc(var(--cpu)*100%)] origin-left animate-bar rounded-[2px] bg-(--c)/22" />
+            <span class="absolute inset-y-0 left-0 w-[calc(var(--coreml)*100%)] origin-left animate-bar rounded-[2px] bg-(--c)" />
           </span>
-          <span class="ms">{t.coreml} ms</span>
+          <span class="text-right text-(--c)">{t.coreml} ms</span>
         </div>
       ))}
     </div>
   )}
   {kind === "cluster" && (
-    <svg viewBox="0 0 240 160">
-      <g class="edges">
-        <path d="M60 40 L120 80 L190 45 M120 80 L80 130 M120 80 L175 125 M190 45 L175 125 M60 40 L80 130" />
-      </g>
+    <svg class="absolute -right-2.5 -bottom-2.5 w-[62%] opacity-55" viewBox="0 0 240 160">
+      <path
+        class="fill-none stroke-current stroke-1 [stroke-dasharray:3_4]"
+        d="M60 40 L120 80 L190 45 M120 80 L80 130 M120 80 L175 125 M190 45 L175 125 M60 40 L80 130"
+      />
       {[
         [60, 40],
         [190, 45],
         [80, 130],
         [175, 125],
       ].map(([x, y], i) => (
-        <g class="node" style={`--d:${i * 0.6}s`}>
-          <polygon points={hex(x, y, 16)} />
-          <circle cx={x} cy={y} r="4" />
+        <g style={`--d:${i * 0.6}s`}>
+          <polygon class="fill-current/10 stroke-current stroke-[1.2]" points={hex(x, y, 16)} />
+          <circle class="animate-blink-node fill-current" cx={x} cy={y} r="4" />
         </g>
       ))}
-      <g class="node core">
-        <polygon points={hex(120, 80, 22)} />
-        <circle cx="120" cy="80" r="6" />
-      </g>
-      <circle class="packet" r="3">
+      <polygon class="fill-current/22 stroke-current stroke-[1.2]" points={hex(120, 80, 22)} />
+      <circle class="animate-blink-node fill-current" cx="120" cy="80" r="6" />
+      <circle class="fill-clay motion-reduce:hidden" r="3">
         <animateMotion dur="3.2s" repeatCount="indefinite" path="M60 40 L120 80 L175 125" />
       </circle>
-      <circle class="packet" r="3">
+      <circle class="fill-clay motion-reduce:hidden" r="3">
         <animateMotion
           dur="2.6s"
           begin="1s"
@@ -146,608 +181,69 @@ const timings = [
     </svg>
   )}
   {kind === "wave" && (
-    <div class="bars">
+    <div class="absolute top-5.5 right-5.5 left-5.5 flex h-[44%] items-end gap-0.75 opacity-40">
       {waveBars.map((h, i) => (
-        <span style={`--h:${h};--d:${(i % 7) * 0.12}s`}></span>
+        <span
+          class="h-[calc(var(--h)*100%)] flex-1 origin-bottom animate-eq rounded-[2px] bg-current"
+          style={`--h:${h};--d:${(i % 7) * 0.12}s`}
+        />
       ))}
     </div>
   )}
   {kind === "rings" && (
-    <svg viewBox="0 0 240 240">
+    <svg class="absolute top-0 right-0 size-[max(240px,min(100%,360px))]" viewBox="0 0 240 240">
       {rings.map((r, i) => (
-        <circle cx="200" cy="40" r={r} style={`--d:${i * 0.15}s`} />
+        <circle
+          class="animate-blink-ring fill-none stroke-current stroke-1 opacity-18"
+          cx="200"
+          cy="40"
+          r={r}
+          style={`--d:${i * 0.15}s`}
+        />
       ))}
       <defs>
         <path id="ring-path" d="M200 40 m-96 0 a96 96 0 1 0 192 0 a96 96 0 1 0 -192 0" />
       </defs>
-      <text>
+      <text class="fill-current text-[9px] tracking-[0.12em] opacity-50">
         <textPath href="#ring-path">{`Git · GNOME · KDE · Telegram · Weblate · ${ui.l10nRing} · `}</textPath>
       </text>
     </svg>
   )}
-  {kind === "layers" && (
-    <svg viewBox="0 0 200 160">
-      {[0, 1, 2, 3].map((i) => (
-        <g class="layer" style={`--i:${i}`}>
-          <path d={`M100 ${110 - i * 22} l60 -18 l-60 -18 l-60 18 z`} />
-        </g>
-      ))}
-      <path class="bucket" d="M52 128 h96 l-10 26 h-76 z" />
-    </svg>
-  )}
-  {kind === "builds" && (
-    <div class="log">
-      {[
-        { s: "fail", w: 0.55, t: "#1" },
-        { s: "fail", w: 0.8, t: "#2" },
-        { s: "ok", w: 1, t: "#3" },
-      ].map((b, i) => (
-        <div class={`run ${b.s}`} style={`--w:${b.w};--d:${i * 1.1}s`}>
-          <span class="id">{b.t}</span>
-          <span class="track">
-            <span class="fill"></span>
-          </span>
-          <i class={`ph-bold ${b.s === "ok" ? "ph-check" : "ph-x"}`}></i>
-        </div>
-      ))}
-    </div>
-  )}
-  {kind === "table" && (
-    <div class="grid" style={`--cols:${tableCols}`}>
-      {Array.from({ length: tableRows * tableCols }, (_, i) => (
-        <span class={i < tableCols ? "head" : ""} style={`--r:${Math.floor(i / tableCols)}`}></span>
-      ))}
-    </div>
-  )}
-  {kind === "slides" && (
-    <div class="deck">
-      {[0, 1, 2, 3].map((i) => (
-        <span style={`--i:${i}`}></span>
-      ))}
-    </div>
-  )}
   {kind === "route" && (
-    <svg viewBox="0 0 1000 120" preserveAspectRatio="none">
-      <path d="M0 90 C 120 20, 220 110, 340 60 S 560 10, 680 70 S 880 100, 1000 30" />
+    <svg
+      class="absolute inset-x-0 bottom-0 h-[70%] w-full"
+      viewBox="0 0 1000 120"
+      preserveAspectRatio="none"
+    >
+      <path
+        class="animate-dash-slow fill-none stroke-sage stroke-[1.5] opacity-35 [stroke-dasharray:6_6]"
+        d="M0 90 C 120 20, 220 110, 340 60 S 560 10, 680 70 S 880 100, 1000 30"
+      />
     </svg>
   )}
   {kind === "orbit" && (
-    <svg viewBox="0 0 200 200">
-      <circle class="o" cx="150" cy="150" r="40" />
-      <circle class="o" cx="150" cy="150" r="70" />
-      <circle class="o" cx="150" cy="150" r="100" />
-      <g class="spin s1">
-        <circle cx="150" cy="80" r="5" />
-      </g>
-      <g class="spin s2">
-        <circle cx="50" cy="150" r="4" />
-      </g>
-      <g class="spin s3">
-        <circle cx="150" cy="110" r="3" />
-      </g>
+    <svg class="absolute -right-10 -bottom-10 w-[110%]" viewBox="0 0 200 200">
+      {[40, 70, 100].map((r) => (
+        <circle class="fill-none stroke-current opacity-20" cx="150" cy="150" r={r} />
+      ))}
+      <circle
+        class="origin-[150px_150px] animate-orbit fill-current opacity-70"
+        cx="150"
+        cy="80"
+        r="5"
+      />
+      <circle
+        class="origin-[150px_150px] animate-orbit-slow fill-current opacity-70"
+        cx="50"
+        cy="150"
+        r="4"
+      />
+      <circle
+        class="origin-[150px_150px] animate-orbit-fast fill-current opacity-70"
+        cx="150"
+        cy="110"
+        r="3"
+      />
     </svg>
   )}
 </div>
-
-<style>
-  .viz {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    color: var(--viz, currentColor);
-  }
-  .viz svg {
-    position: absolute;
-  }
-  @keyframes pulse {
-    50% {
-      opacity: 0.35;
-    }
-  }
-  @keyframes float {
-    50% {
-      translate: 0 -6px;
-    }
-  }
-
-  .viz-bootstrap svg {
-    left: 22px;
-    top: 22px;
-    width: calc(100% - 96px);
-    max-width: 260px;
-  }
-  .viz-bootstrap .server rect {
-    fill: color-mix(in oklab, var(--c) 10%, transparent);
-    stroke: var(--c);
-    stroke-width: 1.2;
-  }
-  .viz-bootstrap .server line {
-    stroke: var(--c);
-    stroke-width: 1.2;
-    opacity: 0.6;
-  }
-  .viz-bootstrap .led {
-    fill: var(--c);
-    animation: pulse 1.2s infinite;
-  }
-  .viz-bootstrap .ssh {
-    stroke: var(--c);
-    stroke-width: 1.2;
-    stroke-dasharray: 4 4;
-    animation: dash 6s linear infinite;
-  }
-  .viz-bootstrap .hexnode {
-    fill: color-mix(in oklab, var(--c) 18%, transparent);
-    stroke: var(--c);
-    stroke-width: 1.2;
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: grow 4s calc(var(--i) * 0.3s) ease-out infinite;
-  }
-  @keyframes grow {
-    0% {
-      scale: 0;
-      opacity: 0;
-    }
-    20%,
-    85% {
-      scale: 1;
-      opacity: 1;
-    }
-    100% {
-      scale: 1;
-      opacity: 0;
-    }
-  }
-
-  .viz-diff .diff {
-    position: absolute;
-    top: 22px;
-    left: 22px;
-    right: 64px;
-    display: grid;
-    gap: 3px;
-    font:
-      11px/1.7 ui-monospace,
-      "SF Mono",
-      monospace;
-  }
-  .viz-diff .r {
-    display: grid;
-    grid-template-columns: 14px auto 1fr;
-    gap: 8px;
-    padding: 0 8px;
-    border-radius: 4px;
-    color: var(--mute);
-    animation: rowin 0.5s calc(var(--i) * 0.12s) ease-out both;
-  }
-  .viz-diff .add {
-    background: color-mix(in oklab, var(--sage) 16%, transparent);
-    color: var(--ink);
-  }
-  .viz-diff .del {
-    background: color-mix(in oklab, var(--clay) 16%, transparent);
-    text-decoration: line-through;
-    text-decoration-color: color-mix(in oklab, var(--clay) 60%, transparent);
-  }
-  .viz-diff .add .m {
-    color: var(--sage);
-  }
-  .viz-diff .del .m {
-    color: var(--clay);
-  }
-  .viz-diff .k {
-    color: var(--c);
-  }
-  .viz-diff .v {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  @keyframes rowin {
-    from {
-      opacity: 0;
-      translate: -6px 0;
-    }
-  }
-
-  .viz-pipeline .pipe {
-    position: absolute;
-    top: 18px;
-    left: 22px;
-    right: 22px;
-  }
-  .viz-pipeline .langs {
-    margin: 12px 0 0;
-    font-size: 12px;
-    line-height: 1.5;
-    color: color-mix(in oklab, var(--c) 75%, var(--tile));
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .viz-pipeline .langs b {
-    font-weight: 600;
-    color: var(--c);
-  }
-
-  .viz-pipeline .rail {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    max-width: min(240px, calc(100% - 42px));
-  }
-  .viz-pipeline .rail::before {
-    content: "";
-    position: absolute;
-    left: 7px;
-    right: 20px;
-    top: 50%;
-    height: 2px;
-    translate: 0 -50%;
-    background: color-mix(in oklab, var(--c) 30%, transparent);
-  }
-  .viz-pipeline .commit {
-    position: relative;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    border: 2px solid var(--c);
-    background: var(--tile);
-    box-sizing: border-box;
-    animation: fill 4s calc(var(--i) * 0.5s) ease-in-out infinite;
-  }
-  .viz-pipeline .image {
-    position: relative;
-    display: grid;
-    place-items: center;
-    width: 34px;
-    height: 34px;
-    border-radius: 9px;
-    background: var(--c);
-    color: var(--tile);
-    font-size: 19px;
-  }
-  .viz-pipeline .image :global(svg) {
-    width: 1em;
-    height: 1em;
-  }
-  @keyframes fill {
-    0%,
-    10% {
-      background: var(--tile);
-    }
-    30%,
-    70% {
-      background: var(--c);
-    }
-    90%,
-    100% {
-      background: var(--tile);
-    }
-  }
-
-  .viz-detect .bench {
-    position: absolute;
-    top: 20px;
-    left: 22px;
-    right: 64px;
-    display: grid;
-    gap: 5px;
-    font:
-      11px/1.4 ui-monospace,
-      "SF Mono",
-      monospace;
-    color: var(--mute);
-  }
-  .viz-detect .legend {
-    display: flex;
-    gap: 12px;
-    margin: 0 0 2px;
-  }
-  .viz-detect .k {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-  }
-  .viz-detect .k::before {
-    content: "";
-    width: 8px;
-    height: 8px;
-    border-radius: 2px;
-    background: var(--c);
-  }
-  .viz-detect .k.cpu::before {
-    background: color-mix(in oklab, var(--c) 22%, transparent);
-  }
-  .viz-detect .row {
-    display: grid;
-    grid-template-columns: 7ch 1fr 6ch;
-    align-items: center;
-    gap: 8px;
-  }
-  .viz-detect .name {
-    color: var(--ink);
-  }
-  .viz-detect .ms {
-    text-align: right;
-    color: var(--c);
-  }
-  .viz-detect .track {
-    position: relative;
-    height: 8px;
-  }
-  .viz-detect .bar {
-    position: absolute;
-    inset: 0 auto 0 0;
-    border-radius: 2px;
-    transform-origin: left;
-    animation: bar 0.7s calc(var(--i) * 0.08s) ease-out both;
-  }
-  .viz-detect .bar.cpu {
-    width: calc(var(--cpu) * 100%);
-    background: color-mix(in oklab, var(--c) 22%, transparent);
-  }
-  .viz-detect .bar.coreml {
-    width: calc(var(--coreml) * 100%);
-    background: var(--c);
-  }
-  @keyframes bar {
-    from {
-      scale: 0 1;
-    }
-  }
-
-  .viz-cluster svg {
-    right: -10px;
-    bottom: -10px;
-    width: 62%;
-    opacity: 0.55;
-  }
-  .viz-cluster .edges path {
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1;
-    stroke-dasharray: 3 4;
-  }
-  .viz-cluster polygon {
-    fill: color-mix(in oklab, currentColor 10%, transparent);
-    stroke: currentColor;
-    stroke-width: 1.2;
-  }
-  .viz-cluster .node circle {
-    fill: currentColor;
-    animation: pulse 2.4s var(--d, 0s) infinite;
-  }
-  .viz-cluster .core polygon {
-    fill: color-mix(in oklab, currentColor 22%, transparent);
-  }
-  .viz-cluster .packet {
-    fill: var(--clay);
-  }
-
-  .viz-wave .bars {
-    position: absolute;
-    left: 22px;
-    right: 22px;
-    top: 22px;
-    height: 44%;
-    display: flex;
-    align-items: flex-end;
-    gap: 3px;
-    opacity: 0.4;
-  }
-  .viz-wave .bars span {
-    flex: 1;
-    height: calc(var(--h) * 100%);
-    background: currentColor;
-    border-radius: 2px;
-    transform-origin: bottom;
-    animation: eq 1.4s var(--d) ease-in-out infinite alternate;
-  }
-  @keyframes eq {
-    from {
-      scale: 1 0.35;
-    }
-  }
-
-  .viz-rings svg {
-    right: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-  }
-  .viz-rings circle {
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1;
-    opacity: 0.18;
-    animation: pulse 4s var(--d) infinite;
-  }
-  .viz-rings text {
-    font-size: 9px;
-    letter-spacing: 0.12em;
-    fill: currentColor;
-    opacity: 0.5;
-  }
-
-  .viz-layers svg {
-    left: 14px;
-    top: 6px;
-    width: 54%;
-  }
-  .viz-layers .layer path {
-    fill: color-mix(in oklab, var(--c) calc(15% + var(--i) * 12%), transparent);
-    stroke: var(--c);
-    stroke-width: 1;
-  }
-  .viz-layers .layer {
-    animation: float 3s calc(var(--i) * 0.25s) ease-in-out infinite;
-  }
-  .viz-layers .bucket {
-    fill: none;
-    stroke: var(--c);
-    stroke-width: 1.2;
-    stroke-dasharray: 4 3;
-  }
-
-  .viz-builds .log {
-    position: absolute;
-    top: 22px;
-    left: 22px;
-    right: 64px;
-    display: grid;
-    gap: 7px;
-    font:
-      11px ui-monospace,
-      monospace;
-  }
-  .viz-builds .run {
-    display: grid;
-    grid-template-columns: 22px 1fr 14px;
-    align-items: center;
-    gap: 6px;
-    color: var(--mute);
-  }
-  .viz-builds .track {
-    height: 6px;
-    border-radius: 3px;
-    background: color-mix(in oklab, var(--c) 12%, transparent);
-    overflow: hidden;
-  }
-  .viz-builds .fill {
-    display: block;
-    height: 100%;
-    width: calc(var(--w) * 100%);
-    background: var(--c);
-    transform-origin: left;
-    animation: build 3.3s var(--d) infinite;
-  }
-  .viz-builds .fail .fill {
-    background: var(--clay);
-  }
-  .viz-builds .fail i {
-    color: var(--clay);
-  }
-  .viz-builds .ok i {
-    color: var(--c);
-  }
-  @keyframes build {
-    0% {
-      scale: 0 1;
-    }
-    30%,
-    100% {
-      scale: 1 1;
-    }
-  }
-
-  .viz-table .grid {
-    position: absolute;
-    top: 22px;
-    left: 22px;
-    width: 58%;
-    display: grid;
-    grid-template-columns: repeat(var(--cols), 1fr);
-    gap: 3px;
-  }
-  .viz-table .grid span {
-    height: 12px;
-    border-radius: 2px;
-    background: color-mix(in oklab, var(--c) 12%, transparent);
-    animation: row 4.8s calc(var(--r) * 0.6s) infinite;
-  }
-  .viz-table .grid .head {
-    background: color-mix(in oklab, var(--c) 45%, transparent);
-    animation: none;
-  }
-  @keyframes row {
-    0%,
-    20% {
-      background: color-mix(in oklab, var(--c) 40%, transparent);
-    }
-    30%,
-    100% {
-      background: color-mix(in oklab, var(--c) 12%, transparent);
-    }
-  }
-
-  .viz-slides .deck {
-    position: absolute;
-    right: 18px;
-    bottom: 18px;
-    width: 46%;
-    aspect-ratio: 16/10;
-  }
-  .viz-slides .deck span {
-    position: absolute;
-    inset: 0;
-    border-radius: 6px;
-    border: 1.2px solid var(--clay);
-    background: color-mix(in oklab, var(--clay) 7%, var(--tile));
-    rotate: calc((var(--i) - 1.5) * 6deg);
-    translate: calc(var(--i) * 6px) calc(var(--i) * -4px);
-    opacity: calc(0.25 + var(--i) * 0.15);
-  }
-
-  .viz-route svg {
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: 70%;
-  }
-  .viz-route path {
-    fill: none;
-    stroke: var(--sage);
-    stroke-width: 1.5;
-    stroke-dasharray: 6 6;
-    opacity: 0.35;
-    animation: dash 30s linear infinite;
-  }
-  @keyframes dash {
-    to {
-      stroke-dashoffset: -600;
-    }
-  }
-
-  .viz-orbit svg {
-    right: -40px;
-    bottom: -40px;
-    width: 110%;
-  }
-  .viz-orbit .o {
-    fill: none;
-    stroke: currentColor;
-    opacity: 0.2;
-  }
-  .viz-orbit .spin {
-    transform-origin: 150px 150px;
-    animation: spin 14s linear infinite;
-    fill: currentColor;
-    opacity: 0.7;
-  }
-  .viz-orbit .s2 {
-    animation-duration: 22s;
-  }
-  .viz-orbit .s3 {
-    animation-duration: 9s;
-    animation-direction: reverse;
-  }
-  @keyframes spin {
-    to {
-      rotate: 360deg;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .viz *,
-    .viz *::before {
-      animation: none !important;
-    }
-    .viz-cluster .packet {
-      display: none;
-    }
-  }
-</style>

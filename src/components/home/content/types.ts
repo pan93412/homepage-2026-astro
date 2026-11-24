@@ -13,7 +13,10 @@ export interface Content {
     quote: (title: string) => string
     latest: string
     talkLinks: { slide: string; page: string; article: string }
-    years: (count: number) => string
+    /** Unit after the years count. */
+    /** Label under the years count. */
+    l10nYears: string
+    l10nNote: string
     l10n: string
     skills: string
     projectLink: string
@@ -30,7 +33,8 @@ export interface Content {
   avatarAlts: { sitcon: string; ferris: string }
   statLabels: { pullRequests: string; contributions: string; followers: string; stars: string }
   now: { icon: string; title: string; role: string; since: string; text: string }[]
-  nowDetail: { oss: { title: string; text: string }[]; zeabur: string[] }
+  /** `repo` is the repository name under github.com/zeabur-oss. */
+  nowDetail: { oss: { repo: string; title: string; text: string }[]; zeabur: string[] }
   skills: { icon: string; label: string; tags: string[]; detail: string }[]
   projects: Record<ProjectKey, { text: string; detail: string[] }>
   timeline: { year: string; text: string }[]

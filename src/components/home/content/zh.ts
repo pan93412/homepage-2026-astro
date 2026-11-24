@@ -9,13 +9,14 @@ export default {
     language: "English",
     theme: "切換深色模式",
     now: "現在",
-    ossHeading: "Zeabur Open Source 的四個開源專案",
+    ossHeading: "Zeabur Open Source 的開源專案",
     zeaburHeading: (count) => `在 Zeabur 做過的 ${count} 件事`,
     talks: "場演講",
     quote: (title) => `《${title}》`,
     latest: "最近：",
     talkLinks: { slide: "投影片", page: "議程", article: "文章" },
-    years: (count) => `${count} 年`,
+    l10nYears: "年開源翻譯",
+    l10nNote: "Git、GNOME、KDE 正體中文翻譯，維護 SLAT 的 Weblate",
     l10n: "開源翻譯與社群",
     skills: "擅長",
     projectLink: "GitHub 專案",
@@ -62,20 +63,34 @@ export default {
   nowDetail: {
     oss: [
       {
+        repo: "zeabur",
         title: "自架 PaaS",
-        text: "Rust 開發，把 Kubernetes 呈現為專案與服務，套用變更前先預覽欄位差異；不需額外資料庫。",
+        text: "在自己的叢集上部署服務。",
       },
       {
+        repo: "identity",
         title: "Zeabur Identity",
-        text: "以 Passkey 登入 kubectl 與 OIDC 應用，用短效權杖取代長期共用的管理員憑證。",
+        text: "叢集的帳號與登入。",
       },
       {
+        repo: "builder",
         title: "Zeabur Builder",
-        text: "Kubernetes operator 搭配 BuildKit，從 Git 建置映像檔，閒置時縮到零。",
+        text: "在叢集內把程式碼建置成映像檔。",
       },
       {
+        repo: "catalog",
         title: "Zeabur Catalog",
-        text: "固定 chart 版本與 values、CI 逐項安裝測試，再發布簽署過的套件。",
+        text: "測試過才發布的應用範本。",
+      },
+      {
+        repo: "zeatend",
+        title: "Zeatend",
+        text: "把 Linux 主機裝成叢集。",
+      },
+      {
+        repo: "website",
+        title: "Website",
+        text: "官網與文件，我負責設計和撰文。",
       },
     ],
     zeabur: [
@@ -162,7 +177,7 @@ export default {
     {
       icon: "device-mobile",
       label: "Apple",
-      tags: ["SwiftUI", "Xcode Cloud", "公證"],
+      tags: ["SwiftUI", "公證", "Xcode Cloud"],
       detail:
         "用 Swift 寫 macOS 和 iOS App，例如 String Catalog 合併工具；熟悉 Xcode Cloud，也在 GitHub Actions 導入公證（notarization）流程。",
     },
@@ -185,7 +200,7 @@ export default {
       detail: [
         "zeatend apply 一個指令裝好叢集，承襲 k3sup 的做法，另附終端介面。",
         "安裝前先檢查主機：記憶體、磁碟、時鐘同步、swap，以及舊安裝留下的檔案。",
-        "新主機裝 Zeabur OSS 的第一步。目前仍在早期開發。",
+        "新主機裝 Zeabur OSS 的第一步。",
       ],
     },
     Zeabur: {
@@ -218,7 +233,7 @@ export default {
   timeline: [
     { year: "2018", text: "加入 l10n-tw，翻譯 Git、GNOME、KDE" },
     { year: "2019", text: "SMHS 開源組織，做疫情點名系統" },
-    { year: "2020", text: "UnblockNeteaseMusic，寫了 Rust 版" },
+    { year: "2020", text: "UNM，寫了 Rust 版" },
     { year: "2022", text: "GDSC 核心成員、MOPCON 議程組" },
     { year: "2023", text: "加入 Zeabur" },
     { year: "2025", text: "COSCUP 資訊組" },

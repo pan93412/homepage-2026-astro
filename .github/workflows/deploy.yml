@@ -46,6 +46,15 @@ jobs:
               PUBLIC_POSTHOG_TOKEN: ${{ vars.PUBLIC_POSTHOG_TOKEN }}
               PUBLIC_POSTHOG_API_HOST: ${{ vars.PUBLIC_POSTHOG_API_HOST }}
               PUBLIC_POSTHOG_UI_HOST: ${{ vars.PUBLIC_POSTHOG_UI_HOST }}
+      - name: End-to-end tests
+        run: bun run test:e2e
+      - name: Upload end-to-end traces
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: playwright-traces
+          path: test-results/
+          retention-days: 7
       - name: Upload static site
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

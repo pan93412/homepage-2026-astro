@@ -12,6 +12,13 @@
   }
 }
 
+/* The 2×2 avatar grid adds a 100px row. Use it when the avatar area above the name is this tall. */
+@custom-variant roomy {
+  @container avatars (min-height: 224px) {
+    @slot;
+  }
+}
+
 @theme {
   --breakpoint-*: initial;
   --breakpoint-sm: 561px;
@@ -69,10 +76,10 @@
       --color-clay-tile: #9c4f31;
       --color-sage-tile: #3f5843;
       --color-deep-tile: #2b3028;
-      /* Ink is light here, so a shadow made from it would glow. */
+      /* A shadow barely shows on a dark page, so a lifted tile gets lighter instead. */
       --shadow-lift:
-        0 12px 32px -12px rgb(0 0 0 / 0.7),
-        0 0 0 1px color-mix(in oklab, var(--color-ink) 10%, transparent);
+        inset 0 0 0 100vmax color-mix(in oklab, var(--color-ink) 5%, transparent),
+        inset 0 0 0 1px color-mix(in oklab, var(--color-ink) 12%, transparent);
     }
   }
   body {

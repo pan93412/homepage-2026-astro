@@ -44,7 +44,7 @@ const gridSlots = [
   [1, 1],
 ]
 const avatarGrid =
-  "group-data-grid/avatars:translate-x-[calc(var(--gx)*100px)]! group-data-grid/avatars:translate-y-[calc(var(--gy)*100px)]! group-data-grid/avatars:rotate-0! group-data-grid/avatars:scale-100!"
+  "roomy:translate-x-[calc(var(--gx)*100px)]! roomy:translate-y-[calc(var(--gy)*100px)]! roomy:rotate-0! roomy:scale-100!"
 
 /** Every non-ASCII character the pages can show, so Google Fonts serves only those CJK glyphs. */
 const cjkText = [
@@ -149,32 +149,33 @@ const pill = "rounded-full px-1.75 py-1 text-[11px] leading-none text-mute not-i
             <Icon name="ph:sun" class:list="hidden dark:block" />
           </button>
         </nav>
-        <div
-          class="group/avatars relative mb-auto size-22 rounded-full outline-offset-6"
-          data-avatars
-          tabindex={extraAvatars.length ? 0 : undefined}
-        >
-          {extraAvatars.map((a, i) => (
+        <div class="min-h-22 flex-1 [container:avatars/size]">
+          <div
+            class="group/avatars relative size-22 rounded-full outline-offset-6"
+            tabindex={extraAvatars.length ? 0 : undefined}
+          >
+            {extraAvatars.map((a, i) => (
+              <img
+                class:list={[
+                  "absolute inset-0 size-22 scale-90 rounded-full object-cover transition-[translate,rotate,scale] duration-350 ease-fan motion-reduce:transition-none",
+                  "group-hover/avatars:scale-100 group-focus-visible/avatars:scale-100 group-hover/avatars:translate-x-(--fan) group-hover/avatars:rotate-[calc(var(--n)*4deg)] group-focus-visible/avatars:translate-x-(--fan) group-focus-visible/avatars:rotate-[calc(var(--n)*4deg)]",
+                  avatarGrid,
+                ]}
+                src={a.src}
+                alt={t.avatarAlts[a.alt]}
+                width="88"
+                height="88"
+                style={`--n:${extraAvatars.length - i};--fan:calc(${extraAvatars.length - i}*100px);--gx:${gridSlots[extraAvatars.length - i - 1][0]};--gy:${gridSlots[extraAvatars.length - i - 1][1]}`}
+              />
+            ))}
             <img
-              class:list={[
-                "absolute inset-0 size-22 scale-90 rounded-full object-cover transition-[translate,rotate,scale] duration-350 ease-fan motion-reduce:transition-none",
-                "group-hover/avatars:scale-100 group-focus-visible/avatars:scale-100 group-hover/avatars:translate-x-(--fan) group-hover/avatars:rotate-[calc(var(--n)*4deg)] group-focus-visible/avatars:translate-x-(--fan) group-focus-visible/avatars:rotate-[calc(var(--n)*4deg)]",
-                avatarGrid,
-              ]}
-              src={a.src}
-              alt={t.avatarAlts[a.alt]}
+              class="absolute inset-0 size-22 rounded-full object-cover"
+              src="/avatar.avif"
+              alt={name}
               width="88"
               height="88"
-              style={`--n:${extraAvatars.length - i};--fan:calc(${extraAvatars.length - i}*100px);--gx:${gridSlots[extraAvatars.length - i - 1][0]};--gy:${gridSlots[extraAvatars.length - i - 1][1]}`}
             />
-          ))}
-          <img
-            class="absolute inset-0 size-22 rounded-full object-cover"
-            src="/avatar.avif"
-            alt={name}
-            width="88"
-            height="88"
-          />
+          </div>
         </div>
         <h1
           class="mt-6 mb-2 font-display text-[clamp(40px,5vw,64px)] leading-none font-normal"
@@ -514,19 +515,6 @@ const pill = "rounded-full px-1.75 py-1 text-[11px] leading-none text-mute not-i
     toggle(open)
     open.querySelector<HTMLElement>(".toggle")?.focus()
   })
-</script>
-
-<script>
-  // The grid adds a second 100px row. Use it when the space above the name can hold it.
-  const avatars = document.querySelector<HTMLElement>("[data-avatars]")
-  const name = avatars?.nextElementSibling
-  if (avatars?.childElementCount && avatars.childElementCount > 1 && name) {
-    const fit = () => {
-      const room = name.getBoundingClientRect().top - avatars.getBoundingClientRect().bottom
-      avatars.toggleAttribute("data-grid", room >= 160)
-    }
-    new ResizeObserver(fit).observe(avatars.parentElement!)
-  }
 </script>
 
 <script>

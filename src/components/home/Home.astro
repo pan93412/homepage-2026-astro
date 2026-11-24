@@ -317,6 +317,10 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
         </dl>
       </Tile>
 
+      <h2 class="heading projects-heading">
+        <Icon name="ph:folders-duotone" class:list="heading__icon" />
+        {t.ui.projects}
+      </h2>
       {projects.map((p) => {
         const id = `bt-${p.key.replace(/\W+/g, "").toLowerCase()}`
         const copy = t.projects[p.key]
@@ -959,6 +963,9 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
   }
 
   /* Projects. --base is the project's colour; dark mode lightens it. */
+  .projects-heading {
+    display: none;
+  }
   .project {
     display: flex;
     min-height: 274px;
@@ -1248,6 +1255,14 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
 
     .project {
       display: block;
+    }
+    .projects-heading {
+      display: flex;
+      grid-column: 1 / -1;
+      margin-bottom: -3mm;
+      /* Grid rows do not keep a heading with the next row, so the projects start a page. */
+      break-before: page;
+      break-after: auto;
     }
     .ticks {
       gap: 0.25rem;

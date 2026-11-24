@@ -22,6 +22,7 @@ export default {
     l10nNote: "Git, GNOME and KDE in Traditional Chinese; I run SLAT’s Weblate",
     l10n: "translating open-source software",
     skills: "Skills",
+    projects: "Projects",
     projectLink: "View on GitHub",
     path: "Timeline",
     contact: "Say hi!",

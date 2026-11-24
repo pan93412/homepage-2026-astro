@@ -66,3 +66,12 @@ test("printed tiles leave out the room kept for their charts", async ({ page }) 
     expect(minHeight).toBe("0px")
   }
 })
+
+test("the projects get a heading only in print", async ({ page }) => {
+  await page.goto("/zh/")
+  const heading = page.locator(".projects-heading")
+  await expect(heading).toBeHidden()
+  await page.emulateMedia({ media: "print" })
+  await expect(heading).toBeVisible()
+  await expect(heading).toHaveText("專案")
+})

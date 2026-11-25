@@ -31,18 +31,17 @@ export interface Content {
     friends: string
     friendsJoin: string
     expand: (name: string) => string
-    pipeline: string
-    l10nRing: string
   }
   role: string
   lead: string
   avatarAlts: { sitcon: string; ferris: string }
   statLabels: { pullRequests: string; contributions: string; followers: string; stars: string }
-  now: { icon: string; title: string; role: string; since: string; text: string }[]
+  now: { title: string; role: string; since: string; text: string }[]
   /** `repo` is the repository name under github.com/zeabur-oss. */
   nowDetail: { oss: { repo: string; title: string; text: string }[]; zeabur: string[] }
-  skills: { icon: string; label: string; tags: string[]; detail: string }[]
-  projects: Record<ProjectKey, { text: string; detail: string[] }>
+  skills: { label: string; tags: string[]; detail: string }[]
+  /** `scene`: the words in the tile's scene, in the order BentoViz reads them. */
+  projects: Record<ProjectKey, { text: string; detail: string[]; scene?: string[] }>
   timeline: { year: string; text: string }[]
   l10nDetail: string[]
   experiences: { when: string; title: string; role: string }[]

@@ -11,21 +11,41 @@
   --color-tile: light-dark(#fbfaf6, #1c1f1a);
   --color-ink: light-dark(#23271f, #e6e8df);
   --color-mute: light-dark(#5f645a, #9da394);
-  --color-sage: light-dark(#5f7a63, #93b096);
-  --color-clay: light-dark(#c96f4a, #e08c66);
-  --color-intro: light-dark(#dfe5d8, #232a22);
-  --color-clay-tile: light-dark(#ad5a36, #9c4f31);
-  --color-sage-tile: light-dark(#5f7a63, #3f5843);
+  /* The one colour on the page: links, focus, and the figure that matters in each scene. */
+  --color-accent: light-dark(#ad5a36, #e08c66);
   --color-deep-tile: light-dark(#23271f, #2b3028);
-  --color-chip: color-mix(in oklab, var(--color-sage) 12%, var(--color-tile));
+  --color-chip: color-mix(in oklab, var(--color-ink) 7%, var(--color-tile));
 
   --font-sans: "Geist", "Noto Sans TC", sans-serif;
   --font-display: "Instrument Serif", serif;
   --font-mono: ui-monospace, "SF Mono", monospace;
 
-  --radius-tile: 22px;
-  --radius-card: 14px;
-  --ease-fan: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --radius-tile: 8px;
+  --radius-card: 6px;
+  /* A critically damped spring, x(t) = 1 - (1 + ωt)e^(-ωt) with ω = 6.64: no bounce, settled at the end. */
+  --ease-spring: linear(
+    0,
+    0.044,
+    0.143,
+    0.263,
+    0.383,
+    0.494,
+    0.592,
+    0.675,
+    0.743,
+    0.799,
+    0.844,
+    0.879,
+    0.907,
+    0.929,
+    0.946,
+    0.959,
+    0.969,
+    0.976,
+    0.982,
+    0.987,
+    1
+  );
   --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Ink is light in dark mode, so the dark shadow is black, with a hairline to show the edge. */
@@ -150,7 +170,7 @@
   overflow: clip;
   border-radius: var(--radius-tile);
   animation-duration: 0.5s;
-  animation-timing-function: var(--ease-fan);
+  animation-timing-function: var(--ease-spring);
 }
 ::view-transition-old(*),
 ::view-transition-new(*) {
@@ -163,68 +183,9 @@
 @keyframes rise {
   from {
     opacity: 0;
-    translate: 0 8px;
+    translate: 0 4px;
   }
 }
-@keyframes blink {
-  50% {
-    opacity: 0.35;
-  }
-}
-@keyframes dash {
-  to {
-    stroke-dashoffset: -600;
-  }
-}
-@keyframes grow {
-  0% {
-    scale: 0;
-    opacity: 0;
-  }
-  20%,
-  85% {
-    scale: 1;
-    opacity: 1;
-  }
-  100% {
-    scale: 1;
-    opacity: 0;
-  }
-}
-@keyframes row-in {
-  from {
-    opacity: 0;
-    translate: -6px 0;
-  }
-}
-@keyframes fill {
-  0%,
-  10%,
-  90%,
-  100% {
-    opacity: 0;
-  }
-  30%,
-  70% {
-    opacity: 1;
-  }
-}
-@keyframes bar {
-  from {
-    scale: 0 1;
-  }
-}
-@keyframes eq {
-  from {
-    scale: 1 0.35;
-  }
-}
-@keyframes orbit {
-  to {
-    rotate: 360deg;
-  }
-}
-
 /* Print: always light, ink on white paper, without the paper colour behind the tiles. */
 @page {
   size: A4;

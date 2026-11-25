@@ -6,7 +6,7 @@ interface Props {
   id?: string
   /** Screen-reader text of the + button. */
   label?: string
-  surface?: "tile" | "intro" | "clay" | "deep" | "sage"
+  surface?: "tile" | "deep"
   /** Take the full row while open. */
   wide?: boolean
   class?: string
@@ -14,7 +14,7 @@ interface Props {
 }
 
 const { id, label, surface = "tile", wide = false, class: className, style } = Astro.props
-const onColor = surface !== "tile" && surface !== "intro"
+const onColor = surface === "deep"
 ---
 
 <section
@@ -165,31 +165,15 @@ const onColor = surface !== "tile" && surface !== "intro"
   .tile--tile {
     background-color: var(--color-tile);
   }
-  .tile--intro {
-    background-color: var(--color-intro);
-  }
-  .tile--clay {
-    background-color: var(--color-clay-tile);
-    color: #fff8f0;
-    --viz: #fff8f0;
-  }
   .tile--deep {
     background-color: var(--color-deep-tile);
     color: #fff8f0;
     --viz: #e9efe2;
   }
-  .tile--sage {
-    background-color: var(--color-sage-tile);
-    color: #f3f6ef;
-    --viz: #f3f6ef;
-  }
 
   .tile--expandable {
-    transition-property: box-shadow, translate;
-    transition-duration: 250ms;
-    transition-timing-function: var(--ease-default);
+    transition: box-shadow 150ms var(--ease-default);
     &:not(:has(> .tile__details[open])):hover {
-      translate: 0 -0.1875rem;
       box-shadow: var(--lift);
     }
     &:has(> .tile__details[open]) {
@@ -237,12 +221,13 @@ const onColor = surface !== "tile" && surface !== "intro"
     place-items: center;
     width: 2.125rem;
     height: 2.125rem;
-    border-radius: 9999px;
+    border-radius: 6px;
     font-size: 16px;
     background-color: color-mix(in oklab, var(--color-ink) 6%, transparent);
-    transition-property: rotate, background-color;
-    transition-duration: 300ms;
-    transition-timing-function: var(--ease-default);
+    transition: background-color 150ms var(--ease-default);
+    & > svg {
+      transition: rotate 300ms var(--ease-spring);
+    }
     &:hover {
       background-color: color-mix(in oklab, var(--color-ink) 12%, transparent);
     }
@@ -253,10 +238,10 @@ const onColor = surface !== "tile" && surface !== "intro"
       background-color: rgb(255 255 255 / 0.24);
     }
     .tile__summary:focus-visible & {
-      outline: 2px solid var(--color-sage);
+      outline: 2px solid var(--color-accent);
       outline-offset: 2px;
     }
-    .tile__details[open] & {
+    .tile__details[open] & > svg {
       rotate: 45deg;
     }
   }
@@ -265,7 +250,7 @@ const onColor = surface !== "tile" && surface !== "intro"
     margin-top: 1.375rem;
     padding-top: 1.25rem;
     border-top: 1px solid color-mix(in oklab, var(--color-ink) 10%, transparent);
-    animation: rise 0.45s 0.1s both;
+    animation: rise 400ms 100ms var(--ease-spring) both;
     .tile__details--on-color & {
       border-top-color: rgb(255 255 255 / 0.15);
     }
@@ -283,7 +268,6 @@ const onColor = surface !== "tile" && surface !== "intro"
     }
     .tile--expandable {
       box-shadow: none !important;
-      translate: none !important;
     }
     .tile__summary {
       display: none;

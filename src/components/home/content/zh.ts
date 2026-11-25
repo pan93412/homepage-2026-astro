@@ -18,7 +18,7 @@ export default {
     latest: "最近：",
     talkLinks: { slide: "投影片", page: "議程", article: "文章" },
     l10nYears: "年開源翻譯",
-    l10nNote: "Git、GNOME、KDE 正體中文翻譯，維護 SLAT 的 Weblate",
+    l10nNote: "Debian 上 100 多個套件的最後譯者，維護 SLAT 的 Weblate",
     l10n: "開源翻譯與社群",
     skills: "擅長",
     projects: "專案",
@@ -28,8 +28,6 @@ export default {
     friends: "朋友們",
     friendsJoin: "來交換友情連結吧！填寫這個表單 ↗",
     expand: (name) => `展開「${name}」`,
-    pipeline: "挑語言：Node.js、Go、Python",
-    l10nRing: "在地化",
   },
   role: "平台工程師，也做開源與翻譯",
   lead: "在 Zeabur 開發雲端平台與開源工具，目前在高科大念碩士班。課餘做設計和翻譯，也常在研討會當志工。",
@@ -42,21 +40,18 @@ export default {
   },
   now: [
     {
-      icon: "cube",
       title: "Zeabur Open Source",
       role: "開發 Lead",
       since: "現任",
       text: "用 Rust 寫一套能裝在自己 Kubernetes 上的 PaaS，搭配 Passkey 登入與 BuildKit 建置。",
     },
     {
-      icon: "cloud",
       title: "Zeabur",
       role: "平台工程師",
       since: "2023 年起",
       text: "從實習生轉為平台工程師，負責建置流程、OCI Registry、可觀測性、GitOps 與多雲叢集。",
     },
     {
-      icon: "graduation-cap",
       title: "國立高雄科技大學",
       role: "智慧商務系碩士班",
       since: "2026 年入學",
@@ -121,77 +116,65 @@ export default {
   },
   skills: [
     {
-      icon: "browser",
       label: "前端",
       tags: ["React", "Astro", "TanStack"],
       detail: "主力 React、TypeScript、Next.js、Astro 與 TanStack 系列；小專案用 Vue、Nuxt、Vite。",
     },
     {
-      icon: "terminal-window",
       label: "後端",
       tags: ["Go", "Rust", "PHP"],
       detail: "Go、Rust、PHP、Node.js。",
     },
     {
-      icon: "graph",
       label: "微服務",
       tags: ["gRPC", "NATS", "GraphQL"],
       detail: "以 gRPC、GraphQL 串接服務，用 NATS、RabbitMQ 傳遞訊息；設計過 Zeabur 的服務規格。",
     },
     {
-      icon: "shield-check",
       label: "身分與資安",
       tags: ["OIDC", "Passkey", "零信任"],
       detail:
         "OAuth 2.0、OpenID Connect 與 Passkey（WebAuthn）；開發 Zeabur Identity，也用 OAuth scope 重新設計 API 授權。Zeabur 遭受攻擊時參與藍隊防禦，導入 AWS Secrets Manager 管理機密；也導入 Tailscale、設定 ACL，協助建立零信任存取。",
     },
     {
-      icon: "stack",
       label: "基礎設施",
       tags: ["Kubernetes", "Flux", "BuildKit"],
       detail:
         "自架 K3s 叢集，用 Helm 和 Flux CD 部署（從 Argo CD 換過來），CI/CD 跑在 GitHub Actions。",
     },
     {
-      icon: "pulse",
       label: "可觀測性",
       tags: ["OpenTelemetry", "Grafana"],
       detail:
         "用 OpenTelemetry 做分散式追蹤，用 Grafana 做儀表板和告警，也維運 VictoriaMetrics、VictoriaLogs、VictoriaTraces。",
     },
     {
-      icon: "snowflake",
       label: "Nix",
       tags: ["Flakes", "可重現環境"],
       detail: "用 Nix flake 管開發環境和自己的機器設定，也拿來打包軟體。",
     },
     {
-      icon: "sparkle",
       label: "LLM",
       tags: ["Agent", "Vibe Coding"],
       detail: "在 Builder 裡接上 AI Agent 讀專案、修建置；日常寫程式也大量用 Agent。",
     },
     {
-      icon: "chart-line-up",
       label: "資料",
       tags: ["pandas", "Polars"],
       detail: "用 pandas、Polars 分析資料，用 Matplotlib、Seaborn、Plotly 畫圖。",
     },
     {
-      icon: "device-mobile",
       label: "Apple",
       tags: ["SwiftUI", "公證", "Xcode Cloud"],
       detail:
         "用 Swift 寫 macOS 和 iOS App，例如 String Catalog 合併工具；熟悉 Xcode Cloud，也在 GitHub Actions 導入公證（notarization）流程。",
     },
     {
-      icon: "pen-nib",
       label: "設計",
       tags: ["Figma", "Adobe"],
       detail: "Figma 做 UI mockup 與 wireframe，也用 Adobe 套件。",
     },
     {
-      icon: "translate",
       label: "在地化",
       tags: ["Git", "GNOME", "KDE"],
       detail: "l10n-tw 成員，翻譯 Git、GNOME、KDE，維護 Weblate。",
@@ -215,6 +198,7 @@ export default {
       ],
     },
     Builder: {
+      scene: ["讀專案", "寫出 Dockerfile", "建置失敗，讀日誌", "再建置，成功"],
       text: "推上 GitHub 就建置成映像檔；整合 zbplan，讓 AI Agent 讀專案後挑出合適的 Dockerfile。",
       detail: [
         "整合 zbplan：AI Agent 分析專案、挑出最適合的 Dockerfile，建置失敗時，Agent 會讀日誌再試一次。",
@@ -225,6 +209,7 @@ export default {
       ],
     },
     "YOLO-RS": {
+      scene: ["一張照片", "用 CoreML", "只用 CPU"],
       text: "用 Rust 跑 Ultralytics YOLO 物件偵測，支援 YOLOv8、YOLO11、YOLO12 與 YOLO26。",
       detail: [
         "透過 ONNX Runtime 推論，可用 CPU、CoreML 或 CUDA。",

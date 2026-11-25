@@ -24,68 +24,68 @@ export const stats = [
   {
     key: "pullRequests",
     value: approx(github.mergedPullRequests),
-    icon: "git-merge",
     url: "https://github.com/pulls?q=author%3Apan93412+is%3Amerged+is%3Apublic",
   },
   {
     key: "contributions",
     value: approx(github.contributionsLastYear),
-    icon: "calendar-check",
     url: "https://github.com/pan93412",
   },
   {
     key: "followers",
     value: approx(github.followers),
-    icon: "github-logo",
     url: "https://github.com/pan93412?tab=followers",
   },
   {
     key: "stars",
     value: approx(github.stars),
-    icon: "star",
     url: "https://github.com/pan93412?tab=repositories&sort=stargazers",
   },
 ] as const
 
 export const projects: {
   key: ProjectKey
-  icon: string
   tags: string[]
-  color: string
   url: string
-  viz: "bootstrap" | "diff" | "pipeline" | "detect"
+  /** The scene in the tile: a screen from the project, or one worded by `scene` in each locale. */
+  scene: "shot" | "agent" | "speed"
+  /** Screens from the project's repository, cut as BentoViz's `shot` says. */
+  shot?: { src: Record<"en" | "zh", string>; position: string }
 }[] = [
   {
     key: "Zeatend",
-    icon: "hard-drives",
     tags: ["Rust"],
-    color: "#8a6a3f",
     url: "https://github.com/zeabur-oss/zeatend",
-    viz: "bootstrap",
+    scene: "shot",
+    // zeabur-oss/zeatend main (cc5a4aa), docs/screens/80x24: the install screen once the cluster is ready.
+    shot: {
+      src: { en: "/shots/zeatend-done-en.svg", zh: "/shots/zeatend-done-zh.svg" },
+      position: "left top",
+    },
   },
   {
     key: "Zeabur",
-    icon: "rocket-launch",
     tags: ["Rust", "700+ stars"],
-    color: "#4f6d8a",
     url: "https://github.com/zeabur-oss/zeabur",
-    viz: "diff",
+    scene: "shot",
+    // zeabur-oss/zeabur main (ebd47c2f7), docs/images/readme-diagnosis-light.avif: a crashing service, explained.
+    shot: {
+      src: { en: "/shots/zeabur-diagnosis.avif", zh: "/shots/zeabur-diagnosis.avif" },
+      // The screenshot has a wide margin of its own on the left.
+      position: "28% top",
+    },
   },
   {
     key: "Builder",
-    icon: "hammer",
-    tags: ["Rust", "BuildKit"],
-    color: "#c96f4a",
+    tags: ["AI Agent", "Kubernetes operator"],
     url: "https://github.com/zeabur-oss/builder",
-    viz: "pipeline",
+    scene: "agent",
   },
   {
     key: "YOLO-RS",
-    icon: "scan",
     tags: ["Rust", "ONNX"],
-    color: "#7d5a7a",
     url: "https://github.com/pan93412/yolo-rs",
-    viz: "detect",
+    scene: "speed",
   },
 ]
 
@@ -100,9 +100,10 @@ export const contacts = [
 
 type TalkLink = { kind: "slide" | "page" | "article"; url: string }
 // Talk titles stay as given at the event, in Traditional Chinese, on both locales.
-export const talks: { event: string; title: string; links: TalkLink[] }[] = [
+export const talks: { event: string; year: number; title: string; links: TalkLink[] }[] = [
   {
     event: "COSCUP 2026",
+    year: 2026,
     title: "Git 繁體中文翻譯流程治理實戰",
     links: [
       {
@@ -114,11 +115,13 @@ export const talks: { event: string; title: string; links: TalkLink[] }[] = [
   },
   {
     event: "CNTUG Meetup #72",
+    year: 2026,
     title: "Zeabur 與共享叢集的奮鬥史",
     links: [{ kind: "page", url: "https://ocgroups.dev/cncf/group/q7hxb6g/event/9d4k6sz" }],
   },
   {
     event: "SITCON 2026",
+    year: 2026,
     title: "從頭製作酷炫的 Grafana 儀表板",
     links: [
       { kind: "slide", url: "https://www.figma.com/deck/O8BwdzmRUfedbq0s8w7gm8" },
@@ -127,16 +130,19 @@ export const talks: { event: string; title: string; links: TalkLink[] }[] = [
   },
   {
     event: "MOPCON 2025",
+    year: 2025,
     title: "帳號驗證機制怎麼噴掉 5 萬元",
     links: [{ kind: "slide", url: "https://link.pan93.com/mopcon-2025-lightning-talk" }],
   },
   {
     event: "Cursor Meetup Taipei",
+    year: 2025,
     title: "Vibe in the efficient way",
     links: [{ kind: "slide", url: "https://link.pan93.com/cursor-meetup-202506-slide" }],
   },
   {
     event: "SITCON 2025",
+    year: 2025,
     title: "選課卡成狗？微服務架構帶你翻轉校園系統",
     links: [
       { kind: "slide", url: "https://link.pan93.com/sitcon2025-ppt" },
@@ -146,6 +152,7 @@ export const talks: { event: string; title: string; links: TalkLink[] }[] = [
   },
   {
     event: "MOPCON 2024",
+    year: 2024,
     title: "導入可監控性：OpenTelemetry 實踐和 Request ID 實作",
     links: [
       { kind: "slide", url: "https://link.pan93.com/opentelemetry-ppt" },
@@ -154,6 +161,7 @@ export const talks: { event: string; title: string; links: TalkLink[] }[] = [
   },
   {
     event: "PyCon 2024",
+    year: 2024,
     title: "如何將 Python 程式碼的環境遷移到其他地方？",
     links: [
       {
@@ -166,6 +174,7 @@ export const talks: { event: string; title: string; links: TalkLink[] }[] = [
   },
   {
     event: "DevFest 2022",
+    year: 2022,
     title: "透過重構實戰，探索 Web App DX 和 UX 的最佳做法",
     links: [
       { kind: "slide", url: "https://1drv.ms/b/s!AiC-9Gl0ltrahdo4tp-3GQz7FFiYxw?e=xM4dXd" },
@@ -177,6 +186,7 @@ export const talks: { event: string; title: string; links: TalkLink[] }[] = [
   },
   {
     event: "MOPCON 2021",
+    year: 2021,
     title: "應到未到，一看就知道！",
     links: [
       { kind: "slide", url: "https://imych.one/mopcon2021p" },
@@ -184,3 +194,9 @@ export const talks: { event: string; title: string; links: TalkLink[] }[] = [
     ],
   },
 ]
+
+// Projects I translate into Traditional Chinese now: Git 2.54 (git/git, April 2026), Weblate (WeblateOrg/weblate,
+// May 2026), Ghostty (ghostty-org/ghostty, February 2026) and Keka.
+export const translating = ["Git", "Weblate", "Ghostty", "Keka"]
+// Earlier work, shown muted: the GNOME zh_TW team, KDE l10n-kf5 zh_TW, and GNU nano, tar and bash on the Translation Project.
+export const translated = ["GNOME", "KDE Plasma", "nano", "tar", "bash"]

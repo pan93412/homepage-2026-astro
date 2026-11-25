@@ -54,25 +54,17 @@ test("system removes the stored choice", async ({ page }) => {
   await expect(page.locator("#theme-system")).toBeChecked()
 })
 
-// Keyframes resolve light-dark() by the system scheme, not by the chosen one.
-test("the pipeline fill uses the chosen light theme on a dark system", async ({ context }) => {
-  const fillAtPeak = async (scheme: "light" | "dark", theme?: string) => {
+test("a tile uses the chosen light theme on a dark system", async ({ context }) => {
+  const fill = async (scheme: "light" | "dark", theme?: string) => {
     const page = await context.newPage()
     await page.emulateMedia({ colorScheme: scheme })
     await page.goto("/")
     if (theme) await choose(page, theme)
     const color = await page
-      .locator("#bt-builder .viz__step")
-      .first()
-      .evaluate((step) => {
-        for (const a of step.getAnimations({ subtree: true })) {
-          a.pause()
-          a.currentTime = 1200
-        }
-        return getComputedStyle(step, "::after").backgroundColor
-      })
+      .locator("#bt-now")
+      .evaluate((tile) => getComputedStyle(tile).backgroundColor)
     await page.close()
     return color
   }
-  expect(await fillAtPeak("dark", "light")).toBe(await fillAtPeak("light"))
+  expect(await fill("dark", "light")).toBe(await fill("light"))
 })

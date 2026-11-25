@@ -10,7 +10,18 @@ import friendsSource from "../../data/friends.yaml?raw"
 import BentoViz from "./BentoViz.astro"
 import Tile from "./Tile.astro"
 import "../../styles/global.css"
-import { avatars, contacts, content, name, projects, stats, talks, type Locale } from "./content"
+import {
+  avatars,
+  contacts,
+  content,
+  name,
+  projects,
+  stats,
+  talks,
+  translated,
+  translating,
+  type Locale,
+} from "./content"
 
 interface Props {
   locale: Locale
@@ -67,6 +78,13 @@ const cjkText = [
   .join("")
 
 const canonical = new URL(getRelativeLocaleUrl(locale), Astro.site)
+const thisYear = new Date().getFullYear()
+// Every year from the first talk to now, a year without a talk included.
+const firstTalk = Math.min(...talks.map((talk) => talk.year))
+const talksByYear = Array.from({ length: thisYear - firstTalk + 1 }, (_, i) => ({
+  year: firstTalk + i,
+  count: talks.filter((talk) => talk.year === firstTalk + i).length,
+}))
 const talkIcon = { slide: "presentation-chart", page: "calendar-dots", article: "article" }
 const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
 ---
@@ -117,7 +135,7 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
       {t.ui.skip}
     </a>
     <main class="bento" id="main" tabindex="-1">
-      <Tile surface="intro" class="intro">
+      <Tile class="intro">
         <nav class="intro__nav">
           <a
             class="intro__language"
@@ -181,12 +199,7 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
             <li>
               <a class="stats__link" href={withUtm(x.url, "stats")}>
                 <b class="stats__value">{x.value}</b>
-                <span class="stats__label">
-                  <span class="stats__icon">
-                    <Icon name={`ph:${x.icon}`} />
-                  </span>
-                  {t.statLabels[x.key]}
-                </span>
+                <span class="stats__label">{t.statLabels[x.key]}</span>
               </a>
             </li>
           ))}
@@ -194,15 +207,10 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
       </Tile>
 
       <Tile id="bt-now" label={t.ui.expand(t.ui.now)} class="now">
-        <BentoViz kind="cluster" ui={t.ui} class="hide-when-open" />
-        <h2 class="heading">
-          <Icon name="ph:sun-horizon-duotone" class:list="heading__icon" />
-          {t.ui.now}
-        </h2>
+        <h2 class="heading">{t.ui.now}</h2>
         <ul class="now__list">
           {t.now.map((n) => (
             <li class="now__item">
-              <Icon name={`ph:${n.icon}-duotone`} class:list="now__icon" />
               <div>
                 <b class="now__title">{n.title}</b>
                 <span class="now__role">
@@ -245,11 +253,9 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
         </div>
       </Tile>
 
-      <Tile id="bt-talks" label={t.ui.expand(t.ui.talks)} surface="clay" class="stat">
-        <div class="stat__head">
-          <b class="stat__number">{talks.length}</b>
-          <BentoViz kind="wave" ui={t.ui} />
-        </div>
+      <Tile id="bt-talks" label={t.ui.expand(t.ui.talks)} class="stat">
+        <BentoViz kind="years" years={talksByYear} />
+        <b class="stat__number">{talks.length}</b>
         <span>{t.ui.talks}</span>
         <p class="stat__note hide-when-open">
           {t.ui.latest}
@@ -281,9 +287,13 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
         </ol>
       </Tile>
 
-      <Tile id="bt-l10n" label={t.ui.expand(t.ui.l10n)} surface="deep" class="stat">
-        <BentoViz kind="rings" ui={t.ui} />
-        <b class="stat__number">{new Date().getFullYear() - 2018}</b>
+      <Tile id="bt-l10n" label={t.ui.expand(t.ui.l10n)} class="stat">
+        <BentoViz
+          kind="names"
+          names={translating}
+          past={translated.join(locale === "zh" ? "、" : ", ")}
+        />
+        <b class="stat__number">{thisYear - 2018}</b>
         <span>{t.ui.l10nYears}</span>
         <p class="stat__note hide-when-open">{t.ui.l10nNote}</p>
         <ul slot="more" class="ticks">
@@ -294,48 +304,37 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
       </Tile>
 
       <Tile id="bt-skills" label={t.ui.expand(t.ui.skills)} class="skills">
-        <h2 class="heading">
-          <Icon name="ph:toolbox-duotone" class:list="heading__icon" />
-          {t.ui.skills}
-        </h2>
-        <ul class="skills__grid hide-when-open">
+        <h2 class="heading">{t.ui.skills}</h2>
+        <dl class="skills__list hide-when-open">
           {t.skills.map((s) => (
-            <li class="skills__card">
-              <Icon name={`ph:${s.icon}-duotone`} class:list="skills__icon" />
-              {s.label}
-              <span class="skills__tags">
-                {s.tags.map((tag) => (
-                  <small class="pill skills__tag">{tag}</small>
-                ))}
-              </span>
-            </li>
+            <div class="skills__row">
+              <dt class="skills__label">{s.label}</dt>
+              <dd class="skills__tags">{s.tags.join(locale === "zh" ? "、" : ", ")}</dd>
+            </div>
           ))}
-        </ul>
+        </dl>
         <dl slot="more" class="skills__detail">
           {t.skills.map((s) => (
             <div>
-              <dt class="skills__term">
-                <Icon name={`ph:${s.icon}-duotone`} class:list="heading__icon" />
-                {s.label}
-              </dt>
+              <dt class="skills__term">{s.label}</dt>
               <dd class="skills__description">{s.detail}</dd>
             </div>
           ))}
         </dl>
       </Tile>
 
-      <h2 class="heading projects-heading">
-        <Icon name="ph:folders-duotone" class:list="heading__icon" />
-        {t.ui.projects}
-      </h2>
+      <h2 class="heading projects-heading">{t.ui.projects}</h2>
       {projects.map((p) => {
         const id = `bt-${p.key.replace(/\W+/g, "").toLowerCase()}`
         const copy = t.projects[p.key]
         return (
-          <Tile id={id} label={t.ui.expand(p.key)} class="project" style={`--base:${p.color}`}>
-            <BentoViz kind={p.viz} ui={t.ui} />
+          <Tile id={id} label={t.ui.expand(p.key)} class="project">
+            <BentoViz
+              kind={p.scene}
+              labels={copy.scene}
+              shot={p.shot && { ...p.shot, src: p.shot.src[locale] }}
+            />
             <span class="project__tags">
-              <Icon name={`ph:${p.icon}-duotone`} class:list="project__icon" />
               {p.tags.map((tag) => (
                 <em class="project__tag">{tag}</em>
               ))}
@@ -361,11 +360,7 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
       })}
 
       <Tile id="bt-path" label={t.ui.expand(t.ui.path)} class="path" wide>
-        <BentoViz kind="route" ui={t.ui} class="hide-when-open" />
-        <h2 class="heading">
-          <Icon name="ph:path-duotone" class:list="heading__icon" />
-          {t.ui.path}
-        </h2>
+        <h2 class="heading">{t.ui.path}</h2>
         <ol class="timeline">
           {t.timeline.map((step) => (
             <li class="timeline__step">
@@ -387,8 +382,7 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
         </table>
       </Tile>
 
-      <Tile surface="sage" class="contact">
-        <BentoViz kind="orbit" ui={t.ui} />
+      <Tile surface="deep" class="contact">
         <h2 class="contact__heading">{t.ui.contact}</h2>
         <ul class="contact__links">
           {contacts.map((c) => (
@@ -408,10 +402,7 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
 
       <Tile class="friends">
         <header class="friends__header">
-          <h2 class="heading friends__heading">
-            <Icon name="ph:users-three-duotone" class:list="heading__icon" />
-            {t.ui.friends}
-          </h2>
+          <h2 class="heading friends__heading">{t.ui.friends}</h2>
           <a
             class="friends__join"
             href={withUtm("https://link.pan93.com/friendship-links", "friends")}
@@ -492,7 +483,7 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
     left: 0.5rem;
     z-index: 10;
     translate: 0 -200%;
-    border-radius: 9999px;
+    border-radius: 4px;
     background-color: var(--color-ink);
     padding: 0.5rem 0.875rem;
     color: var(--color-paper);
@@ -534,10 +525,6 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
     font-weight: 500;
     color: var(--color-mute);
   }
-  .heading__icon {
-    font-size: 20px;
-    color: var(--color-sage);
-  }
   .subheading {
     margin-bottom: 0.75rem;
     font-size: 14px;
@@ -545,7 +532,7 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
     color: var(--color-mute);
   }
   .pill {
-    border-radius: 9999px;
+    border-radius: 4px;
     padding: 0.25rem 0.4375rem;
     font-size: 12px;
     line-height: 1;
@@ -572,7 +559,7 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
     }
   }
   .intro__language:focus-visible {
-    outline: 2px solid var(--color-sage);
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
 
@@ -598,7 +585,7 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
     height: 2.125rem;
     align-items: center;
     gap: 0.375rem;
-    border-radius: 9999px;
+    border-radius: 6px;
     background-color: color-mix(in oklab, var(--color-ink) 7%, transparent);
     padding-inline: 0.75rem;
     font-size: 13px;
@@ -617,7 +604,7 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
   .intro__role {
     margin-bottom: 0.625rem;
     font-weight: 500;
-    color: var(--color-sage);
+    color: var(--color-accent);
   }
   .intro__lead {
     max-width: 30em;
@@ -630,7 +617,7 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
     display: flex;
     height: 2.125rem;
     gap: 0.125rem;
-    border-radius: 9999px;
+    border-radius: 6px;
     background-color: color-mix(in oklab, var(--color-ink) 7%, transparent);
     padding: 0.1875rem;
     &::before {
@@ -639,9 +626,9 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
       inset-block: 0.1875rem;
       left: 0.1875rem;
       width: 1.75rem;
-      border-radius: 9999px;
+      border-radius: 4px;
       background-color: var(--color-tile);
-      transition: translate 300ms var(--ease-fan);
+      transition: translate 200ms var(--ease-spring);
     }
     &:has(#theme-light:checked)::before {
       translate: 1.875rem;
@@ -655,17 +642,17 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
     display: grid;
     width: 1.75rem;
     place-items: center;
-    border-radius: 9999px;
+    border-radius: 4px;
     font-size: 15px;
     color: var(--color-mute);
     cursor: pointer;
-    transition: color 300ms var(--ease-default);
+    transition: color 150ms var(--ease-default);
     &:hover,
     &:has(:checked) {
       color: var(--color-ink);
     }
     &:has(:focus-visible) {
-      outline: 2px solid var(--color-sage);
+      outline: 2px solid var(--color-accent);
       outline-offset: 1px;
     }
   }
@@ -683,7 +670,7 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
     height: 5.5rem;
     border-radius: 9999px;
     &:has(:focus-visible) {
-      outline: 2px solid var(--color-sage);
+      outline: 2px solid var(--color-accent);
       outline-offset: 6px;
     }
   }
@@ -698,8 +685,8 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
   .avatars__image--extra {
     scale: 0.9;
     transition-property: translate, rotate, scale;
-    transition-duration: 350ms;
-    transition-timing-function: var(--ease-fan);
+    transition-duration: 300ms;
+    transition-timing-function: var(--ease-spring);
     /* Hover, or a tap on a touch screen, spreads the avatars into a row with a 12px gap.
        :where() keeps these below the container query, so the 2×2 grid wins when there is room. */
     .avatars__stack:where(:has(:checked)) & {
@@ -742,66 +729,68 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
   }
   .stats__value {
     display: block;
-    font-family: var(--font-display);
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.03em;
     font-size: 30px;
     line-height: 1;
-    font-weight: 400;
     .stats__link:is(:hover, :focus-visible) & {
-      color: var(--color-clay);
+      color: var(--color-accent);
     }
   }
   .stats__label {
+    display: block;
     margin-top: 0.375rem;
-    display: flex;
-    gap: 0.25rem;
     font-size: 12px;
     line-height: 1.5;
     color: var(--color-mute);
   }
-  .stats__icon {
-    display: flex;
-    height: 1lh;
-    align-items: center;
-  }
 
   /* Now */
   .now {
-    --viz: var(--color-sage);
+    --viz: var(--color-accent);
     @media (width >= 561px) {
       grid-column: span 2 / span 2;
-    }
-    /* The list is about 20rem wide. The cluster takes the space to its right, and a phone has none to give. */
-    :global(.viz__cluster) {
-      width: min(62%, 100% - 21rem);
-      @media (width < 561px) {
-        display: none;
-      }
     }
   }
   .now__list {
     display: grid;
     gap: 0.75rem;
+    @media (width >= 901px) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.25rem;
+      margin-top: 0.5rem;
+    }
   }
   .now__item {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    @media (width >= 901px) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
   }
-  .now__icon {
-    font-size: 26px;
-    color: var(--color-clay);
+  .now__item > div {
+    flex: 1;
+    align-self: stretch;
   }
   .now__title {
     display: block;
   }
   .now__role {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
     font-size: 13px;
     color: var(--color-mute);
   }
   .now__since {
-    margin-left: 0.375rem;
+    white-space: nowrap;
     background-color: var(--color-paper);
-    vertical-align: 1px;
   }
   .now__more {
     display: grid;
@@ -837,7 +826,7 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
     transition: translate 150ms var(--ease-default);
     .repos__link:hover & {
       translate: 0.125rem -0.125rem;
-      color: var(--color-sage);
+      color: var(--color-accent);
     }
   }
   .repos__text {
@@ -852,7 +841,7 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
     gap: 0.375rem;
   }
   .chips__chip {
-    border-radius: 9999px;
+    border-radius: 4px;
     background-color: var(--color-chip);
     padding: 0.3125rem 0.75rem;
     font-size: 13px;
@@ -863,36 +852,16 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    --tick: var(--color-clay);
-  }
-  /* The talk bars stand beside the number, so they never run behind it. Open, the scene moves back to the band at the top. */
-  .stat__head {
-    position: relative;
-    display: flex;
-    align-items: flex-end;
-    :global(.stat:has(> .tile__details[open])) & {
-      position: static;
-    }
-    /* Closed, the row takes the space the grid row leaves over, so the bars rise to the top of the tile. */
-    :global(.stat:not(:has(> .tile__details[open]))) & {
-      flex: 1;
-    }
-    :global(.stat:not(:has(> .tile__details[open]))) & > :global(.viz) {
-      position: relative;
-      flex: 1;
-      align-self: stretch;
-      margin: 0 0 0.375rem 1rem;
-      :global(.viz__wave) {
-        inset: 0;
-        height: auto;
-      }
-    }
+    --tick: var(--color-accent);
+    --viz: var(--color-accent);
   }
   .stat__number {
-    font-family: var(--font-display);
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.03em;
     font-size: 64px;
     line-height: 1;
-    font-weight: 400;
   }
   .stat__note {
     margin-top: 0.625rem;
@@ -908,10 +877,10 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
   }
   .talks__item {
     break-inside: avoid;
-    border-bottom: 1px dashed rgb(255 255 255 / 0.22);
+    border-bottom: 1px solid color-mix(in oklab, var(--color-ink) 12%, transparent);
     padding-block: 0.5rem;
     font-size: 12px;
-    color: #ffe1cf;
+    color: var(--color-mute);
   }
   .talks__line {
     display: block;
@@ -926,13 +895,12 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-    border-radius: 9999px;
-    background-color: rgb(255 255 255 / 0.16);
+    border-radius: 4px;
+    background-color: var(--color-chip);
     padding: 0.1875rem 0.5625rem;
-    color: #fff;
+    color: var(--color-ink);
     &:is(:hover, :focus-visible) {
-      background-color: #fff;
-      color: var(--color-clay);
+      color: var(--color-accent);
     }
   }
 
@@ -943,37 +911,27 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
       grid-row: span 2 / span 2;
     }
   }
-  .skills__grid {
+  .skills__list {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.625rem;
+    column-gap: 1.75rem;
     @media (width >= 561px) {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
-  .skills__card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.375rem;
-    border-radius: var(--radius-card);
-    background-color: var(--color-paper);
-    padding: 1rem 0.25rem;
-    text-align: center;
+  .skills__row {
+    display: grid;
+    grid-template-columns: 6.5rem 1fr;
+    gap: 0.75rem;
+    border-top: 1px solid color-mix(in oklab, var(--color-ink) 12%, transparent);
+    padding-block: 0.625rem;
     font-size: 14px;
+    line-height: 1.5;
   }
-  .skills__icon {
-    font-size: 30px;
-    color: var(--color-sage);
+  .skills__label {
+    font-weight: 500;
   }
   .skills__tags {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.25rem;
-  }
-  .skills__tag {
-    background-color: var(--color-tile);
+    color: var(--color-mute);
   }
   .skills__detail {
     display: grid;
@@ -985,20 +943,16 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
     }
   }
   .skills__term {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
     font-weight: 500;
   }
   .skills__description {
     margin-top: 0.25rem;
-    margin-left: 1.75rem;
     font-size: 14px;
     line-height: 1.7;
     color: var(--color-mute);
   }
 
-  /* Projects. --base is the project's colour; dark mode lightens it. */
+  /* Projects */
   .projects-heading {
     display: none;
   }
@@ -1009,7 +963,7 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
     justify-content: flex-end;
     /* Room for the chart, so wrapped text in a narrow column grows the tile instead of running into it. */
     padding-top: 8rem;
-    --c: light-dark(var(--base), color-mix(in oklab, var(--base) 55%, white));
+    --c: var(--color-accent);
     --tick: var(--c);
     --viz: var(--c);
   }
@@ -1030,6 +984,9 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
       justify-content: flex-start;
       padding-top: 10.625rem;
     }
+    &#bt-l10n:global(:has(> .tile__details[open])) {
+      padding-top: 1.375rem;
+    }
   }
   .project__tags {
     display: inline-flex;
@@ -1039,11 +996,8 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
     font-weight: 500;
     color: var(--c);
   }
-  .project__icon {
-    font-size: 16px;
-  }
   .project__tag {
-    border-radius: 9999px;
+    border-radius: 4px;
     background-color: color-mix(in oklab, var(--c) 12%, transparent);
     padding: 0.25rem 0.5rem;
     line-height: 1;
@@ -1101,7 +1055,7 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
     }
   }
   .timeline__step {
-    border-top: 2px solid var(--color-sage);
+    border-top: 2px solid var(--color-accent);
     padding-top: 0.5rem;
     font-size: 13px;
     line-height: 1.5;
@@ -1111,10 +1065,12 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
   }
   .timeline__year {
     display: block;
-    font-family: var(--font-display);
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.03em;
     font-size: 22px;
     line-height: normal;
-    font-weight: 400;
     color: var(--color-ink);
   }
   .experience {
@@ -1144,7 +1100,7 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
   .experience__when {
     width: 100%;
     white-space: nowrap;
-    color: var(--color-sage);
+    color: var(--color-accent);
     @media (width >= 561px) {
       width: calc(8em + 20px);
     }
@@ -1184,12 +1140,12 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
     width: 2.75rem;
     height: 2.75rem;
     place-items: center;
-    border-radius: 9999px;
+    border-radius: 6px;
     background-color: rgb(255 255 255 / 0.14);
     font-size: 22px;
     &:hover {
       background-color: #fff;
-      color: var(--color-sage);
+      color: var(--color-accent);
     }
   }
 
@@ -1211,7 +1167,7 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
   }
   .friends__join {
     font-size: 14px;
-    color: var(--color-sage);
+    color: var(--color-accent);
   }
   .friends__list {
     display: grid;

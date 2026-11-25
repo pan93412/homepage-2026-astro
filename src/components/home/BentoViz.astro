@@ -159,10 +159,10 @@ const timings = [
   {kind === "rings" && (
     <svg class="viz__rings" viewBox="0 0 240 240">
       {rings.map((r, i) => (
-        <circle class="viz__ring" cx="200" cy="40" r={r} style={`--d:${i * 0.15}s`} />
+        <circle class="viz__ring" cx="240" cy="0" r={r} style={`--d:${i * 0.15}s`} />
       ))}
       <defs>
-        <path id="ring-path" d="M200 40 m-96 0 a96 96 0 1 0 192 0 a96 96 0 1 0 -192 0" />
+        <path id="ring-path" d="M240 0 m-96 0 a96 96 0 1 0 192 0 a96 96 0 1 0 -192 0" />
       </defs>
       <text class="viz__ring-text">
         <textPath href="#ring-path">{`Git · GNOME · KDE · Telegram · Weblate · ${ui.l10nRing} · `}</textPath>
@@ -253,7 +253,7 @@ const timings = [
     display: grid;
     gap: 0.1875rem;
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 12px;
     line-height: 1.7;
   }
   .viz__diff-row {
@@ -362,7 +362,7 @@ const timings = [
     display: grid;
     gap: 0.3125rem;
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 12px;
     line-height: 1.4;
     color: var(--color-mute);
     /* .viz__grow scales the open chart by 1.4 from its left edge; this width keeps it inside the same insets. */
@@ -480,12 +480,13 @@ const timings = [
     animation: eq 1.4s var(--d) ease-in-out infinite alternate;
   }
 
+  /* The rings are centred on the top-right corner and stay 240px wide, so they keep clear of the text at the bottom left. */
   .viz__rings {
     position: absolute;
     top: 0;
     right: 0;
-    width: max(240px, min(100%, 360px));
-    height: max(240px, min(100%, 360px));
+    width: 240px;
+    height: 240px;
   }
   .viz__ring {
     fill: none;

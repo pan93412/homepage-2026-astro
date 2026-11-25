@@ -25,7 +25,7 @@ bun run sync:friends  # Refresh approved friend links
 
 - Text: `src/i18n/en.ts` and `src/i18n/zh.ts`.
 - Project, experience and talk lists: `src/components/`. New experiences also need a table-of-contents entry in `Portfolio.astro`.
-- Friend links: edit the source Google Sheet, then run **Sync Friend Links** in GitHub Actions. Approved entries sync daily to `src/data/friends.yaml` and trigger deployment.
+- Friend links: approve the entry in the source Google Sheet. Each production build reads the approved entries, and production rebuilds daily. To publish sooner, run **Bunny and Quality** on `master` in GitHub Actions. `src/data/friends.yaml` holds the entries that pull requests and failed reads use; refresh it with `bun run sync:friends`.
 
 ## PostHog
 

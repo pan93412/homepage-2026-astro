@@ -5,7 +5,7 @@ on:
     branches: [master]
   pull_request:
   schedule:
-    # Daily at 03:47 Asia/Taipei (GitHub schedules use UTC), to refresh the GitHub stats.
+    # Daily at 03:47 Asia/Taipei (GitHub schedules use UTC), to refresh the stats and friend links.
     - cron: "47 19 * * *"
   workflow_dispatch:
 
@@ -36,14 +36,22 @@ jobs:
         uses: ./.github/actions/ci-setup
       - name: Install dependencies
         run: bun install --frozen-lockfile
-      # Pull requests build with the committed numbers, so their output does not change by day.
-      # If GitHub fails, the build keeps the committed numbers.
-      - name: Read GitHub stats
-        if: github.event_name != 'pull_request'
-        continue-on-error: true
-        run: bun run sync:stats
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+      # Pull requests build with the committed data, so their output does not change by day.
+      # If a source fails, the build keeps the committed data.
+      - parallel:
+          - name: Read GitHub stats
+            if: github.event_name != 'pull_request'
+            continue-on-error: true
+            run: bun run sync:stats
+            env:
+              GITHUB_TOKEN: ${{ github.token }}
+          - name: Read approved friend links
+            if: github.event_name != 'pull_request'
+            continue-on-error: true
+            run: bun run sync:friends
+            env:
+              FRIENDSHIP_GOOGLE_SHEET_ID: ${{ vars.FRIENDSHIP_GOOGLE_SHEET_ID }}
+              FRIENDSHIP_GOOGLE_SHEET_NAME: ${{ vars.FRIENDSHIP_GOOGLE_SHEET_NAME }}
       - parallel:
           - name: Check workflow and Nix configuration
             run: nixfmt --check flake.nix && jactionlint

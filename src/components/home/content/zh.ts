@@ -129,8 +129,7 @@ export default {
     {
       label: "微服務",
       tags: ["gRPC", "NATS", "GraphQL"],
-      detail:
-        "服務之間我用 gRPC、GraphQL 溝通，訊息交給 NATS 或 RabbitMQ 傳。我也設計過 Zeabur 的服務規格。",
+      detail: "我熟悉 gRPC、GraphQL、NATS 和 RabbitMQ，也設計過 Zeabur 的服務規格。",
     },
     {
       label: "身分與資安",
@@ -142,7 +141,7 @@ export default {
       label: "基礎設施",
       tags: ["Kubernetes", "Flux", "BuildKit"],
       detail:
-        "我自己架 K3s 叢集，用 Helm 和 Flux CD 部署。之前用的是 Argo CD，後來換成 Flux。CI/CD 則跑在 GitHub Actions。",
+        "我自己架 K3s 叢集，用 Helm 和 Flux CD 部署。之前用的是 Argo CD，後來換成 Flux。CI/CD 則跑在 GitHub Actions。我也熟悉 Kubernetes operator 和 CRD 的設計。",
     },
     {
       label: "可觀測性",

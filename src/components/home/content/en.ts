@@ -131,7 +131,7 @@ export default {
       label: "Microservices",
       tags: ["gRPC", "NATS", "GraphQL"],
       detail:
-        "My services talk over gRPC and GraphQL, and pass messages through NATS or RabbitMQ. I also designed Zeabur’s service specification.",
+        "I’m familiar with gRPC, GraphQL, NATS and RabbitMQ. I also designed Zeabur’s service specification.",
     },
     {
       label: "Security",
@@ -143,7 +143,7 @@ export default {
       label: "Infrastructure",
       tags: ["Kubernetes", "Flux", "BuildKit"],
       detail:
-        "I run my own K3s clusters and deploy with Helm and Flux CD. I used Argo CD before and moved to Flux. CI/CD runs on GitHub Actions.",
+        "I run my own K3s clusters and deploy with Helm and Flux CD. I used Argo CD before and moved to Flux. CI/CD runs on GitHub Actions. I’m also familiar with designing Kubernetes operators and CRDs.",
     },
     {
       label: "Observability",

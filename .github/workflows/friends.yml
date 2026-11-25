@@ -16,11 +16,9 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-slim
-    timeout-minutes: 30
+    timeout-minutes: 10
     permissions:
-      contents: write
-      pull-requests: write
-      actions: write
+      contents: read
     steps:
       - name: Checkout default branch
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -38,60 +36,29 @@ jobs:
         env:
           FRIENDSHIP_GOOGLE_SHEET_ID: ${{ vars.FRIENDSHIP_GOOGLE_SHEET_ID }}
           FRIENDSHIP_GOOGLE_SHEET_NAME: ${{ vars.FRIENDSHIP_GOOGLE_SHEET_NAME }}
-      - name: Merge the changes through a pull request and deploy
+      - name: Open the pull request as the bot
+        id: pr
+        uses: zeabur-oss/.github/actions/bot-pr@395adf27d31c77538ebf7c154946b52822387b96
+        with:
+          client-id: ${{ vars.BOT_CLIENT_ID }}
+          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
+          branch: chore/sync-friends
+          title: "chore: sync friend links"
+          body: Approved entries from the friendship form.
+          add-paths: src/data/friends.yaml
+      - name: Get a bot token for auto-merge
+        id: app
+        if: steps.pr.outputs.pull-request-number != ''
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          client-id: ${{ vars.BOT_CLIENT_ID }}
+          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+      # The bot merges when "build" passes. Its push to master starts the deploy.
+      - name: Turn on auto-merge
+        if: steps.pr.outputs.pull-request-number != ''
         env:
-          GH_TOKEN: ${{ github.token }}
-          BRANCH: chore/sync-friends
-          FILE: src/data/friends.yaml
-          TITLE: "chore: sync friend links"
-        shell: bash
-        run: |
-          set -euo pipefail
-          if git diff --quiet -- "$FILE"; then
-            echo 'Friend links are unchanged.'
-            exit 0
-          fi
-          repo="repos/$GITHUB_REPOSITORY"
-          base=$(git rev-parse HEAD)
-
-          # Start the sync branch at the master commit this run read.
-          if gh api "$repo/git/ref/heads/$BRANCH" --silent 2>/dev/null; then
-            gh api --method PATCH "$repo/git/refs/heads/$BRANCH" -f sha="$base" -F force=true --silent
-          else
-            gh api "$repo/git/refs" -f ref="refs/heads/$BRANCH" -f sha="$base" --silent
-          fi
-
-          # GitHub signs commits that the Actions token makes through the API.
-          commit=$(gh api --method PUT "$repo/contents/$FILE" \
-            -f branch="$BRANCH" \
-            -f sha="$(git rev-parse "HEAD:$FILE")" \
-            -f content="$(base64 --wrap=0 "$FILE")" \
-            -f message="$TITLE"$'\n\nSigned-off-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>' \
-            --jq .commit.sha)
-
-          pr=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$BRANCH" --base master --state open --json number --jq '.[0].number // empty')
-          if [ -z "$pr" ]; then
-            url=$(gh pr create --repo "$GITHUB_REPOSITORY" --head "$BRANCH" --base master --title "$TITLE" \
-              --body "Approved entries from the friendship form, synced by $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID.")
-            pr=${url##*/}
-          fi
-
-          # Events from the Actions token start no workflows, so the pull request
-          # gets no "build" check by itself. Dispatch the build on its head commit.
-          gh workflow run deploy.yml --repo "$GITHUB_REPOSITORY" --ref "$BRANCH"
-          run=
-          for _ in $(seq 30); do
-            run=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow deploy.yml --event workflow_dispatch --commit "$commit" --json databaseId --jq '.[0].databaseId // empty')
-            [ -n "$run" ] && break
-            sleep 5
-          done
-          if [ -z "$run" ]; then
-            echo "::error::No deploy.yml run started for $commit."
-            exit 1
-          fi
-          gh run watch "$run" --repo "$GITHUB_REPOSITORY" --exit-status --interval 30 > /dev/null
-
-          gh pr merge "$pr" --repo "$GITHUB_REPOSITORY" --squash --match-head-commit "$commit"
-
-          # The merge is a push by the Actions token, which starts no workflows. Deploy explicitly.
-          gh workflow run deploy.yml --repo "$GITHUB_REPOSITORY" --ref master
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          PR: ${{ steps.pr.outputs.pull-request-number }}
+        run: gh pr merge "$PR" --repo "$GITHUB_REPOSITORY" --auto --squash

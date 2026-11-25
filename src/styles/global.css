@@ -16,7 +16,7 @@
   --color-deep-tile: light-dark(#23271f, #2b3028);
   --color-chip: color-mix(in oklab, var(--color-ink) 7%, var(--color-tile));
 
-  --font-sans: "Geist", "Noto Sans TC", sans-serif;
+  --font-sans: "Geist", "LINE Seed TW", "PingFang TC", "Microsoft JhengHei", sans-serif;
   --font-mono: ui-monospace, "SF Mono", monospace;
 
   --radius-tile: 8px;

@@ -2,6 +2,7 @@
 import { defineConfig } from "astro/config"
 import sitemap from "@astrojs/sitemap"
 import icon from "astro-icon"
+import subsetFonts from "./src/integrations/subset-fonts.ts"
 
 export default defineConfig({
   output: "static",
@@ -19,6 +20,7 @@ export default defineConfig({
   },
   integrations: [
     icon(),
+    subsetFonts(),
     sitemap({
       i18n: { defaultLocale: "en", locales: { en: "en", zh: "zh-TW" } },
     }),

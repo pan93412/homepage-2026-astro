@@ -141,7 +141,7 @@ export default {
       label: "基礎設施",
       tags: ["Kubernetes", "Flux", "BuildKit"],
       detail:
-        "我自己架 K3s 叢集，用 Helm 和 Flux CD 部署。之前用的是 Argo CD，後來換成 Flux。CI/CD 則跑在 GitHub Actions。我也熟悉 Kubernetes operator 和 CRD 的設計。",
+        "我會架設符合 CIS 標準的 K3s 和 RKE2 叢集，用 Helm 和 Flux CD 部署，並且也封裝成了 Zeatend 這種安裝程式。部署工具之前用 Argo CD，後來換成 Flux。CI/CD 則跑在 GitHub Actions。我也熟悉 Kubernetes operator 和 CRD 的設計。",
     },
     {
       label: "可觀測性",

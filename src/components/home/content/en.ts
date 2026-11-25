@@ -143,7 +143,7 @@ export default {
       label: "Infrastructure",
       tags: ["Kubernetes", "Flux", "BuildKit"],
       detail:
-        "I run my own K3s clusters and deploy with Helm and Flux CD. I used Argo CD before and moved to Flux. CI/CD runs on GitHub Actions. I’m also familiar with designing Kubernetes operators and CRDs.",
+        "I can set up CIS-compliant K3s and RKE2 clusters and deploy to them with Helm and Flux CD, and I packaged this into an installer, Zeatend. For deploys I used Argo CD before and moved to Flux. CI/CD runs on GitHub Actions. I’m also familiar with designing Kubernetes operators and CRDs.",
     },
     {
       label: "Observability",

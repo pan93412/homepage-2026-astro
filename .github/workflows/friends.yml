@@ -20,7 +20,6 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-      actions: write
     steps:
       - name: Checkout default branch
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -39,7 +38,6 @@ jobs:
           FRIENDSHIP_GOOGLE_SHEET_ID: ${{ vars.FRIENDSHIP_GOOGLE_SHEET_ID }}
           FRIENDSHIP_GOOGLE_SHEET_NAME: ${{ vars.FRIENDSHIP_GOOGLE_SHEET_NAME }}
       - name: Open or update the pull request
-        id: pr
         uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1 # v8.1.3
         with:
           token: ${{ github.token }}
@@ -52,10 +50,6 @@ jobs:
           delete-branch: true
           commit-message: "chore: sync friend links"
           title: "chore: sync friend links"
-          body: Approved entries from the friendship form. Merging deploys them to production.
-      # Pull requests from GITHUB_TOKEN start no workflows. Start the "build" check by hand.
-      - name: Run the build check on the pull request
-        if: steps.pr.outputs.pull-request-operation == 'created' || steps.pr.outputs.pull-request-operation == 'updated'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh workflow run deploy.yml --repo "$GITHUB_REPOSITORY" --ref chore/sync-friends
+          body: >-
+            Approved entries from the friendship form. Approve the workflow run to start the
+            "build" check. Merging deploys the entries to production.

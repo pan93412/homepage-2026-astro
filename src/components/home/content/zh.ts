@@ -196,14 +196,14 @@ export default {
       text: "在自己的主機上，從 Git、Docker Compose 或範本部署服務。",
       detail: [
         "講白話些，就是把 Zeabur 搬到你自己的主機上。專案、服務、網域、環境變數、日誌和回滾，用起來都跟 Zeabur 一樣。它跑在 Kubernetes 上，狀態直接存在標準的 Kubernetes 物件裡，所以不用另外架資料庫。",
-        "我最喜歡的是，套用前它會先列出每個欄位改了什麼，讓你看清楚再套用。主機和方案也都由你自己選。",
+        "套用前，它會先列出每個欄位改了什麼。主機和方案也都由你自己選。",
       ],
     },
     Builder: {
       scene: ["讀專案", "寫出 Dockerfile", "建置失敗，讀日誌", "再建置，成功"],
       text: "程式碼推上 GitHub，Builder 就建出可以直接部署的映像檔。",
       detail: [
-        "程式碼推上 GitHub，Builder 就幫你建好映像檔。Dockerfile 交給 zbplan 的 AI Agent，它會讀專案、挑一個合適的。建置失敗的話，它會跟我一樣先去翻日誌，再試一次。Railpack 認得 Node.js、Python、Go、PHP、Ruby、Java、Rust 等語言，專案裡已經有 Dockerfile 的話就直接用。",
+        "程式碼推上 GitHub，Builder 就幫你建好映像檔。Dockerfile 交給 zbplan 的 AI Agent，它會讀專案、挑一個合適的。建置失敗的話，它會讀日誌再試一次。Railpack 認得 Node.js、Python、Go、PHP、Ruby、Java、Rust 等語言，專案裡已經有 Dockerfile 的話就直接用。",
         "分支一更新就會重新建置，再由 Keel 把服務換成新映像檔。建置用的金鑰以 secret 傳入，不會留在映像檔裡。如果你已經有自己的部署工具，也可以只把 Builder 當 Kubernetes operator 用，它會把映像檔 digest 交給你的工具。",
       ],
     },
@@ -212,7 +212,7 @@ export default {
       text: "用 Rust 跑 Ultralytics YOLO 物件偵測，支援 YOLOv8、YOLO11、YOLO12 與 YOLO26。",
       detail: [
         "用 Rust 跑 YOLO，推論交給 ONNX Runtime，CPU、CoreML、CUDA 都能用。在 M3 Max 上用 CoreML 跑 YOLO11x，一張圖大約 45 ms。",
-        "每個模型在 CI 裡都會跑同一張測試圖，找到的人和物件必須一樣，換模型的時候就比較安心。",
+        "每個模型在 CI 裡都會跑同一張測試圖，確認找到的人和物件都一樣。",
       ],
     },
   },
@@ -226,7 +226,7 @@ export default {
     { year: "現在", text: "Zeabur OSS 開發 Lead" },
   ],
   l10nDetail: [
-    "從 2018 年開始，我以 l10n-tw 的名義翻譯 Git、GNOME、KDE，也幫 SLAT 維護 Weblate 翻譯平台。在 Telegram 的在地化社群，我是版主也是譯者，在那裡應該很容易遇到我。",
+    "從 2018 年開始，我以 l10n-tw 的名義翻譯 Git、GNOME、KDE，也幫 SLAT 維護 Weblate 翻譯平台。在 Telegram 的在地化社群，我是版主也是譯者。",
     "在 COSCUP 2026，我分享了 Git 正體中文翻譯的流程治理。",
   ],
   experiences: [

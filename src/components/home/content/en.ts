@@ -200,7 +200,7 @@ export default {
       text: "Deploy apps on your own server from Git, Docker Compose or an app template.",
       detail: [
         "Put simply, it’s Zeabur on your own servers. Projects, services, domains, variables, logs and rollbacks work the same way. It runs on Kubernetes and keeps its state in standard Kubernetes objects, so there is no database to run.",
-        "What I like most is that it shows you every change field by field before it applies anything. The servers and the plan are yours to choose.",
+        "Before it applies anything, it shows you every change field by field. The servers and the plan are yours to choose.",
       ],
     },
     Builder: {
@@ -212,7 +212,7 @@ export default {
       ],
       text: "Push to GitHub and Builder turns your code into an image ready to deploy.",
       detail: [
-        "Push your code to GitHub and Builder makes the image. zbplan’s AI agent reads the project and picks a Dockerfile. When a build fails, it does what I would do: read the log and try again. Railpack detects Node.js, Python, Go, PHP, Ruby, Java, Rust and more, and an existing Dockerfile is used as is.",
+        "Push your code to GitHub and Builder makes the image. zbplan’s AI agent reads the project and picks a Dockerfile. When a build fails, it reads the log and tries again. Railpack detects Node.js, Python, Go, PHP, Ruby, Java, Rust and more, and an existing Dockerfile is used as is.",
         "Every branch update triggers a new build, and Keel rolls out the new image. Build secrets are mounted only during the build, so they never end up in the image. If you already have a deploy tool, you can run Builder on its own as a Kubernetes operator that hands it the image digests.",
       ],
     },
@@ -221,7 +221,7 @@ export default {
       text: "Ultralytics YOLO object detection in Rust: YOLOv8, YOLO11, YOLO12 and YOLO26.",
       detail: [
         "YOLO in Rust. Inference runs on ONNX Runtime, with CPU, CoreML or CUDA. With CoreML on an M3 Max, YOLO11x takes about 45 ms per image.",
-        "In CI, every model runs on the same test image and must find the same people and objects, so I can swap models without worrying.",
+        "In CI, every model runs on the same test image and must find the same people and objects.",
       ],
     },
   },
@@ -235,7 +235,7 @@ export default {
     { year: "Now", text: "Leading Zeabur Open Source" },
   ],
   l10nDetail: [
-    "Since 2018 I have translated Git, GNOME, KDE and more with l10n-tw, and I help SLAT maintain its Weblate. I’m also a moderator and translator in the Telegram localization community, so that’s an easy place to find me.",
+    "Since 2018 I have translated Git, GNOME, KDE and more with l10n-tw, and I help SLAT maintain its Weblate. I’m also a moderator and translator in the Telegram localization community.",
     "At COSCUP 2026, I talked about the workflow behind the Git zh-TW translation.",
   ],
   experiences: [

@@ -19,7 +19,7 @@ export const avatars = [
 const approx = (n: number) =>
   n < 1000 ? String(n) : `${(Math.floor(n / 100) * 100).toLocaleString("en-US")}+`
 
-// Updated daily by .github/workflows/stats.yml (bun run sync:stats).
+// Refreshed by bun run sync:stats before each production build (.github/workflows/deploy.yml).
 export const stats = [
   {
     key: "pullRequests",

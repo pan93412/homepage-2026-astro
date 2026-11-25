@@ -4,6 +4,9 @@ on:
   push:
     branches: [master]
   pull_request:
+  schedule:
+    # Daily at 03:47 Asia/Taipei (GitHub schedules use UTC), to refresh the GitHub stats.
+    - cron: "47 19 * * *"
   workflow_dispatch:
 
 permissions:
@@ -33,6 +36,14 @@ jobs:
         uses: ./.github/actions/ci-setup
       - name: Install dependencies
         run: bun install --frozen-lockfile
+      # Pull requests build with the committed numbers, so their output does not change by day.
+      # If GitHub fails, the build keeps the committed numbers.
+      - name: Read GitHub stats
+        if: github.event_name != 'pull_request'
+        continue-on-error: true
+        run: bun run sync:stats
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - parallel:
           - name: Check workflow and Nix configuration
             run: nixfmt --check flake.nix && jactionlint

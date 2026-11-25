@@ -10,11 +10,11 @@
   --color-paper: light-dark(#ecebe4, #121411);
   --color-tile: light-dark(#fbfaf6, #1c1f1a);
   --color-ink: light-dark(#23271f, #e6e8df);
-  --color-mute: light-dark(#6c7166, #9da394);
+  --color-mute: light-dark(#5f645a, #9da394);
   --color-sage: light-dark(#5f7a63, #93b096);
   --color-clay: light-dark(#c96f4a, #e08c66);
   --color-intro: light-dark(#dfe5d8, #232a22);
-  --color-clay-tile: light-dark(#c96f4a, #9c4f31);
+  --color-clay-tile: light-dark(#ad5a36, #9c4f31);
   --color-sage-tile: light-dark(#5f7a63, #3f5843);
   --color-deep-tile: light-dark(#23271f, #2b3028);
   --color-chip: color-mix(in oklab, var(--color-sage) 12%, var(--color-tile));

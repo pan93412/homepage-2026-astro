@@ -246,8 +246,10 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
       </Tile>
 
       <Tile id="bt-talks" label={t.ui.expand(t.ui.talks)} surface="clay" class="stat">
-        <BentoViz kind="wave" ui={t.ui} />
-        <b class="stat__number">{talks.length}</b>
+        <div class="stat__head">
+          <b class="stat__number">{talks.length}</b>
+          <BentoViz kind="wave" ui={t.ui} />
+        </div>
         <span>{t.ui.talks}</span>
         <p class="stat__note hide-when-open">
           {t.ui.latest}
@@ -545,7 +547,7 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
   .pill {
     border-radius: 9999px;
     padding: 0.25rem 0.4375rem;
-    font-size: 11px;
+    font-size: 12px;
     line-height: 1;
     color: var(--color-mute);
     font-style: normal;
@@ -768,6 +770,13 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
     @media (width >= 561px) {
       grid-column: span 2 / span 2;
     }
+    /* The list is about 20rem wide. The cluster takes the space to its right, and a phone has none to give. */
+    :global(.viz__cluster) {
+      width: min(62%, 100% - 21rem);
+      @media (width < 561px) {
+        display: none;
+      }
+    }
   }
   .now__list {
     display: grid;
@@ -856,6 +865,29 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
     justify-content: flex-end;
     --tick: var(--color-clay);
   }
+  /* The talk bars stand beside the number, so they never run behind it. Open, the scene moves back to the band at the top. */
+  .stat__head {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    :global(.stat:has(> .tile__details[open])) & {
+      position: static;
+    }
+    /* Closed, the row takes the space the grid row leaves over, so the bars rise to the top of the tile. */
+    :global(.stat:not(:has(> .tile__details[open]))) & {
+      flex: 1;
+    }
+    :global(.stat:not(:has(> .tile__details[open]))) & > :global(.viz) {
+      position: relative;
+      flex: 1;
+      align-self: stretch;
+      margin: 0 0 0.375rem 1rem;
+      :global(.viz__wave) {
+        inset: 0;
+        height: auto;
+      }
+    }
+  }
   .stat__number {
     font-family: var(--font-display);
     font-size: 64px;
@@ -864,9 +896,8 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
   }
   .stat__note {
     margin-top: 0.625rem;
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.5;
-    opacity: 0.85;
   }
   .talks {
     column-count: 1;

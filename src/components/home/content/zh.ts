@@ -30,7 +30,7 @@ export default {
     expand: (name) => `展開「${name}」`,
   },
   role: "平台工程師，也做開源與翻譯",
-  lead: "我在 Zeabur 當平台工程師，做建置工具和雲端基礎設施，現在也在高科大念碩士班。課餘翻譯開源軟體、在研討會當志工，也做設計。",
+  lead: "我在 Zeabur 擔任平台工程師，負責建置工具與雲端基礎設施，目前也在高科大攻讀碩士。課餘翻譯開源軟體、在研討會擔任志工，也從事設計。",
   avatarAlts: { sitcon: "在 SITCON 2026 演講", ferris: "手繪的 Ferris 螃蟹" },
   statLabels: {
     pullRequests: "合併的 PR",
@@ -49,7 +49,7 @@ export default {
       title: "Zeabur",
       role: "平台工程師",
       since: "2023 年起",
-      text: "從實習生做到平台工程師，負責建置流程、OCI Registry、可觀測性、GitOps 和多雲叢集。",
+      text: "從實習生一路成為平台工程師，負責建置流程、OCI Registry、可觀測性、GitOps 和多雲叢集。",
     },
     {
       title: "國立高雄科技大學",
@@ -119,99 +119,99 @@ export default {
       label: "前端",
       tags: ["React", "Astro", "TanStack"],
       detail:
-        "我主要寫 React、TypeScript、Next.js 和 Astro，TanStack 系列也很常用。小專案的話，我會用 Vue、Nuxt 和 Vite。",
+        "以 React、TypeScript、Next.js 與 Astro 為主，也慣用 TanStack 系列。規模較小的專案，則交給 Vue、Nuxt 與 Vite。",
     },
     {
       label: "後端",
       tags: ["Go", "Rust", "PHP"],
-      detail: "後端主要寫 Go、Rust、PHP 和 Node.js。",
+      detail: "後端以 Go、Rust、PHP 與 Node.js 為主。",
     },
     {
       label: "微服務",
       tags: ["gRPC", "NATS", "GraphQL"],
-      detail: "我熟悉 gRPC、GraphQL、NATS 和 RabbitMQ，也設計過 Zeabur 的服務規格。",
+      detail: "熟悉 gRPC、GraphQL、NATS 與 RabbitMQ，也曾為 Zeabur 設計服務規格。",
     },
     {
       label: "身分與資安",
       tags: ["OIDC", "Passkey", "零信任"],
       detail:
-        "我熟悉 OAuth 2.0、OpenID Connect 和 Passkey（WebAuthn），現在在開發 Zeabur Identity，也用 OAuth scope 重新設計過 Zeabur 的 API 授權。Zeabur 被攻擊那次我在藍隊。另外也導入了 AWS Secrets Manager 管機密，再用 Tailscale 和 ACL 做零信任存取。",
+        "熟悉 OAuth 2.0、OpenID Connect 與 Passkey（WebAuthn），目前開發 Zeabur Identity，並以 OAuth scope 重新設計 Zeabur 的 API 授權。Zeabur 遭受攻擊時參與藍隊防禦，也導入 AWS Secrets Manager 管理機密，並以 Tailscale 與 ACL 建立零信任存取。",
     },
     {
       label: "基礎設施",
       tags: ["Kubernetes", "Flux", "BuildKit"],
       detail:
-        "我會架設符合 CIS 標準的 K3s 和 RKE2 叢集，用 Helm 和 Flux CD 部署，並且也封裝成了 Zeatend 這種安裝程式。部署工具之前用 Argo CD，後來換成 Flux。CI/CD 則跑在 GitHub Actions。我也熟悉 Kubernetes operator 和 CRD 的設計。",
+        "我會架設符合 CIS 標準的 K3s 與 RKE2 叢集，以 Helm 和 Flux CD 部署，並將這套流程封裝成 Zeatend 安裝程式。部署工具早先用 Argo CD，後來改用 Flux，CI/CD 則交由 GitHub Actions。我也熟悉 Kubernetes operator 與 CRD 的設計。",
     },
     {
       label: "可觀測性",
       tags: ["OpenTelemetry", "Grafana"],
       detail:
-        "分散式追蹤我用 OpenTelemetry，儀表板和告警放在 Grafana，背後的 VictoriaMetrics、VictoriaLogs、VictoriaTraces 也是我在維運。",
+        "以 OpenTelemetry 串起分散式追蹤，以 Grafana 呈現儀表板與告警，並維運背後的 VictoriaMetrics、VictoriaLogs 與 VictoriaTraces。",
     },
     {
       label: "Nix",
       tags: ["Flakes", "可重現環境"],
-      detail: "開發環境和自己電腦的設定，我都用 Nix flake 管，打包軟體也會用它。",
+      detail: "開發環境與自己的機器設定，都以 Nix flake 管理，也用它打包軟體。",
     },
     {
       label: "LLM",
       tags: ["Agent", "Vibe Coding"],
-      detail: "Builder 裡有個 AI Agent 會讀專案、修建置。我自己寫程式也大量用 Agent。",
+      detail: "在 Builder 裡接上 AI Agent，讓它讀懂專案、修好建置。日常寫程式也大量仰賴 Agent。",
     },
     {
       label: "資料",
       tags: ["pandas", "Polars"],
       detail:
-        "我會用 pandas、Polars 分析資料，用 Matplotlib、Seaborn、Plotly 畫圖。統計只懂基礎（t 檢定、ANOVA、卡方檢定），還不算熟練。",
+        "以 pandas、Polars 分析資料，以 Matplotlib、Seaborn、Plotly 繪圖。統計僅具基礎（t 檢定、ANOVA、卡方檢定），尚稱不上熟練。",
     },
     {
       label: "Apple",
       tags: ["SwiftUI", "公證", "Xcode Cloud"],
       detail:
-        "我業餘會用 Swift 寫 macOS 和 iOS App，例如合併 String Catalog 的小工具。我熟悉 Xcode Cloud，也在 GitHub Actions 上做過 App 公證（notarization）。",
+        "業餘以 Swift 開發 macOS 與 iOS App，例如合併 String Catalog 的小工具。熟悉 Xcode Cloud，也在 GitHub Actions 上建立過 App 公證（notarization）流程。",
     },
     {
       label: "設計",
       tags: ["Figma", "Adobe"],
       detail:
-        "我會用 Figma 畫 UI mockup 和 wireframe，需要呈現作品時，也會用 Photoshop、Illustrator、Premiere Pro。",
+        "以 Figma 繪製 UI mockup 與 wireframe，需要呈現作品時，也會用 Photoshop、Illustrator 與 Premiere Pro。",
     },
     {
       label: "在地化",
       tags: ["Git", "GNOME", "KDE"],
-      detail: "我是 l10n-tw 的成員，翻譯 Git、GNOME、KDE，也幫 SLAT 維護 Weblate。",
+      detail: "身為 l10n-tw 成員，翻譯 Git、GNOME 與 KDE，並協助 SLAT 維護 Weblate。",
     },
   ],
   projects: {
     Zeatend: {
       text: "透過 SSH 把一台 Linux 主機裝成 Kubernetes 叢集，支援 K3s、RKE2 與 KubeSolo。",
       detail: [
-        "想把一台 Linux 主機變成 Kubernetes 叢集，只要下 zeatend apply 這一個指令。概念跟 k3sup 差不多，也有終端機介面可以用。",
-        "動手之前，它會先檢查主機，記憶體、磁碟、時鐘同步、swap，還有之前安裝留下的檔案都會看。所以我在新主機上裝 Zeabur OSS 前，都會先跑一次。",
+        "一道 zeatend apply 指令，就能把一台 Linux 主機化為 Kubernetes 叢集。做法承襲 k3sup，另附終端機介面。",
+        "動手之前，它會先審視主機：記憶體、磁碟、時鐘同步、swap，以及舊安裝殘留的檔案。也因此，在新主機上安裝 Zeabur OSS 之前，我總會先跑一次。",
       ],
     },
     Zeabur: {
       text: "在自己的主機上，從 Git、Docker Compose 或範本部署服務。",
       detail: [
-        "講白話些，就是把 Zeabur 搬到你自己的主機上。專案、服務、網域、環境變數、日誌和回滾，用起來都跟 Zeabur 一樣。它跑在 Kubernetes 上，狀態直接存在標準的 Kubernetes 物件裡，所以不用另外架資料庫。",
-        "套用前，它會先列出每個欄位改了什麼。主機和方案也都由你自己選。",
+        "把 Zeabur 帶到自己的主機上。專案、服務、網域、環境變數、日誌與回滾，用起來一如 Zeabur。它建立在 Kubernetes 之上，狀態就存放在標準的 Kubernetes 物件裡，無須另架資料庫。",
+        "套用之前，會先逐欄列出變更。主機與方案，皆由你自行選擇。",
       ],
     },
     Builder: {
       scene: ["讀專案", "寫出 Dockerfile", "建置失敗，讀日誌", "再建置，成功"],
       text: "程式碼推上 GitHub，Builder 就建出可以直接部署的映像檔。",
       detail: [
-        "程式碼推上 GitHub，Builder 就幫你建好映像檔。Dockerfile 交給 zbplan 的 AI Agent，它會讀專案、挑一個合適的。建置失敗的話，它會讀日誌再試一次。Railpack 認得 Node.js、Python、Go、PHP、Ruby、Java、Rust 等語言，專案裡已經有 Dockerfile 的話就直接用。",
-        "分支一更新就會重新建置，再由 Keel 把服務換成新映像檔。建置用的金鑰以 secret 傳入，不會留在映像檔裡。如果你已經有自己的部署工具，也可以只把 Builder 當 Kubernetes operator 用，它會把映像檔 digest 交給你的工具。",
+        "程式碼推上 GitHub，Builder 便建置出映像檔。Dockerfile 交由 zbplan 的 AI Agent 決定：它會讀懂專案，挑選合適的 Dockerfile，建置失敗時也會讀日誌、再試一次。Railpack 認得 Node.js、Python、Go、PHP、Ruby、Java、Rust 等語言，專案若已有 Dockerfile，則直接沿用。",
+        "分支一有更新便重新建置，再由 Keel 換上新映像檔。建置用的金鑰以 secret 傳入，不會留在映像檔中。若已有慣用的部署工具，也能單獨把 Builder 當作 Kubernetes operator，讓它把映像檔 digest 交給那套工具。",
       ],
     },
     "YOLO-RS": {
       scene: ["一張照片", "用 CoreML", "只用 CPU"],
       text: "用 Rust 跑 Ultralytics YOLO 物件偵測，支援 YOLOv8、YOLO11、YOLO12 與 YOLO26。",
       detail: [
-        "用 Rust 跑 YOLO，推論交給 ONNX Runtime，CPU、CoreML、CUDA 都能用。在 M3 Max 上用 CoreML 跑 YOLO11x，一張圖大約 45 ms。",
-        "每個模型在 CI 裡都會跑同一張測試圖，確認找到的人和物件都一樣。",
+        "以 Rust 執行 YOLO，推論交給 ONNX Runtime，可選 CPU、CoreML 或 CUDA。在 M3 Max 上以 CoreML 執行 YOLO11x，一張圖約需 45 ms。",
+        "CI 會讓每個模型辨識同一張測試圖，確認找出的人與物件完全一致。",
       ],
     },
   },
@@ -225,8 +225,8 @@ export default {
     { year: "現在", text: "Zeabur OSS 開發 Lead" },
   ],
   l10nDetail: [
-    "從 2018 年開始，我以 l10n-tw 的名義翻譯 Git、GNOME、KDE，也幫 SLAT 維護 Weblate 翻譯平台。在 Telegram 的在地化社群，我是群組管理員也是譯者。",
-    "在 COSCUP 2026，我分享了 Git 正體中文翻譯的流程治理。",
+    "自 2018 年起，以 l10n-tw 之名翻譯 Git、GNOME 與 KDE，並協助 SLAT 維護 Weblate 翻譯平台。在 Telegram 的在地化社群中，身兼群組管理員與譯者。",
+    "於 COSCUP 2026 分享 Git 正體中文翻譯的流程治理。",
   ],
   experiences: [
     { when: "現在", title: "Zeabur Open Source", role: "開發 Lead" },

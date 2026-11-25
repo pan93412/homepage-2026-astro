@@ -120,7 +120,7 @@ export default {
       label: "Frontend",
       tags: ["React", "Astro", "TanStack"],
       detail:
-        "I mostly write React, TypeScript, Next.js and Astro, and I use the TanStack libraries a lot. For small projects I reach for Vue, Nuxt and Vite.",
+        "Mostly React, TypeScript, Next.js and Astro, with the TanStack libraries close at hand. Smaller projects go to Vue, Nuxt and Vite.",
     },
     {
       label: "Backend",
@@ -137,19 +137,19 @@ export default {
       label: "Security",
       tags: ["OIDC", "Passkey", "Zero trust"],
       detail:
-        "I know OAuth 2.0, OIDC and passkeys well. I’m building Zeabur Identity, and I moved the Zeabur API to scoped tokens. When Zeabur was attacked, I was on the blue team. I also set up AWS Secrets Manager, and Tailscale with ACLs for zero-trust access.",
+        "I know OAuth 2.0, OIDC and passkeys well. I’m building Zeabur Identity, and I redesigned the Zeabur API around scoped tokens. When Zeabur came under attack, I joined the blue team’s defense. I also brought in AWS Secrets Manager, and Tailscale with ACLs for zero-trust access.",
     },
     {
       label: "Infrastructure",
       tags: ["Kubernetes", "Flux", "BuildKit"],
       detail:
-        "I can set up CIS-compliant K3s and RKE2 clusters and deploy to them with Helm and Flux CD, and I packaged this into an installer, Zeatend. For deploys I used Argo CD before and moved to Flux. CI/CD runs on GitHub Actions. I’m also familiar with designing Kubernetes operators and CRDs.",
+        "I can set up CIS-compliant K3s and RKE2 clusters, deploy to them with Helm and Flux CD, and I have packaged the whole process into an installer, Zeatend. I used Argo CD for deploys before moving to Flux, and CI/CD runs on GitHub Actions. I’m also familiar with designing Kubernetes operators and CRDs.",
     },
     {
       label: "Observability",
       tags: ["OpenTelemetry", "Grafana"],
       detail:
-        "I trace with OpenTelemetry and keep dashboards and alerts in Grafana. I also run the VictoriaMetrics, VictoriaLogs and VictoriaTraces behind them.",
+        "OpenTelemetry for distributed tracing, Grafana for dashboards and alerts, and the VictoriaMetrics, VictoriaLogs and VictoriaTraces behind them, which I run.",
     },
     {
       label: "Nix",
@@ -185,22 +185,22 @@ export default {
       label: "Localization",
       tags: ["Git", "GNOME", "KDE"],
       detail:
-        "I’m part of l10n-tw, translating Git, GNOME and KDE, and I help SLAT maintain its Weblate.",
+        "A member of l10n-tw, I translate Git, GNOME and KDE and help SLAT maintain its Weblate.",
     },
   ],
   projects: {
     Zeatend: {
       text: "Turn one Linux server into a Kubernetes cluster with K3s, RKE2 or KubeSolo.",
       detail: [
-        "To turn a Linux server into a Kubernetes cluster, you run one command, zeatend apply. The idea is close to k3sup, and there is a terminal UI if you prefer it.",
-        "Before it touches anything, it checks the host: memory, disk, clock sync, swap and files left over from earlier installs. That’s why I run it first on every new server, before I install Zeabur.",
+        "One command, zeatend apply, turns a Linux server into a Kubernetes cluster. The approach follows k3sup, with a terminal UI alongside.",
+        "Before it touches anything, it examines the host: memory, disk, clock sync, swap and whatever earlier installs left behind. That is why I run it first on every new server, before Zeabur.",
       ],
     },
     Zeabur: {
       text: "Deploy apps on your own server from Git, Docker Compose or an app template.",
       detail: [
-        "Put simply, it’s Zeabur on your own servers. Projects, services, domains, variables, logs and rollbacks work the same way. It runs on Kubernetes and keeps its state in standard Kubernetes objects, so there is no database to run.",
-        "Before it applies anything, it shows you every change field by field. The servers and the plan are yours to choose.",
+        "Zeabur, brought to your own servers. Projects, services, domains, variables, logs and rollbacks work just as they do on Zeabur. It is built on Kubernetes and keeps its state in standard Kubernetes objects, with no database to run.",
+        "Before anything is applied, it lays out every change field by field. The servers and the plan are yours to choose.",
       ],
     },
     Builder: {
@@ -212,16 +212,16 @@ export default {
       ],
       text: "Push to GitHub and Builder turns your code into an image ready to deploy.",
       detail: [
-        "Push your code to GitHub and Builder makes the image. zbplan’s AI agent reads the project and picks a Dockerfile. When a build fails, it reads the log and tries again. Railpack detects Node.js, Python, Go, PHP, Ruby, Java, Rust and more, and an existing Dockerfile is used as is.",
-        "Every branch update triggers a new build, and Keel rolls out the new image. Build secrets are mounted only during the build, so they never end up in the image. If you already have a deploy tool, you can run Builder on its own as a Kubernetes operator that hands it the image digests.",
+        "Push to GitHub, and Builder turns the code into an image. The Dockerfile is left to zbplan’s AI agent, which reads the project and picks a fitting one, and when a build fails, reads the log and tries again. Railpack recognizes Node.js, Python, Go, PHP, Ruby, Java, Rust and more, and an existing Dockerfile is used as is.",
+        "Every branch update starts a new build, and Keel rolls out the new image. Build secrets are mounted only during the build, so they never end up in the image. If you already have a deploy tool, Builder can run on its own as a Kubernetes operator and hand it the image digests.",
       ],
     },
     "YOLO-RS": {
       scene: ["per photo", "With CoreML", "CPU only"],
       text: "Ultralytics YOLO object detection in Rust: YOLOv8, YOLO11, YOLO12 and YOLO26.",
       detail: [
-        "YOLO in Rust. Inference runs on ONNX Runtime, with CPU, CoreML or CUDA. With CoreML on an M3 Max, YOLO11x takes about 45 ms per image.",
-        "In CI, every model runs on the same test image and must find the same people and objects.",
+        "YOLO in Rust. Inference runs on ONNX Runtime, on CPU, CoreML or CUDA. With CoreML on an M3 Max, YOLO11x needs about 45 ms per image.",
+        "In CI, every model looks at the same test image and must find exactly the same people and objects.",
       ],
     },
   },
@@ -235,8 +235,8 @@ export default {
     { year: "Now", text: "Leading Zeabur Open Source" },
   ],
   l10nDetail: [
-    "Since 2018 I have translated Git, GNOME, KDE and more with l10n-tw, and I help SLAT maintain its Weblate. I’m also a group admin and translator in the Telegram localization community.",
-    "At COSCUP 2026, I talked about the workflow behind the Git zh-TW translation.",
+    "Since 2018 I have translated Git, GNOME and KDE under the l10n-tw name, and I help SLAT maintain its Weblate. In the Telegram localization community I serve as both group admin and translator.",
+    "At COSCUP 2026, I spoke on the governance of the Git zh-TW translation workflow.",
   ],
   experiences: [
     { when: "Now", title: "Zeabur Open Source", role: "Development Lead" },

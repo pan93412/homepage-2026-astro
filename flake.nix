@@ -53,6 +53,11 @@
               jactionlint
               shellcheck
               nixfmt
+              # pyftsubset cuts LINE Seed TW down to the characters the built pages use.
+              (python3.withPackages (p: [
+                p.fonttools
+                p.brotli
+              ]))
             ];
             env = {
               PLAYWRIGHT_BROWSERS_PATH = "${browsers}";

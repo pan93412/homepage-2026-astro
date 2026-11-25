@@ -7,6 +7,7 @@ import { Image } from "astro:assets"
 import { Icon } from "astro-icon/components"
 import { parse } from "yaml"
 import friendsSource from "../../data/friends.yaml?raw"
+import Fonts from "../Fonts.astro"
 import BentoViz from "./BentoViz.astro"
 import Tile from "./Tile.astro"
 import "../../styles/global.css"
@@ -69,14 +70,6 @@ const gridSlots = [
   [1, 1],
 ]
 
-/** Every non-ASCII character the pages can show, so Google Fonts serves only those CJK glyphs. */
-const cjkText = [
-  ...new Set(JSON.stringify({ content, friends, talks, projects, contacts, avatars, name })),
-]
-  .filter((c) => c.charCodeAt(0) > 0x7f)
-  .sort()
-  .join("")
-
 const canonical = new URL(getRelativeLocaleUrl(locale), Astro.site)
 const thisYear = new Date().getFullYear()
 // Every year from the first talk to now, a year without a talk included.
@@ -119,16 +112,7 @@ const themeIcon = { system: "desktop", light: "sun", dark: "moon" } as const
     <meta property="og:image" content={new URL("/avatar.png", Astro.site)} />
     <meta property="og:image:alt" content={name} />
     <meta name="twitter:card" content="summary" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&display=swap"
-    />
-    <link
-      rel="stylesheet"
-      href={`https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&text=${encodeURIComponent(cjkText)}&display=swap`}
-    />
+    <Fonts />
   </head>
   <body>
     <a class="skip" href="#main">

@@ -1,5 +1,6 @@
 ---
 import { getRelativeLocaleUrl } from "astro:i18n"
+import Fonts from "../components/Fonts.astro"
 import "../styles/global.css"
 ---
 
@@ -11,16 +12,7 @@ import "../styles/global.css"
     <meta name="robots" content="noindex" />
     <meta name="color-scheme" content="light dark" />
     <title>404 — Page not found / 找不到頁面</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&display=swap"
-    />
-    <link
-      rel="stylesheet"
-      href={`https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&text=${encodeURIComponent("找不到頁面您要找的頁面不存在。回到繁體中文首頁／")}&display=swap`}
-    />
+    <Fonts />
   </head>
   <body>
     <main class="not-found">

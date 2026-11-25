@@ -19,7 +19,7 @@ export default {
     latest: "Latest: ",
     talkLinks: { slide: "Slides", page: "Session", article: "Article" },
     l10nYears: "years of open-source translation",
-    l10nNote: "Last translator of 100+ Debian packages; I run SLAT’s Weblate",
+    l10nNote: "Last translator of 100+ Debian packages. I also run SLAT’s Weblate",
     l10n: "translating open-source software",
     skills: "Skills",
     projects: "Projects",
@@ -120,109 +120,106 @@ export default {
       label: "Frontend",
       tags: ["React", "Astro", "TanStack"],
       detail:
-        "Mainly React, TypeScript, Next.js, Astro and TanStack. Vue, Nuxt and Vite for small projects.",
+        "I mainly use React, TypeScript, Next.js, Astro and TanStack. For small projects I reach for Vue, Nuxt and Vite.",
     },
     {
       label: "Backend",
       tags: ["Go", "Rust", "PHP"],
-      detail: "Mainly Go, Rust, PHP and Node.js.",
+      detail: "On the backend I write Go, Rust, PHP and Node.js.",
     },
     {
       label: "Microservices",
       tags: ["gRPC", "NATS", "GraphQL"],
-      detail: "gRPC, GraphQL, NATS and RabbitMQ. I designed Zeabur’s service specification.",
+      detail:
+        "I connect services with gRPC and GraphQL and pass messages with NATS and RabbitMQ. I also designed Zeabur’s service specification.",
     },
     {
       label: "Security",
       tags: ["OIDC", "Passkey", "Zero trust"],
       detail:
-        "OAuth 2.0, OIDC and passkeys. I build Zeabur Identity, and moved the Zeabur API to scoped tokens. When Zeabur was attacked, I was on the blue team. I also set up AWS Secrets Manager, and Tailscale with ACLs for zero-trust access.",
+        "I work with OAuth 2.0, OIDC and passkeys. I build Zeabur Identity, and I moved the Zeabur API to scoped tokens. When Zeabur was attacked, I was on the blue team. I also set up AWS Secrets Manager, and Tailscale with ACLs for zero-trust access.",
     },
     {
       label: "Infrastructure",
       tags: ["Kubernetes", "Flux", "BuildKit"],
       detail:
-        "Self-hosted K3s clusters, deployed with Helm and Flux CD (migrated from Argo CD). CI/CD on GitHub Actions.",
+        "I run self-hosted K3s clusters and deploy with Helm and Flux CD, which I moved to from Argo CD. CI/CD runs on GitHub Actions.",
     },
     {
       label: "Observability",
       tags: ["OpenTelemetry", "Grafana"],
       detail:
-        "OpenTelemetry tracing, Grafana dashboards and alerts, and VictoriaMetrics, VictoriaLogs and VictoriaTraces in production.",
+        "I trace with OpenTelemetry and build dashboards and alerts in Grafana. In production I also run VictoriaMetrics, VictoriaLogs and VictoriaTraces.",
     },
     {
       label: "Nix",
       tags: ["Flakes", "Reproducible"],
-      detail: "Flakes for dev environments, my own machines, and packaging.",
+      detail: "I use flakes for my dev environments, my own machines and packaging.",
     },
     {
       label: "LLM",
       tags: ["Agent", "Vibe Coding"],
       detail:
-        "Builder has an AI agent that reads projects and fixes failed builds. I write most of my code with agents.",
+        "Builder has an AI agent that reads projects and fixes failed builds. I write most of my own code with agents too.",
     },
     {
       label: "Data",
       tags: ["pandas", "Polars"],
-      detail: "Data analysis with pandas and Polars; charts with Matplotlib, Seaborn and Plotly.",
+      detail:
+        "I analyze data with pandas and Polars, and draw charts with Matplotlib, Seaborn and Plotly.",
     },
     {
       label: "Apple",
       tags: ["SwiftUI", "Xcode Cloud", "Notarization"],
       detail:
-        "Swift apps for macOS and iOS, like a String Catalog merger. Xcode Cloud, and notarization on GitHub Actions.",
+        "I write Swift apps for macOS and iOS, like a String Catalog merger. I know Xcode Cloud well and set up notarization on GitHub Actions.",
     },
     {
       label: "Design",
       tags: ["Figma", "Adobe"],
-      detail: "UI mockups and wireframes in Figma, plus Photoshop, Illustrator and Premiere Pro.",
+      detail:
+        "I make UI mockups and wireframes in Figma, and I also use Photoshop, Illustrator and Premiere Pro.",
     },
     {
       label: "Localization",
       tags: ["Git", "GNOME", "KDE"],
-      detail: "I translate Git, GNOME and KDE with l10n-tw, and maintain SLAT’s Weblate.",
+      detail: "I translate Git, GNOME and KDE with l10n-tw, and I maintain SLAT’s Weblate.",
     },
   ],
   projects: {
     Zeatend: {
       text: "Turn one Linux server into a Kubernetes cluster with K3s, RKE2 or KubeSolo.",
       detail: [
-        "zeatend apply sets up the whole cluster in one command, much like k3sup. It also has a terminal UI.",
-        "Checks the host first: memory, disk, clock sync, swap and leftovers from earlier installs.",
-        "On a new server, run this before installing Zeabur.",
+        "One command, zeatend apply, sets up the whole cluster, much like k3sup, and there is a terminal UI too. Before it installs anything, it checks the host’s memory, disk, clock sync and swap, and looks for leftovers from earlier installs.",
+        "On a new server, I run it before I install Zeabur.",
       ],
     },
     Zeabur: {
       text: "Deploy apps on your own server from Git, Docker Compose or an app template.",
       detail: [
-        "Projects, services, domains, variables, logs and rollbacks work just like on Zeabur.",
-        "Runs on Kubernetes and keeps state in standard Kubernetes objects. No database.",
-        "Before anything is applied, you see the change field by field. You choose the servers and the plan.",
+        "If you have used Zeabur, this will feel familiar. Projects, services, domains, variables, logs and rollbacks work the same way. It runs on Kubernetes and keeps its state in standard Kubernetes objects, so there is no database to run.",
+        "What I like most is that you see every change field by field before anything is applied. The servers and the plan are yours to choose.",
       ],
     },
     Builder: {
       scene: [
         "Reads the repository",
         "Writes a Dockerfile",
-        "Build fails; reads the log",
+        "Build fails, reads the log",
         "Builds again",
       ],
       text: "Push to GitHub and Builder turns your code into an image ready to deploy.",
       detail: [
-        "zbplan’s AI agent reads the project and picks a Dockerfile. When a build fails, it reads the log and tries again.",
-        "Railpack detects Node.js, Python, Go, PHP, Ruby, Java, Rust and more. An existing Dockerfile is used as is.",
-        "Rebuilds whenever a branch is updated, and Keel rolls out the new image.",
-        "Build secrets are mounted only during the build, so they never end up in the image.",
-        "Can also run on its own as a Kubernetes operator that passes image digests to your deploy tool.",
+        "zbplan’s AI agent reads the project and picks a Dockerfile. When a build fails, it does what I would do: it reads the log and tries again. Railpack detects Node.js, Python, Go, PHP, Ruby, Java, Rust and more, and an existing Dockerfile is used as is.",
+        "Builder rebuilds whenever a branch is updated, and Keel rolls out the new image. Build secrets are mounted only during the build, so they never end up in the image. If you already have a deploy tool, you can run Builder on its own as a Kubernetes operator that passes it the image digests.",
       ],
     },
     "YOLO-RS": {
       scene: ["per photo", "With CoreML", "CPU only"],
       text: "Ultralytics YOLO object detection in Rust: YOLOv8, YOLO11, YOLO12 and YOLO26.",
       detail: [
-        "Runs on ONNX Runtime with CPU, CoreML or CUDA.",
-        "YOLO11x takes about 45 ms per image with CoreML on an M3 Max.",
-        "CI runs every model on the same image and checks they find the same objects.",
+        "It runs on ONNX Runtime with CPU, CoreML or CUDA. With CoreML on an M3 Max, YOLO11x takes about 45 ms per image.",
+        "In CI, every model runs on the same image, and the test checks that they all find the same objects.",
       ],
     },
   },
@@ -236,10 +233,8 @@ export default {
     { year: "Now", text: "Leading Zeabur Open Source" },
   ],
   l10nDetail: [
-    "Translate Git, GNOME, KDE and more under the name l10n-tw.",
-    "Maintain the Weblate translation platform for SLAT.",
-    "Moderator and translator in the Telegram community.",
-    "Spoke at COSCUP 2026 about the Git zh-TW translation workflow.",
+    "I have translated Git, GNOME, KDE and more with l10n-tw since 2018. I also maintain SLAT’s Weblate, and I moderate and translate in the Telegram localization community.",
+    "At COSCUP 2026, I talked about the workflow behind the Git zh-TW translation.",
   ],
   experiences: [
     { when: "Now", title: "Zeabur Open Source", role: "Development Lead" },

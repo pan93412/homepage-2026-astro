@@ -1,193 +1,110 @@
 ---
-// Decorative background scene for a bento tile. Each kind draws what that work is about.
 import { Icon } from "astro-icon/components"
-import type { Content } from "./content"
+
 interface Props {
-  ui: Content["ui"]
-  kind:
-    | "bootstrap"
-    | "diff"
-    | "pipeline"
-    | "detect"
-    | "cluster"
-    | "wave"
-    | "rings"
-    | "route"
-    | "orbit"
+  kind: "years" | "names" | "shot" | "agent" | "speed"
+  /** For "years": a count per year, oldest first. The last year is the current one. */
+  years?: { year: number; count: number }[]
+  /** For "names": the current names, then a line on the earlier ones, shown muted. */
+  names?: string[]
+  past?: string
+  /** For "shot": a screen from the project, and the `object-position` that keeps its part that matters in view. */
+  shot?: { src: string; position: string }
+  /** For "agent": the agent's four steps, the third a failed build. For "speed": the caption, the fast run and the slow run. */
+  labels?: string[]
   class?: string
 }
-const { kind, ui, class: className } = Astro.props
-const waveBars = Array.from(
-  { length: 28 },
-  (_, i) => 0.25 + 0.75 * Math.abs(Math.sin(i * 1.7) * Math.cos(i * 0.6)),
-)
-const rings = Array.from({ length: 8 }, (_, i) => 18 + i * 13)
-const hex = (x: number, y: number, r: number) =>
-  Array.from({ length: 6 }, (_, i) => {
-    const a = (Math.PI / 3) * i + Math.PI / 6
-    return `${(x + r * Math.cos(a)).toFixed(1)},${(y + r * Math.sin(a)).toFixed(1)}`
-  }).join(" ")
-// yolo-rs README, "Performance": median ms on an M3 Max MacBook Pro.
-const timings = [
-  { model: "YOLOv8x", coreml: 28, cpu: 374 },
-  { model: "YOLO11x", coreml: 45, cpu: 322 },
-  { model: "YOLO12x", coreml: 164, cpu: 373 },
-  { model: "YOLO26x", coreml: 47, cpu: 345 },
-]
+const { kind, years = [], names = [], past = "", labels = [], shot, class: className } = Astro.props
+const most = Math.max(1, ...years.map((y) => y.count))
+
+// yolo-rs README, "Performance": YOLO11x, median ms per image on an M3 Max MacBook Pro.
+const fast = 45
+const slow = 322
 ---
 
 <div class:list={["viz", `viz--${kind}`, className]} aria-hidden="true">
-  {kind === "bootstrap" && (
-    <svg class="viz__bootstrap" viewBox="0 0 220 110">
-      <rect class="viz__stroke viz__terminal" x="8" y="22" width="62" height="66" rx="6" />
-      {[40, 55, 70].map((y) => (
-        <line class="viz__stroke viz__terminal-line" x1="18" y1={y} x2="52" y2={y} />
-      ))}
-      <circle class="viz__cursor" cx="60" cy="40" r="2.5" />
-      <path class="viz__stroke viz__wire" d="M78 55 H118" />
-      {[
-        [146, 30],
-        [190, 30],
-        [146, 80],
-        [190, 80],
-        [168, 55],
-      ].map(([x, y], i) => (
-        <polygon
-          class="viz__stroke viz__node"
-          style={`--i:${i}`}
-          points={hex(x, y, i === 4 ? 15 : 12)}
-        />
-      ))}
-    </svg>
-  )}
-  {kind === "diff" && (
-    <div class="viz__grow viz__diff">
-      {[
-        { m: " ", k: "service", v: "web" },
-        { m: "-", k: "image", v: "main-a1b2c3" },
-        { m: "+", k: "image", v: "main-3e1a9c" },
-        { m: "+", k: "domain", v: "app.example.com" },
-      ].map((r, i) => (
-        <div
-          class:list={[
-            "viz__diff-row",
-            r.m === "+" && "viz__diff-row--add",
-            r.m === "-" && "viz__diff-row--remove",
-          ]}
-          style={`--i:${i}`}
-        >
-          <span class="viz__diff-mark">{r.m}</span>
-          <span class="viz__diff-key">{r.k}</span>
-          <span class="viz__diff-value">{r.v}</span>
+  {kind === "years" && (
+    <div class="viz__chart">
+      {years.map((y, i) => (
+        <div class="viz__col" style={`--i:${i};--h:${y.count / most}`}>
+          <span class="viz__count">{y.count || ""}</span>
+          <span class="viz__column" />
+          <span class="viz__year">{`’${String(y.year).slice(2)}`}</span>
         </div>
       ))}
     </div>
   )}
-  {kind === "pipeline" && (
-    <div class="viz__grow viz__pipeline">
-      <div class="viz__steps">
-        {[0, 1, 2, 3].map((i) => (
-          <span class="viz__step" style={`--i:${i}`} />
+  {kind === "names" && (
+    <>
+      <ul class="viz__names">
+        {names.map((n, i) => (
+          <li class="viz__name" style={`--i:${i}`}>
+            {n}
+          </li>
         ))}
-        <span class="viz__package">
-          <Icon name="ph:package-duotone" />
+      </ul>
+      <p class="viz__past" style={`--i:${names.length}`}>
+        {past}
+      </p>
+    </>
+  )}
+  {kind === "shot" && shot && (
+    <div class="viz__shot">
+      <img
+        src={shot.src}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        style={`object-position:${shot.position}`}
+      />
+    </div>
+  )}
+  {kind === "agent" && (
+    <ul class="viz__band viz__list">
+      {labels.map((label, i) => (
+        <li class="viz__check" style={`--i:${i}`}>
+          {i === 2 ? (
+            <Icon name="ph:x-bold" class:list="viz__tick viz__tick--fail" />
+          ) : (
+            <Icon name="ph:check-bold" class:list="viz__tick" />
+          )}
+          {label}
+        </li>
+      ))}
+    </ul>
+  )}
+  {kind === "speed" && (
+    <div class="viz__band viz__speed" style={`--fast:${fast / slow}`}>
+      <p class="viz__ms">
+        <b>{fast}</b> ms <span class="viz__caption">{labels[0]}</span>
+      </p>
+      <div class="viz__race">
+        <span class="viz__lane">{labels[1]}</span>
+        <span class="viz__track">
+          <span class="viz__bar viz__bar--fast" />
+        </span>
+        <span class="viz__lane">{labels[2]}</span>
+        <span class="viz__track">
+          <span class="viz__bar viz__bar--slow" />
         </span>
       </div>
-      <p class="viz__caption">
-        <b>AI Agent</b> {ui.pipeline}
-      </p>
     </div>
-  )}
-  {kind === "detect" && (
-    <div class="viz__grow viz__detect">
-      <p class="viz__legend">
-        M3 Max
-        <span class="viz__key viz__key--coreml">CoreML</span>
-        <span class="viz__key viz__key--cpu">CPU</span>
-      </p>
-      {timings.map((t, i) => (
-        <div class="viz__timing" style={`--i:${i};--coreml:${t.coreml / 400};--cpu:${t.cpu / 400}`}>
-          <span class="viz__model">{t.model}</span>
-          <span class="viz__bars">
-            <span class="viz__bar viz__bar--cpu" />
-            <span class="viz__bar viz__bar--coreml" />
-          </span>
-          <span class="viz__ms">{t.coreml} ms</span>
-        </div>
-      ))}
-    </div>
-  )}
-  {kind === "cluster" && (
-    <svg class="viz__cluster" viewBox="0 0 240 160">
-      <path
-        class="viz__links"
-        d="M60 40 L120 80 L190 45 M120 80 L80 130 M120 80 L175 125 M190 45 L175 125 M60 40 L80 130"
-      />
-      {[
-        [60, 40],
-        [190, 45],
-        [80, 130],
-        [175, 125],
-      ].map(([x, y], i) => (
-        <g style={`--d:${i * 0.6}s`}>
-          <polygon class="viz__host" points={hex(x, y, 16)} />
-          <circle class="viz__light" cx={x} cy={y} r="4" />
-        </g>
-      ))}
-      <polygon class="viz__host viz__host--main" points={hex(120, 80, 22)} />
-      <circle class="viz__light" cx="120" cy="80" r="6" />
-      <circle class="viz__packet" r="3">
-        <animateMotion dur="3.2s" repeatCount="indefinite" path="M60 40 L120 80 L175 125" />
-      </circle>
-      <circle class="viz__packet" r="3">
-        <animateMotion
-          dur="2.6s"
-          begin="1s"
-          repeatCount="indefinite"
-          path="M190 45 L120 80 L80 130"
-        />
-      </circle>
-    </svg>
-  )}
-  {kind === "wave" && (
-    <div class="viz__wave">
-      {waveBars.map((h, i) => (
-        <span class="viz__wave-bar" style={`--h:${h};--d:${(i % 7) * 0.12}s`} />
-      ))}
-    </div>
-  )}
-  {kind === "rings" && (
-    <svg class="viz__rings" viewBox="0 0 240 240">
-      {rings.map((r, i) => (
-        <circle class="viz__ring" cx="240" cy="0" r={r} style={`--d:${i * 0.15}s`} />
-      ))}
-      <defs>
-        <path id="ring-path" d="M240 0 m-96 0 a96 96 0 1 0 192 0 a96 96 0 1 0 -192 0" />
-      </defs>
-      <text class="viz__ring-text">
-        <textPath href="#ring-path">{`Git · GNOME · KDE · Telegram · Weblate · ${ui.l10nRing} · `}</textPath>
-      </text>
-    </svg>
-  )}
-  {kind === "route" && (
-    <svg class="viz__route" viewBox="0 0 1000 120" preserveAspectRatio="none">
-      <path
-        class="viz__route-path"
-        d="M0 90 C 120 20, 220 110, 340 60 S 560 10, 680 70 S 880 100, 1000 30"
-      />
-    </svg>
-  )}
-  {kind === "orbit" && (
-    <svg class="viz__orbit" viewBox="0 0 200 200">
-      {[40, 70, 100].map((r) => (
-        <circle class="viz__orbit-ring" cx="150" cy="150" r={r} />
-      ))}
-      <circle class="viz__planet viz__planet--1" cx="150" cy="80" r="5" />
-      <circle class="viz__planet viz__planet--2" cx="50" cy="150" r="4" />
-      <circle class="viz__planet viz__planet--3" cx="150" cy="110" r="3" />
-    </svg>
   )}
 </div>
+
+<script>
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue
+        entry.target.setAttribute("data-seen", "")
+        observer.unobserve(entry.target)
+      }
+    },
+    { threshold: 0.5 },
+  )
+  for (const viz of document.querySelectorAll(".viz")) observer.observe(viz)
+</script>
 
 <style>
   .viz {
@@ -196,351 +113,269 @@ const timings = [
     inset: 0;
     z-index: -1;
     color: var(--viz);
+    --reveal: 700ms;
+    --step: 140ms;
   }
-  /* An open tile keeps the scene in a 150px band at the top. */
-  :global(.tile:has(> .tile__details[open])) .viz:not(.viz--rings) {
+  :global(.tile:has(> .tile__details[open])) .viz {
     bottom: auto;
     height: 9.375rem;
   }
 
-  .viz__stroke {
-    stroke: var(--c);
-    stroke-width: 1.2;
-  }
-  .viz__grow {
-    transform-origin: top left;
-    transition: scale 300ms var(--ease-default);
-    @media (width >= 561px) {
-      :global(.tile:has(> .tile__details[open])) & {
-        scale: 1.4;
+  @media screen and (prefers-reduced-motion: no-preference) and (scripting: enabled) {
+    .viz:not([data-seen]) {
+      .viz__column {
+        scale: 1 0;
       }
+      .viz__bar {
+        scale: 0 1;
+      }
+      .viz__count,
+      .viz__name,
+      .viz__check,
+      .viz__shot,
+      .viz__ms {
+        opacity: 0;
+        translate: 0 4px;
+      }
+    }
+    .viz__column,
+    .viz__name,
+    .viz__check,
+    .viz__shot,
+    .viz__ms,
+    .viz__count {
+      transition-property: scale, opacity, translate;
+      transition-duration: var(--reveal);
+      transition-timing-function: var(--ease-spring);
+      transition-delay: calc(var(--i, 0) * var(--step));
+    }
+    .viz__count {
+      transition-delay: calc(var(--i) * var(--step) + 500ms);
+    }
+    .viz__check {
+      --step: 280ms;
+    }
+    /* 45 ms and 322 ms, each × 7. */
+    .viz__bar {
+      transition: scale linear;
+      transition-delay: 400ms;
+    }
+    .viz__bar--fast {
+      transition-duration: 315ms;
+    }
+    .viz__bar--slow {
+      transition-duration: 2254ms;
     }
   }
 
-  .viz__bootstrap {
+  .viz--years,
+  .viz--names {
+    position: relative;
+    flex: 1;
+    min-height: 4rem;
+    margin: 0 2.75rem 1.5rem 0;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1;
+    :global(.tile:has(> .tile__details[open])) & {
+      position: absolute;
+      inset: 1.375rem 4rem auto 1.375rem;
+      height: 6.5rem;
+      margin: 0;
+    }
+  }
+  :global(.tile:has(> .tile__details[open])) .viz--names {
+    position: relative;
+    inset: auto;
+    height: auto;
+    contain: none;
+    flex: 1;
+    margin: 0 3rem 1.75rem 0;
+  }
+  .viz__chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    height: 100%;
+    border-bottom: 1px solid color-mix(in oklab, currentcolor 30%, transparent);
+    padding-bottom: 0;
+  }
+  .viz__col {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    max-width: 2rem;
+  }
+  .viz__column {
+    width: 100%;
+    height: calc(var(--h) * (100% - 1.25rem));
+    min-height: 2px;
+    transform-origin: bottom;
+    border-radius: 4px 4px 0 0;
+    background-color: color-mix(in oklab, currentcolor 45%, transparent);
+    .viz__col:last-child & {
+      background-color: currentcolor;
+    }
+  }
+  .viz__count {
+    margin-bottom: 0.375rem;
+    opacity: 0.8;
+  }
+  .viz__year {
     position: absolute;
-    top: 1.375rem;
-    left: 1.375rem;
-    width: calc(100% - 96px);
-    max-width: 16.25rem;
+    top: calc(100% + 0.5rem);
+    opacity: 0.7;
   }
-  .viz__terminal {
-    fill: color-mix(in oklab, var(--c) 10%, transparent);
+  .viz--names {
+    /* A taller row would switch the avatars tile to its 2×2 layout. */
+    contain: size;
+    overflow: hidden;
+    margin-right: 0;
+    font-family: var(--font-sans);
   }
-  .viz__terminal-line {
-    opacity: 0.6;
-  }
-  .viz__cursor {
-    fill: var(--c);
-    animation: blink 1.2s infinite;
-  }
-  .viz__wire {
-    stroke-dasharray: 4 4;
-    animation: dash 6s linear infinite;
-  }
-  .viz__node {
-    fill: color-mix(in oklab, var(--c) 18%, transparent);
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: grow 4s calc(var(--i) * 0.3s) ease-out infinite;
+  .viz__names {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    /* Clear of the + button; the line under the chips runs below it, to the tile's padding. */
+    margin-right: 2.75rem;
   }
 
-  .viz__diff {
+  .viz__name {
+    display: inline-flex;
+    align-items: center;
+    height: 1.5rem;
+    border-radius: 4px;
+    padding: 0 0.375rem;
+    background-color: var(--viz);
+    font-size: 12px;
+    line-height: 1;
+    color: var(--color-tile);
+    :global(.tile:has(> .tile__details[open])) & {
+      height: 2rem;
+      padding: 0 0.75rem;
+      font-size: 15px;
+    }
+  }
+  .viz__past {
+    margin-top: 0.5rem;
+    font-size: 12px;
+    line-height: 1.5;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    color: var(--color-mute);
+    :global(.tile:has(> .tile__details[open])) & {
+      margin-top: 0.75rem;
+      font-size: 15px;
+      -webkit-line-clamp: none;
+    }
+  }
+
+  .viz__band {
     position: absolute;
     top: 1.375rem;
     right: 4rem;
     left: 1.375rem;
-    display: grid;
-    gap: 0.1875rem;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    line-height: 1.7;
+    transform-origin: top left;
+    transition: scale 500ms var(--ease-spring);
+    @media (width >= 561px) {
+      :global(.tile:has(> .tile__details[open])) & {
+        scale: 1.3;
+        /* Undoes the scale, so the scene keeps its insets. */
+        right: auto;
+        width: calc((100% - 5.375rem) / 1.3);
+      }
+    }
   }
-  .viz__diff-row {
+  .viz__list {
     display: grid;
-    grid-template-columns: 14px auto 1fr;
     gap: 0.5rem;
-    border-radius: 0.25rem;
-    padding-inline: 0.5rem;
-    color: var(--color-mute);
-    animation: row-in 0.5s calc(var(--i) * 0.12s) ease-out both;
+    font-size: 13px;
+    line-height: 1;
   }
-  .viz__diff-row--add {
-    background-color: color-mix(in oklab, var(--color-sage) 16%, transparent);
-    color: var(--color-ink);
-    .viz__diff-mark {
-      color: var(--color-sage);
-    }
-  }
-  .viz__diff-row--remove {
-    background-color: color-mix(in oklab, var(--color-clay) 16%, transparent);
-    text-decoration-line: line-through;
-    text-decoration-color: color-mix(in oklab, var(--color-clay) 60%, transparent);
-    .viz__diff-mark {
-      color: var(--color-clay);
-    }
-  }
-  .viz__diff-key {
-    color: var(--c);
-  }
-  .viz__diff-value {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .viz__pipeline {
-    position: absolute;
-    top: 1.125rem;
-    right: 1.375rem;
-    left: 1.375rem;
-  }
-  .viz__steps {
-    position: relative;
+  .viz__check {
     display: flex;
-    max-width: min(240px, calc(100% - 42px));
     align-items: center;
-    justify-content: space-between;
-    &::before {
-      content: "";
-      position: absolute;
-      top: 50%;
-      right: 1.25rem;
-      left: 0.4375rem;
-      height: 0.125rem;
-      translate: 0 -50%;
-      background-color: color-mix(in oklab, var(--c) 30%, transparent);
-    }
+    gap: 0.5rem;
+    height: 1.125rem;
   }
-  .viz__step {
-    position: relative;
-    width: 0.875rem;
-    height: 0.875rem;
-    border: 2px solid var(--c);
-    border-radius: 9999px;
-    background-color: var(--color-tile);
-    /* light-dark() in a keyframe follows the system theme, not the theme switch, so the fill fades in on top. */
-    &::after {
-      content: "";
-      position: absolute;
-      inset: -2px;
-      border-radius: inherit;
-      background-color: var(--c);
-      animation: fill 4s calc(var(--i) * 0.5s) ease-in-out infinite;
-    }
-  }
-  .viz__package {
-    position: relative;
+  .viz__tick {
     display: grid;
-    place-items: center;
-    width: 2.125rem;
-    height: 2.125rem;
-    border-radius: 9px;
+    flex: none;
+    width: 1.125rem;
+    height: 1.125rem;
+    padding: 3px;
+    border-radius: 4px;
     background-color: var(--c);
-    font-size: 19px;
     color: var(--color-tile);
   }
-  .viz__caption {
-    margin-top: 0.75rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: 12px;
-    line-height: 1.5;
-    color: color-mix(in oklab, var(--c) 75%, var(--color-tile));
+  .viz__tick--fail {
+    outline: 1.5px solid var(--c);
+    outline-offset: -1.5px;
+    background-color: transparent;
+    color: var(--c);
+  }
+
+  /* The whole screen fills the tile and fades out above the text. */
+  .viz__shot {
+    position: absolute;
+    inset: 0;
+    mask-image: linear-gradient(to bottom, #000 20%, transparent 60%);
+    :global(.tile:has(> .tile__details[open])) & {
+      mask-image: linear-gradient(to bottom, #000 40%, transparent);
+    }
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .viz__ms {
+    font-size: 13px;
+    color: var(--color-mute);
     b {
-      font-weight: 600;
+      font-size: 36px;
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.03em;
+      line-height: 1;
       color: var(--c);
     }
   }
-
-  .viz__detect {
-    position: absolute;
-    top: 1.25rem;
-    right: 4rem;
-    left: 1.375rem;
+  .viz__caption {
+    margin-left: 0.25rem;
+  }
+  .viz__race {
     display: grid;
-    gap: 0.3125rem;
-    font-family: var(--font-mono);
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 0.375rem 0.625rem;
+    margin-top: 0.625rem;
     font-size: 12px;
-    line-height: 1.4;
     color: var(--color-mute);
-    /* .viz__grow scales the open chart by 1.4 from its left edge; this width keeps it inside the same insets. */
-    @media (width >= 561px) {
-      :global(.tile:has(> .tile__details[open])) & {
-        right: auto;
-        width: calc((100% - 5.375rem) / 1.4);
-      }
-    }
   }
-  .viz__legend {
-    margin-bottom: 0.125rem;
-    display: flex;
-    white-space: nowrap;
-    gap: 0.75rem;
-  }
-  .viz__key {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3125rem;
-    &::before {
-      content: "";
-      width: 0.5rem;
-      height: 0.5rem;
-      border-radius: 2px;
-      background-color: var(--c);
-    }
-  }
-  .viz__key--cpu::before {
-    background-color: color-mix(in oklab, var(--c) 22%, transparent);
-  }
-  .viz__timing {
-    display: grid;
-    grid-template-columns: 7ch 1fr 6ch;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .viz__model {
-    color: var(--color-ink);
-  }
-  .viz__bars {
-    position: relative;
+  .viz__track {
+    display: block;
     height: 0.5rem;
   }
   .viz__bar {
-    position: absolute;
-    inset-block: 0;
-    left: 0;
+    display: block;
+    height: 100%;
     transform-origin: left;
     border-radius: 2px;
-    animation: bar 0.7s calc(var(--i) * 0.08s) ease-out both;
   }
-  .viz__bar--cpu {
-    width: calc(var(--cpu) * 100%);
-    background-color: color-mix(in oklab, var(--c) 22%, transparent);
-  }
-  .viz__bar--coreml {
-    width: calc(var(--coreml) * 100%);
+  .viz__bar--fast {
+    width: calc(var(--fast) * 100%);
     background-color: var(--c);
   }
-  .viz__ms {
-    text-align: right;
-    color: var(--c);
-  }
-
-  .viz__cluster {
-    position: absolute;
-    right: -0.625rem;
-    bottom: -0.625rem;
-    width: 62%;
-    opacity: 0.55;
-  }
-  .viz__links {
-    fill: none;
-    stroke: currentcolor;
-    stroke-width: 1;
-    stroke-dasharray: 3 4;
-  }
-  .viz__host {
-    fill: color-mix(in oklab, currentcolor 10%, transparent);
-    stroke: currentcolor;
-    stroke-width: 1.2;
-  }
-  .viz__host--main {
-    fill: color-mix(in oklab, currentcolor 22%, transparent);
-  }
-  .viz__light {
-    fill: currentcolor;
-    animation: blink 2.4s var(--d, 0s) infinite;
-  }
-  .viz__packet {
-    fill: var(--color-clay);
-    @media (prefers-reduced-motion: reduce) {
-      display: none;
-    }
-  }
-
-  .viz__wave {
-    position: absolute;
-    top: 1.375rem;
-    right: 1.375rem;
-    left: 1.375rem;
-    display: flex;
-    height: 44%;
-    align-items: flex-end;
-    gap: 0.1875rem;
-    opacity: 0.4;
-  }
-  .viz__wave-bar {
-    height: calc(var(--h) * 100%);
-    flex: 1;
-    transform-origin: bottom;
-    border-radius: 2px;
-    background-color: currentcolor;
-    animation: eq 1.4s var(--d) ease-in-out infinite alternate;
-  }
-
-  /* The rings are centred on the top-right corner and stay 240px wide, so they keep clear of the text at the bottom left. */
-  .viz__rings {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 240px;
-    height: 240px;
-  }
-  .viz__ring {
-    fill: none;
-    stroke: currentcolor;
-    stroke-width: 1;
-    opacity: 0.18;
-    animation: blink 4s var(--d) infinite;
-  }
-  .viz__ring-text {
-    fill: currentcolor;
-    font-size: 9px;
-    letter-spacing: 0.12em;
-    opacity: 0.5;
-  }
-
-  .viz__route {
-    position: absolute;
-    inset-inline: 0;
-    bottom: 0.5rem;
-    height: 2.5rem;
-    width: 100%;
-  }
-  .viz__route-path {
-    fill: none;
-    stroke: var(--color-sage);
-    stroke-width: 1.5;
-    stroke-dasharray: 6 6;
-    opacity: 0.35;
-    animation: dash 30s linear infinite;
-  }
-
-  .viz__orbit {
-    position: absolute;
-    right: -2.5rem;
-    bottom: -2.5rem;
-    width: 110%;
-  }
-  .viz__orbit-ring {
-    fill: none;
-    stroke: currentcolor;
-    opacity: 0.2;
-  }
-  .viz__planet {
-    fill: currentcolor;
-    opacity: 0.7;
-    transform-origin: 150px 150px;
-  }
-  .viz__planet--1 {
-    animation: orbit 14s linear infinite;
-  }
-  .viz__planet--2 {
-    animation: orbit 22s linear infinite;
-  }
-  .viz__planet--3 {
-    animation: orbit 9s linear infinite reverse;
+  .viz__bar--slow {
+    background-color: color-mix(in oklab, var(--c) 25%, transparent);
   }
 </style>

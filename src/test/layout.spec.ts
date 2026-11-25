@@ -2,7 +2,7 @@ import { type Page } from "@playwright/test"
 import { expect, expectFriendsHeaderAligned, expectOpen, plus, stableBox, test } from "./helpers"
 
 const tiles = (page: Page) => page.locator("main > .tile")
-const contact = (page: Page) => page.locator("main > .tile--sage")
+const contact = (page: Page) => page.locator("main > .contact")
 
 /** Fails when two tiles overlap. */
 const expectNoOverlap = async (page: Page) => {
@@ -55,13 +55,13 @@ for (const width of [1300, 1000]) {
     test("the open YOLO-RS chart stays inside its tile", async ({ page }) => {
       await open(page, "bt-yolors")
       const yolo = await stableBox(page.locator("#bt-yolors"))
-      const chart = await stableBox(page.locator("#bt-yolors .viz__detect"))
+      const chart = await stableBox(page.locator("#bt-yolors .viz__speed"))
       expect(chart.x).toBeGreaterThanOrEqual(yolo.x)
       expect(chart.right).toBeLessThanOrEqual(yolo.right)
     })
 
     test("the closed YOLO-RS chart sits above the tags", async ({ page }) => {
-      const chart = await stableBox(page.locator("#bt-yolors .viz__detect"))
+      const chart = await stableBox(page.locator("#bt-yolors .viz__speed"))
       const tags = await stableBox(page.locator("#bt-yolors .project__tags"))
       expect(chart.bottom).toBeLessThanOrEqual(tags.y)
     })
@@ -127,7 +127,7 @@ test.describe("two columns at 700px", () => {
           all.filter((t) => {
             const r = t.getBoundingClientRect()
             return (
-              !t.classList.contains("tile--sage") &&
+              !t.classList.contains("contact") &&
               r.top + scrollY < c.bottom - 1 &&
               r.bottom + scrollY > c.y + 1
             )

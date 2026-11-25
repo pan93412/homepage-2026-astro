@@ -226,7 +226,7 @@ export default {
     { year: "現在", text: "Zeabur OSS 開發 Lead" },
   ],
   l10nDetail: [
-    "從 2018 年開始，我以 l10n-tw 的名義翻譯 Git、GNOME、KDE，也幫 SLAT 維護 Weblate 翻譯平台。在 Telegram 的在地化社群，我是版主也是譯者。",
+    "從 2018 年開始，我以 l10n-tw 的名義翻譯 Git、GNOME、KDE，也幫 SLAT 維護 Weblate 翻譯平台。在 Telegram 的在地化社群，我是群組管理員也是譯者。",
     "在 COSCUP 2026，我分享了 Git 正體中文翻譯的流程治理。",
   ],
   experiences: [

@@ -235,7 +235,7 @@ export default {
     { year: "Now", text: "Leading Zeabur Open Source" },
   ],
   l10nDetail: [
-    "Since 2018 I have translated Git, GNOME, KDE and more with l10n-tw, and I help SLAT maintain its Weblate. I’m also a moderator and translator in the Telegram localization community.",
+    "Since 2018 I have translated Git, GNOME, KDE and more with l10n-tw, and I help SLAT maintain its Weblate. I’m also a group admin and translator in the Telegram localization community.",
     "At COSCUP 2026, I talked about the workflow behind the Git zh-TW translation.",
   ],
   experiences: [

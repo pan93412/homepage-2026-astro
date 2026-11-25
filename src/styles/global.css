@@ -17,7 +17,6 @@
   --color-chip: color-mix(in oklab, var(--color-ink) 7%, var(--color-tile));
 
   --font-sans: "Geist", "Noto Sans TC", sans-serif;
-  --font-display: "Instrument Serif", serif;
   --font-mono: ui-monospace, "SF Mono", monospace;
 
   --radius-tile: 8px;
